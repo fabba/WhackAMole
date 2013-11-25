@@ -71,9 +71,11 @@ Moles ( Name / Ability / Points )
 
 - Goldy / Need 1 click to kill and lots of poits / 5
 
-- Burny / Need 1 click to kill and will burn others ( this will cost you a life ) / 3
+- Burny / Need 1 click to kill and will burn others if burny is not killed in a certain time( this will cost you a life ) /2
 
-- Icy / Need 1 click to freeze the rest of the moles ( appearance time will be stuck for 2 seconds )/ 0
+- Icy / Need 1 click to freeze the rest of the moles ( appearance time will be stuck for 2 seconds )/ 1
+
+- Smogy / Need 1 click to kill and will blur your screen if not killed in a certain time / 2
 
 
 
