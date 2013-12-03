@@ -1,21 +1,37 @@
 DesignDocument
 
-Database in SQL(ite). We store the current game state in a table called game, from which we should be able to reconstruct that specific game when a player presses resume.This game will be constructed at the beginning of each level. Each round consists of a set of moles which will appear in order at specific points in time, the place where the mole will appear will be randomly chosen.
+Database in SQL(ite). We store the current game state in a table called game, from which we should be able to reconstruct that specific game when a player presses resume.This game will be constructed at the beginning of each level. Each round consists of a set of moles which will appear in order at specific points in time, the location where the mole will appear will be randomly chosen. For the graphics we will make use of OpenGl (http://developer.android.com/guide/topics/graphics/opengl.html).
 
 
 Database tables:
 
-Table: game
+Table: gameLog
 
-- id (int) | username | score (int) | level(int) | round ( int )
+- id (int) | userId (int) | scoreId (int) | level(int) | round ( int )
 
 Table: score
 
-- id(int) | username (string) | score (int) 
+- id (int) | userId (int) | score (int) 
 
 Table: user
 
-- id(int) | username (string) | password (string)
+- id (int) | username (string) | password (string)
+
+Table: level
+
+- id (int) | spriteLocation (string)
+
+Table: location:
+
+- id (int) | levelId(int) | x (int) | y (int)
+
+Table: round
+
+- id (int) | levelId (int) | moleId (int) | time (int) | appearanceTime (int)
+
+Table: mole
+
+- id (int) | type (int) | clicks (int) | points (int) | spriteLocation (string)
 
 Model Classes:
 
@@ -46,21 +62,20 @@ Setting Activity:
 
 Maipanel:
 
-	private moleNormy Normy; ( for each mole)
-	private level1 [ normy, tanky , hatty, normy,normy,normy]  ( for each level which moles will be available
-	private Positions [right,left,Rightdown... etc]
+	private Mole[] moles # moles in order of appearance
+	private Level # current level
 	private mainThread thread; ( The thread of the game )
 
 	private score = 0;
-	
-	public Class pickMole
-		pick a random Mole from the array level1
 		
-	public Class pickPostition
+	public Class pickPosition
 		pick a random position form the array positions
 		
 	public MainPanel(Context context)
 		constructors and create mainThread
+		load current level(/round) for user
+		get all moles belonging to that round
+		divide moles among known positions.
 	
 	public void surfaceCreated
 		Set the background and start the Thread
@@ -69,39 +84,52 @@ Maipanel:
 		If the surface is destroyed safe the game state
 	
 	public boolean onTouchEvent
-		Checks which mole was touched and execute the moles ability when touched
+		Checks which position was touched and call the position's onTouch method
 		Update score
-	
 
 	 protected void onDraw
 	 	Draw the score on the surface and draw the background
-	 		if moleAppearance time > elapsedTime
-	 		Destroy mole
-	 		set New Mole
-	 	
-		draw the new mole at the new position
-
+	 	Call the draw method of all locations
 	
 MainThread:
 
-	
 	MainThread
 		Set the surface and the mainpanel in the mainthread
 	public void run
 		Will run the application and will update the draws in main panel
 	
 	
-		
+Position: 
+
+	private startX
+	private startY
+	Mole currentMole
+	Mole[] moles # moles in order of appearance
 	
+	public PositionRightDown (x, y, moles)
+	    instantiate position
+	
+	public OnTouch(time)
+	   if the time matches or passed mole appear time
+	   	call draw
+	   	load next mole from moles.
+	   return score
+	
+	public draw(time)
+		if appear time >= time > appear time + appearance time
+		    draws the current mole at the position ()
+		    and moves it equal to the width of the bitmap
+		else if time > appear time + appearance time
+		    load next mole from moles.
 
 
-MoleNormy ( for each mole ):
+MoleNormy ( for each mole ): # should inherit from some abstract class + implement some interface.
 	
-	private bitmap = get bitmap drawable spirte of mole
+	private bitmap = get bitmap drawable sprite of mole
 	private appearanceTime;
 	
 	public MoleNormy
-		set the appearance time
+		construct self from database.
 	
 	public boolean isTouched
 		return if touched and executes the ability
@@ -122,25 +150,31 @@ MoleNormy ( for each mole ):
 		
 	public void handleActionDown
 		checks if the mole was touched and set touched
+		
+Level:
 
-PositionRightDown ( for each posistion ):
-	
-	private startX
-	private startY
-	private AppearanceTime
-	
-	public PositionRightDown ( class mole )
-		set the appearancetime
+      Round[] rounds
+      private bitmap = get bitmap drawable sprite of the level.
+      Round currentRound
+      
+      Level():
+         construct all rounds from database
+         
+      getMoles():
+         returns mole in order of appearance
+         
+      nextRound()
+      
+Round: 
+      
+      Mole[] moles # moles in order of appearance
+      
+      Round():
+         construct all moles from database
 		
-	public draw
-		draws the mole at the position and moves it equal to the width of the bitmap
-	
-	private getAppearanceTime
-		
-		
-	
-	
-		
+     getMoles():
+        returns moles in order of appearance
+        
 Styleguide:
 - CamelCase.
 - Max 120 chars per line.
