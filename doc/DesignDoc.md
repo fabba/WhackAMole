@@ -144,7 +144,7 @@ PositionRightDown ( for each posistion ):
 Styleguide:
 - CamelCase.
 - Max 120 chars per line.
-- Use two spaces per indentation level. No hard tabs.
+- Use four spaces per indentation level. No hard tabs.
 - No single line methods.
 - Spaces around operators, after commas, semicolons.
 - No spaces after (,[ or before ],). 
