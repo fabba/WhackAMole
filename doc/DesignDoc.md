@@ -75,6 +75,11 @@ Maipanel:
 
 	 protected void onDraw
 	 	Draw the score on the surface and draw the background
+	 		if moleAppearance time > elapsedTime
+	 		Destroy mole
+	 		set New Mole
+	 	
+		draw the new mole at the new position
 
 	
 MainThread:
@@ -84,11 +89,7 @@ MainThread:
 		Set the surface and the mainpanel in the mainthread
 	public void run
 		Will run the application and will update the draws in main panel
-		if moleAppearance time > elapsedTime
-	 		Destroy mole
-	 		set New Mole
-	 	
-		draw the new mole at the new position
+	
 	
 		
 	
