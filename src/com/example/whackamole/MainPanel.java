@@ -25,7 +25,7 @@ public class MainPanel extends SurfaceView implements
 	  // adding the callback (this) to the surface holder to intercept events
 	  getHolder().addCallback(this);
 	  // create droid and load bitmap
-	  normy = new MoleNormy(BitmapFactory.decodeResource(getResources(), R.drawable.normy), 50, 50);
+	  
 
 	  // create the game loop thread
 	  thread = new MainThread(getHolder(), this);
@@ -43,6 +43,7 @@ public class MainPanel extends SurfaceView implements
 	 public void surfaceCreated(SurfaceHolder holder) {
 	  // at this point the surface is created and
 	  // we can safely start the game loop
+	  normy = new MoleNormy(BitmapFactory.decodeResource(getResources(), R.drawable.normy), 50, 50,System.currentTimeMillis());
 	  Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.ground1);
 	  float scale = (float)background.getHeight()/(float)getHeight();
 	  int newWidth = Math.round(background.getWidth()/scale);
@@ -83,14 +84,7 @@ public class MainPanel extends SurfaceView implements
 	   } else {
 	    Log.d(TAG, "Coords: x=" + event.getX() + ",y=" + event.getY());
 	   }
-	  } if (event.getAction() == MotionEvent.ACTION_MOVE) {
-	   // the gestures
-	   if (normy.isTouched()) {
-	    // the droid was picked up and is being dragged
-	    normy.setX((int)event.getX());
-	    normy.setY((int)event.getY());
-	   }
-	  } if (event.getAction() == MotionEvent.ACTION_UP) {
+	  }  if (event.getAction() == MotionEvent.ACTION_UP) {
 	   // touch was released
 	   if (normy.isTouched()) {
 	    normy.setTouched(false);
@@ -99,9 +93,15 @@ public class MainPanel extends SurfaceView implements
 	  return true;
 	 }
 
+	 private void keepTrackofMoles(Canvas canvas){
+		 if(normy.getTime() > System.currentTimeMillis()){
+			 System.out.println(normy.getY());
+			 normy.draw(canvas);
+		 }
+	 }
 	 @Override
 	 protected void onDraw(Canvas canvas) {
 	 	canvas.drawBitmap(back, 0, 0, null); // draw the background
-	  	normy.draw(canvas);
+	 	keepTrackofMoles(canvas);
 	 }
 	}
