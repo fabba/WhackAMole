@@ -1,6 +1,6 @@
 DesignDocument
 
-Database in SQL(ite). We store the current game state in a table called game, from which we should be able to reconstruct that specific game when a player presses resume.This game will be constructed at the beginning of each level. Each round consists of a set of moles which will be execute in order at specific points in time, the place where the mole will appear will be randomly chosen.
+Database in SQL(ite). We store the current game state in a table called game, from which we should be able to reconstruct that specific game when a player presses resume.This game will be constructed at the beginning of each level. Each round consists of a set of moles which will appear in order at specific points in time, the place where the mole will appear will be randomly chosen.
 
 
 Database tables:
