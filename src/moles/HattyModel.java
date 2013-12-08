@@ -11,7 +11,6 @@ public class HattyModel extends MoleModel {
 	public HattyModel(float pX, float pY, float beginY, float speed,
 			ITiledTextureRegion moleSprite, GameScene scene) {
 		super(pX, pY, beginY, speed, moleSprite, scene);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void onDie() {

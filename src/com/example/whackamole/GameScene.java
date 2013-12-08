@@ -38,7 +38,13 @@ public class GameScene extends BaseScene
     private HUD gameHUD;
     private Text scoreText;
     private PhysicsWorld physicsWorld;
-	
+    private float horzLeft = 43;
+    private float horzMid = 297;
+    private float horzRight = 546;
+    private float vertUp = 250;
+    private float vertMid = 649;
+    private float vertDown = 1071;
+    
 	@Override
     public void createScene()
     {
@@ -102,20 +108,12 @@ public class GameScene extends BaseScene
         camera.setHUD(gameHUD);
     }
    
-    private float horzLeft = 43 ;
-    private float horzMid = 297 ;
-    private float horzRight = 546 ;
-    private float vertUp = 250 ;
-    private float vertMid = 649 ;
-    private float vertDown = 1071 ;
-    
-    
-    private MoleModel createMoleNormy(float pX, float pY , float beginY, float speed){
+    private MoleModel createMoleNormy(float pX, float pY , float beginY, float speed) {
     	return new NormyModel(pX + 2, pY,beginY,speed,
     			ResourcesManager.getInstance().mole_normy, this);
     }
     
-    private MoleModel createMoleHatty(float pX, float pY , float beginY,  float speed){
+    private MoleModel createMoleHatty(float pX, float pY , float beginY,  float speed) {
     	return new HattyModel(pX + 2, pY,beginY,speed,
     			ResourcesManager.getInstance().mole_hatty, this);
     }

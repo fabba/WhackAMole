@@ -1,23 +1,17 @@
 package moles;
 
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.camera.hud.HUD;
-import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
-import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.example.whackamole.GameScene;
-
-
 
 public abstract class MoleModel extends Sprite implements MoleInterface
 {
@@ -26,9 +20,6 @@ public abstract class MoleModel extends Sprite implements MoleInterface
     // ---------------------------------------------
     private float beginY;
     private float speed;
-    private VertexBufferObjectManager vbo;
-    private Camera camera;
-    private PhysicsWorld physicsWorld;
     protected GameScene gameScene;
     
     public MoleModel(float pX, float pY, float beginY, float speed,
@@ -39,11 +30,11 @@ public abstract class MoleModel extends Sprite implements MoleInterface
     	this.beginY = beginY;
         
     	this.gameScene = scene;
-        this.vbo = this.gameScene.getVbom();
-        this.camera = this.gameScene.getCamera();
-        this.physicsWorld = this.gameScene.getPhysicsWorld();
-        createPhysics(this.camera, this.physicsWorld);
-        this.camera.setChaseEntity(this);
+        //this.vbo = this.gameScene.getVbom();
+        //this.camera = this.gameScene.getCamera();
+        //this.physicsWorld = this.gameScene.getPhysicsWorld();
+        createPhysics(this.gameScene.getCamera(), this.gameScene.getPhysicsWorld());
+        this.gameScene.getCamera().setChaseEntity(this);
     }
 
 	 // ---------------------------------------------
@@ -56,20 +47,18 @@ public abstract class MoleModel extends Sprite implements MoleInterface
     {        
         body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
         body.setFixedRotation(true);
-        physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false)
-        {
-            @Override
-            public void onUpdate(float pSecondsElapsed)
-            {
+        
+        physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false) {
+            
+        	@Override
+            public void onUpdate(float pSecondsElapsed) {
                 super.onUpdate(pSecondsElapsed);
                 camera.onUpdate(0.1f);
-                if (getY() > beginY)
-                {                    
+                if (getY() > beginY) {                    
                     onDie();
                 }
                 
-                if (getY() < ( beginY - 150))
-                {    
+                if (getY() < ( beginY - 150)) {    
                 	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed)); 
                 }
             }
@@ -89,14 +78,14 @@ public abstract class MoleModel extends Sprite implements MoleInterface
     }
     
     public VertexBufferObjectManager getVbo(){
-    	return this.vbo;
+    	return this.gameScene.getVbom();
     }
     
     public Camera getCamera(){
-    	return this.camera;
+    	return this.gameScene.getCamera();
     }
     
     public PhysicsWorld getPhysicsWorld(){
-    	return this.physicsWorld;
+    	return this.gameScene.getPhysicsWorld();
     }
 }

@@ -10,12 +10,10 @@ public class NormyModel extends MoleModel {
 	public NormyModel(float pX, float pY, float beginY, float speed,
 			ITiledTextureRegion moleSprite, GameScene scene) {
 		super(pX, pY, beginY, speed, moleSprite, scene);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-		
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
 	}
@@ -23,9 +21,9 @@ public class NormyModel extends MoleModel {
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
 		HUD gameHUD = gameScene.getGameHUD();
-		
 		gameHUD.detachChild(this);
     	gameHUD.unregisterTouchArea(this);
+    	
     	gameScene.addToScore(1);
 		return true;
 	}
