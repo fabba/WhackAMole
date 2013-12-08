@@ -1,9 +1,6 @@
 package com.example.whackamole;
 
-import android.os.Bundle;
-import android.app.Activity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import java.io.IOException;
 
 import org.andengine.engine.camera.Camera;

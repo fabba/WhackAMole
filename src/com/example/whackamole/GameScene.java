@@ -1,6 +1,12 @@
 package com.example.whackamole;
 
+<<<<<<< HEAD
 import java.util.Random;
+=======
+import moles.HattyModel;
+import moles.MoleModel;
+import moles.NormyModel;
+>>>>>>> 4c9a471be7b21d37d60e4ca73ae8a6494ae38d78
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -28,12 +34,22 @@ import org.andengine.util.color.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.example.whackamole.BaseScene;
-import com.example.whackamole.Mole;
 import com.example.whackamole.SceneManager.SceneType;
 
 public class GameScene extends BaseScene
 {
-    @Override
+    private int score = 0;
+    private HUD gameHUD;
+    private Text scoreText;
+    private PhysicsWorld physicsWorld;
+    private float horzLeft = 43;
+    private float horzMid = 297;
+    private float horzRight = 546;
+    private float vertUp = 250;
+    private float vertMid = 649;
+    private float vertDown = 1071;
+    
+	@Override
     public void createScene()
     {
     	 createBackground();
@@ -69,18 +85,12 @@ public class GameScene extends BaseScene
         setBackground(background);
     }
     
-    private int score = 0;
-
-    private void addToScore(int i)
+    public void addToScore(int i)
     {
         score += i;
         scoreText.setText("Score: " + score);
     }
     
-    private HUD gameHUD;
-    private Text scoreText;
-
-    private PhysicsWorld physicsWorld;
 
     private void createPhysics()
     {
@@ -102,14 +112,17 @@ public class GameScene extends BaseScene
         camera.setHUD(gameHUD);
     }
    
-    private float horzLeft = 43 ;
-    private float horzMid = 297 ;
-    private float horzRight = 546 ;
-    private float vertUp = 250 ;
-    private float vertMid = 649 ;
-    private float vertDown = 1071 ;
+    private MoleModel createMoleNormy(float pX, float pY , float beginY, float speed) {
+    	return new NormyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_normy, this);
+    }
     
+    private MoleModel createMoleHatty(float pX, float pY , float beginY,  float speed) {
+    	return new HattyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_hatty, this);
+    }
     
+<<<<<<< HEAD
     private Mole createMoleNormy(float pX, float pY , float beginY,  float speed, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld){
     	Mole moleNormy;
     	moleNormy = new Mole(pX + 2, pY,beginY,speed,ResourcesManager.getInstance().mole_normy, vbo, camera, physicsWorld)
@@ -131,31 +144,69 @@ public class GameScene extends BaseScene
 				return true;
 			}};
     	return moleNormy;
+=======
+    public VertexBufferObjectManager getVbom() {
+    	return vbom;
+>>>>>>> 4c9a471be7b21d37d60e4ca73ae8a6494ae38d78
     }
     
-    private Mole createMoleHatty(float pX, float pY , float beginY,  float speed, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld){
-    	Mole moleHatty;
-    	moleHatty = new Mole(pX + 2, pY,beginY,speed,ResourcesManager.getInstance().mole_hatty, vbo, camera, physicsWorld)
-    	{
+    public Camera getCamera() {
+    	return camera;
+    }
+    
+    public PhysicsWorld getPhysicsWorld() {
+    	return physicsWorld;
+    }
+<<<<<<< HEAD
+    public static int randInt(int min, int max) {
+=======
+    
+    public HUD getGameHUD() {
+    	return gameHUD;
+    }
+    
+    private void loadLevel(int levelID)
+    {
+    	float horzLeft = 43 ;
+        float horzMid = 297 ;
+        float horzRight = 546 ;
+        float vertUp = 250 ;
+        float vertMid = 649 ;
+        float vertDown = 1071 ;
+		
+		MoleModel moleNormy = createMoleHatty(horzMid, vertMid, vertMid, 1);
+		moleNormy.jump();
+		gameHUD.attachChild(moleNormy);
+    	gameHUD.registerTouchArea(moleNormy);
+    	
+		MoleModel moleHatty = createMoleHatty(horzLeft, vertUp, vertUp, 1);
+		moleHatty.jump();
+    	gameHUD.attachChild(moleHatty);
+    	gameHUD.registerTouchArea(moleHatty);
+    	
+    	gameHUD.attachChild( new Sprite(horzLeft, vertUp, resourcesManager.back, vbom));
+    	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
+    	/* moleNormy1 = new MoleNormy(300, 250,1, vbom, camera, physicsWorld){
 
 			@Override
 			public void onDie() {
-				gameHUD.detachChild(this);
-				gameHUD.unregisterTouchArea(this);
-			}
+				// TODO Auto-generated method stub
+	
+				
+			}};
+    	gameHUD.attachChild(moleNormy1);
+    	gameHUD.attachChild( new Sprite(297, 250, resourcesManager.back, vbom));
+    	moleNormy2 = new MoleNormy(549, 256,1, vbom, camera, physicsWorld){
 
 			@Override
-			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
-					float pTouchAreaLocalX, float pTouchAreaLocalY) {
+			public void onDie() {
+				// TODO Auto-generated method stub
 				
-				gameHUD.detachChild(this);
-		    	gameHUD.unregisterTouchArea(this);
-		    	addToScore(1);
-				return true;
 			}};
-    	return moleHatty;
-    }
-    public static int randInt(int min, int max) {
+    	gameHUD.attachChild(moleNormy2);
+    	gameHUD.attachChild( new Sprite(546, 256, resourcesManager.back, vbom));
+    	moleNormy3 = new MoleNormy(46, 649,1, vbom, camera, physicsWorld){
+>>>>>>> 4c9a471be7b21d37d60e4ca73ae8a6494ae38d78
 
         // Usually this can be a field rather than a method variable
         Random rand = new Random();
