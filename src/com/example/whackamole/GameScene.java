@@ -1,5 +1,7 @@
 package com.example.whackamole;
 
+import java.util.Random;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
@@ -125,8 +127,7 @@ public class GameScene extends BaseScene
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				addToScore(1);
 				gameHUD.detachChild(this);
-		    	gameHUD.unregisterTouchArea(this);
-				
+		    	gameHUD.unregisterTouchArea(this);	
 				return true;
 			}};
     	return moleNormy;
@@ -154,103 +155,48 @@ public class GameScene extends BaseScene
 			}};
     	return moleHatty;
     }
-    
-    
-    private void loadLevel(int levelID)
-    {
-    	float horzLeft = 43 ;
-        float horzMid = 297 ;
-        float horzRight = 546 ;
-        float vertUp = 250 ;
-        float vertMid = 649 ;
-        float vertDown = 1071 ;
-		
-		Mole moleNormy = createMoleHatty(horzMid, vertMid,vertMid,1, vbom, camera, physicsWorld);
-		moleNormy.jump();
-		gameHUD.attachChild(moleNormy);
-    	gameHUD.registerTouchArea(moleNormy);
-    	
-		Mole moleHatty = createMoleHatty(horzLeft, vertUp,vertUp,1, vbom, camera, physicsWorld);
-		moleHatty.jump();
-    	gameHUD.attachChild(moleHatty);
-    	gameHUD.registerTouchArea(moleHatty);
-    	
-    	gameHUD.attachChild( new Sprite(horzLeft, vertUp, resourcesManager.back, vbom));
-    	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
-    	/* moleNormy1 = new MoleNormy(300, 250,1, vbom, camera, physicsWorld){
+    public static int randInt(int min, int max) {
 
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-	
-				
-			}};
-    	gameHUD.attachChild(moleNormy1);
-    	gameHUD.attachChild( new Sprite(297, 250, resourcesManager.back, vbom));
-    	moleNormy2 = new MoleNormy(549, 256,1, vbom, camera, physicsWorld){
+        // Usually this can be a field rather than a method variable
+        Random rand = new Random();
 
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy2);
-    	gameHUD.attachChild( new Sprite(546, 256, resourcesManager.back, vbom));
-    	moleNormy3 = new MoleNormy(46, 649,1, vbom, camera, physicsWorld){
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
 
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy3);
-    	gameHUD.attachChild( new Sprite(43, 649, resourcesManager.back, vbom));
-    	moleNormy4 = new MoleNormy(300, 649,1, vbom, camera, physicsWorld){
-
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy4);
-    	gameHUD.attachChild( new Sprite(297, 649, resourcesManager.back, vbom));
-    	moleNormy5 = new MoleNormy(549, 655,1, vbom, camera, physicsWorld){
-
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy5);
-    	gameHUD.attachChild( new Sprite(546, 655, resourcesManager.back, vbom));
-    	moleNormy6 = new MoleNormy(45, 1071,1, vbom, camera, physicsWorld){
-
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy6);
-    	gameHUD.attachChild( new Sprite(42, 1071, resourcesManager.back, vbom));
-    	moleNormy7 = new MoleNormy(297, 1071,1, vbom, camera, physicsWorld){
-
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy7);
-    	gameHUD.attachChild( new Sprite(294, 1071, resourcesManager.back, vbom));
-    	moleNormy8 = new MoleNormy(546, 1071,1, vbom, camera, physicsWorld){
-
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy8);
-    	gameHUD.attachChild( new Sprite(543, 1071, resourcesManager.back, vbom)); */
-    	
+        return randomNum;
     }
+   
+	
+    private Mole getRandomMole(int[] level1, int[] coordinates) {
+    	Mole newMole = null;
+		switch(level1[randInt(0,level1.length-1)]){
+		case 1:
+			newMole = createMoleNormy(coordinates[0], coordinates[1],coordinates[1],1, vbom, camera, physicsWorld);
+			break;
+		case 2:
+			newMole = createMoleHatty(coordinates[0], coordinates[1],coordinates[1],1, vbom, camera, physicsWorld);
+			break;
+		}
+		return newMole;
+	}
+    private int[] getRandomPosition() {
+        int[] xCoordinates = new int[] {43,297,546};
+        int[] yCoordinates = new int[] {250,649,1071 };
+        return new int[] {xCoordinates[randInt(0,2)],yCoordinates[randInt(0,2)]};
+	}
+   
+	private void loadLevel(int levelID)
+    {
+		int[] level1 = new int[] {1,2,1,1,1,2,1,1};
+		int[] coordinates = getRandomPosition();
+		Mole newMole = getRandomMole(level1, coordinates);
+		newMole.jump();
+		gameHUD.attachChild(newMole);
+		gameHUD.registerTouchArea(newMole);
+		gameHUD.attachChild( new Sprite(coordinates[0], coordinates[1], resourcesManager.back, vbom));
+	
+    }
+
 
 }
