@@ -1,12 +1,11 @@
 package com.example.whackamole;
 
-<<<<<<< HEAD
+
 import java.util.Random;
-=======
+
 import moles.HattyModel;
 import moles.MoleModel;
 import moles.NormyModel;
->>>>>>> 4c9a471be7b21d37d60e4ca73ae8a6494ae38d78
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -122,33 +121,7 @@ public class GameScene extends BaseScene
     			ResourcesManager.getInstance().mole_hatty, this);
     }
     
-<<<<<<< HEAD
-    private Mole createMoleNormy(float pX, float pY , float beginY,  float speed, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld){
-    	Mole moleNormy;
-    	moleNormy = new Mole(pX + 2, pY,beginY,speed,ResourcesManager.getInstance().mole_normy, vbo, camera, physicsWorld)
-    	{
 
-			@Override
-			public void onDie() {
-				gameHUD.detachChild(this);
-				gameHUD.unregisterTouchArea(this);
-				
-			}
-
-			@Override
-			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
-					float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				addToScore(1);
-				gameHUD.detachChild(this);
-		    	gameHUD.unregisterTouchArea(this);	
-				return true;
-			}};
-    	return moleNormy;
-=======
-    public VertexBufferObjectManager getVbom() {
-    	return vbom;
->>>>>>> 4c9a471be7b21d37d60e4ca73ae8a6494ae38d78
-    }
     
     public Camera getCamera() {
     	return camera;
@@ -157,9 +130,6 @@ public class GameScene extends BaseScene
     public PhysicsWorld getPhysicsWorld() {
     	return physicsWorld;
     }
-<<<<<<< HEAD
-    public static int randInt(int min, int max) {
-=======
     
     public HUD getGameHUD() {
     	return gameHUD;
@@ -174,7 +144,7 @@ public class GameScene extends BaseScene
         float vertMid = 649 ;
         float vertDown = 1071 ;
 		
-		MoleModel moleNormy = createMoleHatty(horzMid, vertMid, vertMid, 1);
+		MoleModel moleNormy = createMoleNormy(horzMid, vertMid, vertMid, 1);
 		moleNormy.jump();
 		gameHUD.attachChild(moleNormy);
     	gameHUD.registerTouchArea(moleNormy);
@@ -186,27 +156,10 @@ public class GameScene extends BaseScene
     	
     	gameHUD.attachChild( new Sprite(horzLeft, vertUp, resourcesManager.back, vbom));
     	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
-    	/* moleNormy1 = new MoleNormy(300, 250,1, vbom, camera, physicsWorld){
 
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-	
-				
-			}};
-    	gameHUD.attachChild(moleNormy1);
-    	gameHUD.attachChild( new Sprite(297, 250, resourcesManager.back, vbom));
-    	moleNormy2 = new MoleNormy(549, 256,1, vbom, camera, physicsWorld){
-
-			@Override
-			public void onDie() {
-				// TODO Auto-generated method stub
-				
-			}};
-    	gameHUD.attachChild(moleNormy2);
-    	gameHUD.attachChild( new Sprite(546, 256, resourcesManager.back, vbom));
-    	moleNormy3 = new MoleNormy(46, 649,1, vbom, camera, physicsWorld){
->>>>>>> 4c9a471be7b21d37d60e4ca73ae8a6494ae38d78
+    	
+    }
+    private int randInt(int min, int max){
 
         // Usually this can be a field rather than a method variable
         Random rand = new Random();
@@ -218,36 +171,17 @@ public class GameScene extends BaseScene
         return randomNum;
     }
    
-	
-    private Mole getRandomMole(int[] level1, int[] coordinates) {
-    	Mole newMole = null;
-		switch(level1[randInt(0,level1.length-1)]){
-		case 1:
-			newMole = createMoleNormy(coordinates[0], coordinates[1],coordinates[1],1, vbom, camera, physicsWorld);
-			break;
-		case 2:
-			newMole = createMoleHatty(coordinates[0], coordinates[1],coordinates[1],1, vbom, camera, physicsWorld);
-			break;
-		}
-		return newMole;
-	}
+
     private int[] getRandomPosition() {
         int[] xCoordinates = new int[] {43,297,546};
         int[] yCoordinates = new int[] {250,649,1071 };
         return new int[] {xCoordinates[randInt(0,2)],yCoordinates[randInt(0,2)]};
 	}
-   
-	private void loadLevel(int levelID)
-    {
-		int[] level1 = new int[] {1,2,1,1,1,2,1,1};
-		int[] coordinates = getRandomPosition();
-		Mole newMole = getRandomMole(level1, coordinates);
-		newMole.jump();
-		gameHUD.attachChild(newMole);
-		gameHUD.registerTouchArea(newMole);
-		gameHUD.attachChild( new Sprite(coordinates[0], coordinates[1], resourcesManager.back, vbom));
-	
-    }
+
+	public VertexBufferObjectManager getVbom() {
+		return vbom;
+	}
+  
 
 
 }
