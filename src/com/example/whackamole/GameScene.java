@@ -1,5 +1,9 @@
 package com.example.whackamole;
 
+import moles.HattyModel;
+import moles.MoleModel;
+import moles.NormyModel;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
@@ -26,12 +30,16 @@ import org.andengine.util.color.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.example.whackamole.BaseScene;
-import com.example.whackamole.Mole;
 import com.example.whackamole.SceneManager.SceneType;
 
 public class GameScene extends BaseScene
 {
-    @Override
+    private int score = 0;
+    private HUD gameHUD;
+    private Text scoreText;
+    private PhysicsWorld physicsWorld;
+	
+	@Override
     public void createScene()
     {
     	 createBackground();
@@ -67,18 +75,12 @@ public class GameScene extends BaseScene
         setBackground(background);
     }
     
-    private int score = 0;
-
-    private void addToScore(int i)
+    public void addToScore(int i)
     {
         score += i;
         scoreText.setText("Score: " + score);
     }
     
-    private HUD gameHUD;
-    private Text scoreText;
-
-    private PhysicsWorld physicsWorld;
 
     private void createPhysics()
     {
@@ -108,53 +110,31 @@ public class GameScene extends BaseScene
     private float vertDown = 1071 ;
     
     
-    private Mole createMoleNormy(float pX, float pY , float beginY,  float speed, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld){
-    	Mole moleNormy;
-    	moleNormy = new Mole(pX + 2, pY,beginY,speed,ResourcesManager.getInstance().mole_normy, vbo, camera, physicsWorld)
-    	{
-
-			@Override
-			public void onDie() {
-				gameHUD.detachChild(this);
-				gameHUD.unregisterTouchArea(this);
-				
-			}
-
-			@Override
-			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
-					float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				addToScore(1);
-				gameHUD.detachChild(this);
-		    	gameHUD.unregisterTouchArea(this);
-				
-				return true;
-			}};
-    	return moleNormy;
+    private MoleModel createMoleNormy(float pX, float pY , float beginY, float speed){
+    	return new NormyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_normy, this);
     }
     
-    private Mole createMoleHatty(float pX, float pY , float beginY,  float speed, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld){
-    	Mole moleHatty;
-    	moleHatty = new Mole(pX + 2, pY,beginY,speed,ResourcesManager.getInstance().mole_hatty, vbo, camera, physicsWorld)
-    	{
-
-			@Override
-			public void onDie() {
-				gameHUD.detachChild(this);
-				gameHUD.unregisterTouchArea(this);
-			}
-
-			@Override
-			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
-					float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				
-				gameHUD.detachChild(this);
-		    	gameHUD.unregisterTouchArea(this);
-		    	addToScore(1);
-				return true;
-			}};
-    	return moleHatty;
+    private MoleModel createMoleHatty(float pX, float pY , float beginY,  float speed){
+    	return new HattyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_hatty, this);
     }
     
+    public VertexBufferObjectManager getVbom() {
+    	return vbom;
+    }
+    
+    public Camera getCamera() {
+    	return camera;
+    }
+    
+    public PhysicsWorld getPhysicsWorld() {
+    	return physicsWorld;
+    }
+    
+    public HUD getGameHUD() {
+    	return gameHUD;
+    }
     
     private void loadLevel(int levelID)
     {
@@ -165,12 +145,12 @@ public class GameScene extends BaseScene
         float vertMid = 649 ;
         float vertDown = 1071 ;
 		
-		Mole moleNormy = createMoleHatty(horzMid, vertMid,vertMid,1, vbom, camera, physicsWorld);
+		MoleModel moleNormy = createMoleHatty(horzMid, vertMid, vertMid, 1);
 		moleNormy.jump();
 		gameHUD.attachChild(moleNormy);
     	gameHUD.registerTouchArea(moleNormy);
     	
-		Mole moleHatty = createMoleHatty(horzLeft, vertUp,vertUp,1, vbom, camera, physicsWorld);
+		MoleModel moleHatty = createMoleHatty(horzLeft, vertUp, vertUp, 1);
 		moleHatty.jump();
     	gameHUD.attachChild(moleHatty);
     	gameHUD.registerTouchArea(moleHatty);
