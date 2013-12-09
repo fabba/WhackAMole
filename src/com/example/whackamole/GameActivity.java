@@ -1,5 +1,6 @@
 package com.example.whackamole;
 
+import android.os.Bundle;
 import android.view.KeyEvent;
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ public class GameActivity extends BaseGameActivity
 {
 	private Camera camera;
 	private ResourcesManager resourcesManager;
-	
+
     public EngineOptions onCreateEngineOptions()
     {
     	camera = new Camera(0, 0, 720, 1280);
@@ -36,7 +37,8 @@ public class GameActivity extends BaseGameActivity
 
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException
     {
-        SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
+    	SceneManager.getInstance().loadGameScene(mEngine);
+    	SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
     }
 
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException
@@ -46,7 +48,6 @@ public class GameActivity extends BaseGameActivity
     	        public void onTimePassed(final TimerHandler pTimerHandler) 
     	        {
     	            mEngine.unregisterUpdateHandler(pTimerHandler);
-    	            SceneManager.getInstance().createMenuScene();
     	        }
     	    }));
     	    pOnPopulateSceneCallback.onPopulateSceneFinished();

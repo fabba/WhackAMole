@@ -8,9 +8,9 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import com.example.whackamole.GameScene;
 import com.example.whackamole.ResourcesManager;
 
-public class HattyModel extends MoleModel {
+public class TankyModel extends MoleModel {
 
-	public HattyModel(float pX, float pY, float beginY, float speed,
+	public TankyModel(float pX, float pY, float beginY, float speed,
 			ITiledTextureRegion moleSprite, GameScene scene) {
 		super(pX, pY, beginY, speed, moleSprite, scene);
 	}
@@ -32,6 +32,12 @@ public class HattyModel extends MoleModel {
 				return true;
 				
 			}
+			else if(getCurrentTileIndex() == 1){
+				setCurrentTileIndex(2);
+				gameScene.addToScore(1);
+				return true;
+				
+			}
 			else{
 				gameHUD.detachChild(this);
 		    	gameHUD.unregisterTouchArea(this);
@@ -43,4 +49,5 @@ public class HattyModel extends MoleModel {
 		return false;
 	}
 }
+
 

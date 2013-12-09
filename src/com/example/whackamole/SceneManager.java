@@ -90,19 +90,14 @@ public class SceneManager
         splashScene = null;
     }
     
-    public void createMenuScene()
-    {
-        ResourcesManager.getInstance().loadMenuResources();
-        menuScene = new MainMenuScene();
-        loadingScene = new LoadingScene();
-        SceneManager.getInstance().setScene(menuScene);
-        disposeSplashScene();
-    }
     
     public void loadGameScene(final Engine mEngine)
     {
+    	
+    	ResourcesManager.getInstance().loadFonts();
+        loadingScene = new LoadingScene();
+        //disposeSplashScene();
         setScene(loadingScene);
-        ResourcesManager.getInstance().unloadMenuTextures();
         mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() 
         {
             public void onTimePassed(final TimerHandler pTimerHandler) 

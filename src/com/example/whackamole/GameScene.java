@@ -2,10 +2,19 @@ package com.example.whackamole;
 
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import moles.BurnyModel;
+import moles.GoldyModel;
 import moles.HattyModel;
+import moles.IcyModel;
 import moles.MoleModel;
 import moles.NormyModel;
+import moles.SmogyModel;
+import moles.SniffyModel;
+import moles.SpeedyModel;
+import moles.TankyModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -29,6 +38,8 @@ import org.andengine.util.SAXUtils;
 import org.andengine.util.color.Color;
 
 
+
+import android.content.Intent;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -60,7 +71,6 @@ public class GameScene extends BaseScene
     @Override
     public void onBackKeyPressed()
     {
-    	SceneManager.getInstance().loadMenuScene(engine);
     }
 
     @Override
@@ -120,7 +130,40 @@ public class GameScene extends BaseScene
     	return new HattyModel(pX + 2, pY,beginY,speed,
     			ResourcesManager.getInstance().mole_hatty, this);
     }
+    private MoleModel createMoleTanky(float pX, float pY , float beginY, float speed) {
+    	return new TankyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_tanky, this);
+    }
     
+    private MoleModel createMoleSpeedy(float pX, float pY , float beginY,  float speed) {
+    	return new SpeedyModel(pX + 2, pY,beginY,speed * 2,
+    			ResourcesManager.getInstance().mole_speedy, this);
+    }
+    
+    private MoleModel createMoleGoldy(float pX, float pY , float beginY, float speed) {
+    	return new GoldyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_goldy, this);
+    }
+    
+    private MoleModel createMoleIcy(float pX, float pY , float beginY,  float speed) {
+    	return new IcyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_icy, this);
+    }
+    
+    private MoleModel createMoleBurny(float pX, float pY , float beginY, float speed) {
+    	return new BurnyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_burny, this);
+    }
+    
+    private MoleModel createMoleSniffy(float pX, float pY , float beginY,  float speed) {
+    	return new SniffyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_sniffy, this);
+    }
+    
+    private MoleModel createMoleSmogy(float pX, float pY , float beginY,  float speed) {
+    	return new SmogyModel(pX + 2, pY,beginY,speed,
+    			ResourcesManager.getInstance().mole_smogy, this);
+    }
 
     
     public Camera getCamera() {
@@ -144,18 +187,36 @@ public class GameScene extends BaseScene
         float vertMid = 649 ;
         float vertDown = 1071 ;
 		
-		MoleModel moleNormy = createMoleNormy(horzMid, vertMid, vertMid, 1);
-		moleNormy.jump();
-		gameHUD.attachChild(moleNormy);
-    	gameHUD.registerTouchArea(moleNormy);
+		
     	
 		MoleModel moleHatty = createMoleHatty(horzLeft, vertUp, vertUp, 1);
 		moleHatty.jump();
     	gameHUD.attachChild(moleHatty);
     	gameHUD.registerTouchArea(moleHatty);
-    	
     	gameHUD.attachChild( new Sprite(horzLeft, vertUp, resourcesManager.back, vbom));
-    	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
+    	
+    	
+    	Timer t = new Timer();
+    	t.schedule(new TimerTask() {
+
+    	            @Override
+    	            public void run() {
+    	            	float horzLeft = 43 ;
+    	                float horzMid = 297 ;
+    	                float horzRight = 546 ;
+    	                float vertUp = 250 ;
+    	                float vertMid = 649 ;
+    	                float vertDown = 1071 ;
+    	            	MoleModel moleNormy = createMoleNormy(horzMid, vertMid, vertMid, 1);
+    	        		moleNormy.jump();
+    	        		gameHUD.attachChild(moleNormy);
+    	            	gameHUD.registerTouchArea(moleNormy);
+    	            	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
+    	            	
+
+    	            }
+    	        }, 8000,4000);
+    	
 
     	
     }
