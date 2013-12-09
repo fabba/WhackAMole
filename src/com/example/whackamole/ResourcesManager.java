@@ -52,6 +52,7 @@ public class ResourcesManager
 	// Game Texture
     public BuildableBitmapTextureAtlas gameTextureAtlas;
     public ITextureRegion background_region;
+    public ITextureRegion ice;
     // Game Texture Regions
     public ITiledTextureRegion mole_normy;
     public ITiledTextureRegion mole_hatty;
@@ -130,7 +131,7 @@ public class ResourcesManager
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1090, 1800, TextureOptions.BILINEAR);
         background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ground1.png");
-        
+        ice = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ice.png");
         mole_normy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "normy.png", 1, 1);
         mole_burny = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "burny.png", 1, 1);
         back = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "back.png");

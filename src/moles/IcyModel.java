@@ -1,6 +1,7 @@
 package moles;
 
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
@@ -26,7 +27,7 @@ public class IcyModel extends MoleModel {
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
 		HUD gameHUD = gameScene.getGameHUD();
 		if(pSceneTouchEvent.isActionDown()){
-			
+
 			gameScene.addToScore(2);
 			gameHUD.detachChild(this);
 			gameHUD.unregisterTouchArea(this);

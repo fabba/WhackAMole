@@ -51,6 +51,7 @@ public class GameScene extends BaseScene
 {
     private int score = 0;
     private HUD gameHUD;
+  
     private Text scoreText;
     private PhysicsWorld physicsWorld;
     
@@ -105,6 +106,7 @@ public class GameScene extends BaseScene
     private void createHUD()
     {
         gameHUD = new HUD();
+    
         // CREATE SCORE TEXT
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
@@ -171,20 +173,19 @@ public class GameScene extends BaseScene
     public HUD getGameHUD() {
     	return gameHUD;
     }
-    
-    
+   
     private void loadLevel(int levelID)
     {
     	ArrayList<Integer> level1 = new ArrayList<Integer>();
     	level1.add(1);
     	level1.add(1);
-    	level1.add(6);
     	level1.add(2);
-    	level1.add(5);
+    	level1.add(3);
+    	level1.add(2);
     	level1.add(4);
     	level1.add(3);
     	level1.add(1);
-    	level1.add(8);
+    	level1.add(1);
     	level1.add(2);
     	level1.add(2);
     	level1.add(1);
@@ -214,7 +215,7 @@ public class GameScene extends BaseScene
             	
 
             }
-        }, delay ,4000);
+        }, delay);
     }
     private int randInt(int min, int max){
 
