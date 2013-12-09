@@ -1,4 +1,4 @@
-package moles;
+package models.moles;
 
 import org.andengine.input.touch.TouchEvent;
 

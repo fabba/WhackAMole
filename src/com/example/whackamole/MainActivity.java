@@ -21,8 +21,6 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	Intent intent = new Intent (getBaseContext(), GameActivity.class);
-    	
-    	
     	startActivityForResult(intent,0);
     }
 

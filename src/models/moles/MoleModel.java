@@ -1,4 +1,6 @@
-package moles;
+package models.moles;
+
+import models.levels.LocationModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.sprite.Sprite;
@@ -18,16 +20,19 @@ public abstract class MoleModel extends Sprite implements MoleInterface
     // ---------------------------------------------
     // CONSTRUCTOR
     // ---------------------------------------------
-    private float beginY;
-    private float speed;
+    private float time, speed, appearanceTime;
     protected GameScene gameScene;
+    private LocationModel location;
     
-    public MoleModel(float pX, float pY, float beginY, float speed,
+    public MoleModel(LocationModel location, float speed, float time, float appearanceTime,
     		ITiledTextureRegion moleSprite, GameScene scene)
     {
-    	super(pX, pY, moleSprite, scene.getVbom());
+    	super(location.getX(), location.getY(), moleSprite, scene.getVbom());
     	this.speed = speed;
-    	this.beginY = beginY;
+    	this.location = location;
+    	
+    	this.time = time;
+    	this.appearanceTime = appearanceTime;
         
     	this.gameScene = scene;
         //this.vbo = this.gameScene.getVbom();
@@ -54,11 +59,11 @@ public abstract class MoleModel extends Sprite implements MoleInterface
             public void onUpdate(float pSecondsElapsed) {
                 super.onUpdate(pSecondsElapsed);
                 camera.onUpdate(0.1f);
-                if (getY() > beginY) {                    
+                if (getY() > location.getBeginY()) {                    
                     onDie();
                 }
                 
-                if (getY() < ( beginY - 150)) {    
+                if (getY() < (location.getBeginY() - 150)) {    
                 	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed)); 
                 }
             }
@@ -70,7 +75,15 @@ public abstract class MoleModel extends Sprite implements MoleInterface
     }
     
     public float getStartY(){
-    	return this.beginY;
+    	return this.location.getBeginY();
+    }
+    
+    public float getTime() {
+    	return this.time;
+    }
+    
+    public float getAppearanceTime() {
+    	return this.appearanceTime;
     }
 
     public void jump() {

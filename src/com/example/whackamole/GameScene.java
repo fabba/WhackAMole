@@ -1,11 +1,15 @@
 package com.example.whackamole;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
-import moles.HattyModel;
-import moles.MoleModel;
-import moles.NormyModel;
+import models.levels.LocationModel;
+import models.levels.RoundModel;
+import models.moles.HattyModel;
+import models.moles.MoleModel;
+import models.moles.NormyModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -28,12 +32,12 @@ import org.andengine.util.HorizontalAlign;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.color.Color;
 
-
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.example.whackamole.BaseScene;
 import com.example.whackamole.SceneManager.SceneType;
+
+import databaseadapter.RoundAdapter;
 
 public class GameScene extends BaseScene
 {
@@ -41,12 +45,8 @@ public class GameScene extends BaseScene
     private HUD gameHUD;
     private Text scoreText;
     private PhysicsWorld physicsWorld;
-    private float horzLeft = 43;
-    private float horzMid = 297;
-    private float horzRight = 546;
-    private float vertUp = 250;
-    private float vertMid = 649;
-    private float vertDown = 1071;
+    
+    private ArrayList<LocationModel> locations;
     
 	@Override
     public void createScene()
@@ -111,17 +111,78 @@ public class GameScene extends BaseScene
         camera.setHUD(gameHUD);
     }
    
-    private MoleModel createMoleNormy(float pX, float pY , float beginY, float speed) {
-    	return new NormyModel(pX + 2, pY,beginY,speed,
+    public MoleModel createMoleNormy(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new NormyModel(location, speed, time, appearanceTime,
     			ResourcesManager.getInstance().mole_normy, this);
     }
     
-    private MoleModel createMoleHatty(float pX, float pY , float beginY,  float speed) {
-    	return new HattyModel(pX + 2, pY,beginY,speed,
+    public MoleModel createMoleHatty(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new HattyModel(location, speed, time, appearanceTime,
     			ResourcesManager.getInstance().mole_hatty, this);
     }
     
-
+    public MoleModel createMole(Class<?> moleClass, LocationModel location,
+    		float speed, float time, float appearanceTime){
+    	
+    	if (moleClass.equals(NormyModel.class)) {
+    		return createMoleNormy(location, speed, time, appearanceTime);
+    	}
+    	else if (moleClass.equals(HattyModel.class)) {
+    		return createMoleHatty(location, speed, time, appearanceTime);
+    	}
+    	else {
+    		return null;
+    	}
+    }
+    
+    public ArrayList<MoleModel> createMoles(ArrayList<Class<?>> moleClasses,
+    		ArrayList<Float> times, ArrayList<Float> appearanceTimes) {
+    	
+    	ArrayList<MoleModel> moles = new ArrayList<MoleModel>();
+    	float speed = 1;
+    	int size = moleClasses.size();
+    	
+    	for (int i = 0; i < size; i++) {
+    		float time = times.get(i);
+    		float appearanceTime = appearanceTimes.get(i);
+    		Class<?> moleClass = moleClasses.get(i);
+    		
+	    	Random random = new Random();
+	    	
+	    	ArrayList<Integer> shuffledIndexes = new ArrayList<Integer>();
+	    	for (int j = 0; j < locations.size(); j++) {
+	    		shuffledIndexes.add(j);
+	    	}
+	    	Collections.shuffle(shuffledIndexes);
+	    	
+	    	boolean placementSucceeded = false;
+	    	for (int index : shuffledIndexes) {
+	    		LocationModel location = locations.get(index);
+	    		
+	    		System.out.println("Placement succeeded " + location.isRoomForMole(time, appearanceTime));
+	    		
+	    		if (location.isRoomForMole(time, appearanceTime)) {
+	    			MoleModel mole = createMole(moleClass, location, speed, time, appearanceTime);
+	    			
+	    			if (mole != null) {
+	    				location.addMole(mole);
+	    				moles.add(mole);
+	    			}
+	    			
+	    			placementSucceeded = true;
+	    			break;
+	    		}
+	    	}
+	    	
+	    	if (!placementSucceeded) {
+	    		// TODO throw exception
+	    	}
+    	}
+    	
+    	return moles;
+    }
     
     public Camera getCamera() {
     	return camera;
@@ -144,15 +205,39 @@ public class GameScene extends BaseScene
         float vertMid = 649 ;
         float vertDown = 1071 ;
 		
-		MoleModel moleNormy = createMoleNormy(horzMid, vertMid, vertMid, 1);
+        float[] horz = {43, 297, 546};
+        float[] vert = {250, 649, 1071};
+        
+        this.locations = new ArrayList<LocationModel>();
+        for (float hor : horz) {
+        	for (float ver : vert) {
+        		this.locations.add(new LocationModel(hor, ver, ver));
+        	}
+        }
+        
+        RoundAdapter roundAdapter = new RoundAdapter();
+        roundAdapter.open();
+        RoundModel round = roundAdapter.getRound(1, this);
+        roundAdapter.close();
+        
+        ArrayList<MoleModel> moles = round.getMoles();
+        moles.get(0).jump();
+        gameHUD.attachChild(moles.get(0));
+        gameHUD.registerTouchArea(moles.get(0));
+        
+        /*
+		MoleModel moleNormy = createMoleNormy(locations.get(0), 1, 0, 3);
 		moleNormy.jump();
 		gameHUD.attachChild(moleNormy);
     	gameHUD.registerTouchArea(moleNormy);
+    	*/
     	
-		MoleModel moleHatty = createMoleHatty(horzLeft, vertUp, vertUp, 1);
+    	/*
+		MoleModel moleHatty = createMoleHatty(locations.get(1), 1, 0, 3);
 		moleHatty.jump();
     	gameHUD.attachChild(moleHatty);
     	gameHUD.registerTouchArea(moleHatty);
+    	*/
     	
     	gameHUD.attachChild( new Sprite(horzLeft, vertUp, resourcesManager.back, vbom));
     	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
