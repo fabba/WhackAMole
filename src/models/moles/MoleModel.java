@@ -3,10 +3,13 @@ package models.moles;
 import models.levels.LocationModel;
 
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
@@ -14,16 +17,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.example.whackamole.GameScene;
+import com.example.whackamole.ResourcesManager;
 
-public abstract class MoleModel extends Sprite implements MoleInterface
+public abstract class MoleModel extends TiledSprite implements MoleInterface
 {
-    // ---------------------------------------------
-    // CONSTRUCTOR
-    // ---------------------------------------------
     private float time, speed, appearanceTime;
     protected GameScene gameScene;
     private LocationModel location;
-    
+    private Body body;
+	
     public MoleModel(LocationModel location, float speed, float time, float appearanceTime,
     		ITiledTextureRegion moleSprite, GameScene scene)
     {
@@ -42,12 +44,6 @@ public abstract class MoleModel extends Sprite implements MoleInterface
         this.gameScene.getCamera().setChaseEntity(this);
     }
 
-	 // ---------------------------------------------
-	 // VARIABLES
-	 // ---------------------------------------------
-     
-    private Body body;
-	
     private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
     {        
         body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
@@ -59,8 +55,10 @@ public abstract class MoleModel extends Sprite implements MoleInterface
             public void onUpdate(float pSecondsElapsed) {
                 super.onUpdate(pSecondsElapsed);
                 camera.onUpdate(0.1f);
-                if (getY() > location.getBeginY()) {                    
+
+                if (getY() > location.getBeginY()) {
                     onDie();
+                    body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0)); 
                 }
                 
                 if (getY() < (location.getBeginY() - 150)) {    
@@ -88,6 +86,14 @@ public abstract class MoleModel extends Sprite implements MoleInterface
 
     public void jump() {
         body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, -speed));
+        
+        HUD gameHUD = this.gameScene.getGameHUD();
+        ResourcesManager resourcesManager = this.gameScene.getResourcesManager();
+        
+        gameHUD.attachChild(this);
+    	gameHUD.registerTouchArea(this);
+    	gameHUD.attachChild( new Sprite(location.getX(), location.getY(),
+    			resourcesManager.back, gameScene.getVbom()));
     }
     
     public VertexBufferObjectManager getVbo(){

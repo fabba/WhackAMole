@@ -1,0 +1,65 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".SelectUser" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/userTextField"
+        android:layout_alignBottom="@+id/userTextField"
+        android:layout_alignParentLeft="true"
+        android:text="New User"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/userTextField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="26dp"
+        android:ems="10"
+        android:inputType="text" >
+
+        <requestFocus />
+       </EditText>
+
+    <ListView
+        android:id="@+id/selectUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/userTextField"
+        android:layout_marginTop="47dp" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/existingUsers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/selectUser"
+        android:layout_alignRight="@+id/userTextField"
+        android:layout_below="@+id/userTextField"
+        android:layout_marginTop="30dp"
+        android:text="Existing User" />
+
+    <TextView
+        android:id="@+id/selectUserError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/existingUsers"
+        android:layout_alignRight="@+id/userTextField"
+        android:layout_below="@+id/userTextField"
+        android:textColor="#ff0000"
+        android:text="" />
+
+</RelativeLayout>
+        

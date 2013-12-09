@@ -52,17 +52,19 @@ public class ResourcesManager
 	// Game Texture
     public BuildableBitmapTextureAtlas gameTextureAtlas;
     public ITextureRegion background_region;
+    public ITextureRegion ice;
     // Game Texture Regions
     public ITiledTextureRegion mole_normy;
     public ITiledTextureRegion mole_hatty;
     public ITextureRegion back;
-    public ITextureRegion mole_tanky;
-    public ITextureRegion mole_icy;
-    public ITextureRegion mole_sniffy;
-    public ITextureRegion mole_burny;
-    public ITextureRegion mole_smogy;
-    public ITextureRegion mole_goldy;
-    public ITextureRegion mole_speedy;
+    public ITextureRegion smog;
+    public ITiledTextureRegion mole_tanky;
+    public ITiledTextureRegion mole_icy;
+    public ITiledTextureRegion mole_sniffy;
+    public ITiledTextureRegion mole_burny;
+    public ITiledTextureRegion mole_smogy;
+    public ITiledTextureRegion mole_goldy;
+    public ITiledTextureRegion mole_speedy;
     
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
@@ -76,7 +78,7 @@ public class ResourcesManager
     {
     	loadMenuGraphics();
         loadMenuAudio();
-        loadMenuFonts();
+
     }
     
     public void loadGameResources()
@@ -129,16 +131,17 @@ public class ResourcesManager
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1090, 1800, TextureOptions.BILINEAR);
         background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ground1.png");
+        ice = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ice.png");
         mole_normy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "normy.png", 1, 1);
-        mole_burny = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "burny.png");
+        mole_burny = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "burny.png", 1, 1);
         back = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "back.png");
-        mole_hatty = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "hatty.png", 1, 1);
-        mole_tanky = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "tanky.png");
-        mole_icy = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "icy.png");
-        mole_smogy = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "smogy.png");
-        mole_speedy = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "speedy.png");
-        mole_goldy = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "goldy.png");
-        mole_sniffy = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "sniffy.png");
+        mole_hatty = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "hatty.png", 1, 2);
+        mole_tanky = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "tanky.png", 1, 3);
+        mole_icy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "icy.png", 1, 1);
+        mole_smogy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "smogy.png", 1, 1);
+        mole_speedy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "speedy.png", 1, 1);
+        mole_goldy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "goldy.png", 1, 1);
+        mole_sniffy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "sniffy.png", 1, 1);
         
         try 
         {
@@ -178,7 +181,7 @@ public class ResourcesManager
     
     public Font font;
 
-    private void loadMenuFonts()
+    public void loadFonts()
     {
         FontFactory.setAssetBasePath("font/");
         final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);

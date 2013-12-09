@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/home"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Home"/>
+    <item
+        android:id="@+id/resume"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Resume"/>
+    
+    <item
+        android:id="@+id/game"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="New Game"/>
+    
+    <item
+        android:id="@+id/score"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Score"/>
+
+</menu>

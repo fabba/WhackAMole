@@ -4,12 +4,21 @@ package com.example.whackamole;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import models.levels.LocationModel;
 import models.levels.RoundModel;
+import models.moles.BurnyModel;
+import models.moles.GoldyModel;
 import models.moles.HattyModel;
+import models.moles.IcyModel;
 import models.moles.MoleModel;
 import models.moles.NormyModel;
+import models.moles.SmogyModel;
+import models.moles.SniffyModel;
+import models.moles.SpeedyModel;
+import models.moles.TankyModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -32,6 +41,7 @@ import org.andengine.util.HorizontalAlign;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.color.Color;
 
+import android.content.Intent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.example.whackamole.BaseScene;
@@ -43,9 +53,10 @@ public class GameScene extends BaseScene
 {
     private int score = 0;
     private HUD gameHUD;
+  
     private Text scoreText;
     private PhysicsWorld physicsWorld;
-    
+
     private ArrayList<LocationModel> locations;
     
 	@Override
@@ -60,7 +71,6 @@ public class GameScene extends BaseScene
     @Override
     public void onBackKeyPressed()
     {
-    	SceneManager.getInstance().loadMenuScene(engine);
     }
 
     @Override
@@ -100,7 +110,7 @@ public class GameScene extends BaseScene
     private void createHUD()
     {
         gameHUD = new HUD();
-        
+    
         // CREATE SCORE TEXT
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
@@ -111,18 +121,60 @@ public class GameScene extends BaseScene
         camera.setHUD(gameHUD);
     }
    
-    public MoleModel createMoleNormy(LocationModel location,
+    public NormyModel createMoleNormy(LocationModel location,
     		float speed, float time, float appearanceTime) {
     	return new NormyModel(location, speed, time, appearanceTime,
     			ResourcesManager.getInstance().mole_normy, this);
     }
     
-    public MoleModel createMoleHatty(LocationModel location,
+    public HattyModel createMoleHatty(LocationModel location,
     		float speed, float time, float appearanceTime) {
     	return new HattyModel(location, speed, time, appearanceTime,
     			ResourcesManager.getInstance().mole_hatty, this);
     }
     
+    public TankyModel createMoleTanky(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new TankyModel(location, speed, time, appearanceTime,
+    			ResourcesManager.getInstance().mole_tanky, this);
+    }
+    
+    public SpeedyModel createMoleSpeedy(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new SpeedyModel(location, speed, time, appearanceTime,
+    			ResourcesManager.getInstance().mole_speedy, this);
+    }
+    
+    public GoldyModel createMoleGoldy(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new GoldyModel(location, speed, time, appearanceTime,
+    			ResourcesManager.getInstance().mole_goldy, this);
+    }
+
+    public IcyModel createMoleIcy(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new IcyModel(location, speed, time, appearanceTime,
+    			ResourcesManager.getInstance().mole_icy, this);
+    }
+	
+    public BurnyModel createMoleBurny(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new BurnyModel(location, speed, time, appearanceTime,
+    			ResourcesManager.getInstance().mole_burny, this);
+    }
+	
+    public SniffyModel createMoleSniffy(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new SniffyModel(location, speed, time, appearanceTime,
+    			ResourcesManager.getInstance().mole_sniffy, this);
+    }
+	
+    public SmogyModel createMoleSmogy(LocationModel location,
+    		float speed, float time, float appearanceTime) {
+    	return new SmogyModel(location, speed, time, appearanceTime,
+    			ResourcesManager.getInstance().mole_smogy, this);
+    }
+
     public MoleModel createMole(Class<?> moleClass, LocationModel location,
     		float speed, float time, float appearanceTime){
     	
@@ -132,11 +184,32 @@ public class GameScene extends BaseScene
     	else if (moleClass.equals(HattyModel.class)) {
     		return createMoleHatty(location, speed, time, appearanceTime);
     	}
+    	else if (moleClass.equals(TankyModel.class)) {
+    		return createMoleTanky(location, speed, time, appearanceTime);
+    	}
+    	else if (moleClass.equals(SpeedyModel.class)) {
+    		return createMoleSpeedy(location, speed, time, appearanceTime);
+    	}
+    	else if (moleClass.equals(GoldyModel.class)) {
+    		return createMoleGoldy(location, speed, time, appearanceTime);
+    	}
+    	else if (moleClass.equals(IcyModel.class)) {
+    		return createMoleIcy(location, speed, time, appearanceTime);
+    	}
+    	else if (moleClass.equals(BurnyModel.class)) {
+    		return createMoleBurny(location, speed, time, appearanceTime);
+    	}
+    	else if (moleClass.equals(SniffyModel.class)) {
+    		return createMoleSniffy(location, speed, time, appearanceTime);
+    	}
+    	else if (moleClass.equals(SmogyModel.class)) {
+    		return createMoleSmogy(location, speed, time, appearanceTime);
+    	}
     	else {
     		return null;
     	}
     }
-    
+	
     public ArrayList<MoleModel> createMoles(ArrayList<Class<?>> moleClasses,
     		ArrayList<Float> times, ArrayList<Float> appearanceTimes) {
     	
@@ -195,16 +268,19 @@ public class GameScene extends BaseScene
     public HUD getGameHUD() {
     	return gameHUD;
     }
+   
+    public VertexBufferObjectManager getVbom() {
+		return vbom;
+	}
+    
+    public ResourcesManager getResourcesManager() {
+    	return resourcesManager;
+    }
     
     private void loadLevel(int levelID)
     {
-    	float horzLeft = 43 ;
-        float horzMid = 297 ;
-        float horzRight = 546 ;
-        float vertUp = 250 ;
-        float vertMid = 649 ;
-        float vertDown = 1071 ;
-		
+    	// TODO load from database instead.
+    	// create all locations for the moles to jump from
         float[] horz = {43, 297, 546};
         float[] vert = {250, 649, 1071};
         
@@ -215,34 +291,34 @@ public class GameScene extends BaseScene
         	}
         }
         
+        System.out.println("Level loading!");
+        
+        // get a round from the database
         RoundAdapter roundAdapter = new RoundAdapter();
         roundAdapter.open();
-        RoundModel round = roundAdapter.getRound(1, this);
+        RoundModel round = roundAdapter.getRound(levelID, this);
         roundAdapter.close();
         
+        // get all moles in the round
         ArrayList<MoleModel> moles = round.getMoles();
-        moles.get(0).jump();
-        gameHUD.attachChild(moles.get(0));
-        gameHUD.registerTouchArea(moles.get(0));
         
-        /*
-		MoleModel moleNormy = createMoleNormy(locations.get(0), 1, 0, 3);
-		moleNormy.jump();
-		gameHUD.attachChild(moleNormy);
-    	gameHUD.registerTouchArea(moleNormy);
-    	*/
-    	
-    	/*
-		MoleModel moleHatty = createMoleHatty(locations.get(1), 1, 0, 3);
-		moleHatty.jump();
-    	gameHUD.attachChild(moleHatty);
-    	gameHUD.registerTouchArea(moleHatty);
-    	*/
-    	
-    	gameHUD.attachChild( new Sprite(horzLeft, vertUp, resourcesManager.back, vbom));
-    	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
+        // make the first mole jump
+        moles.get(0).jump();
+        	
+    	System.out.println("Loading level: finished");
+    }
+   
+    /*
+    private void createNewMole(Timer t, int delay, final int listLevel){
+    	t.schedule(new TimerTask() {
 
-    	
+            @Override
+            public void run() {
+            	int[] coordinates = getRandomPosition();
+            	MoleModel moleNormy = getRandomMole(listLevel, coordinates);
+        		moleNormy.jump();
+        	}
+        }, delay);
     }
     private int randInt(int min, int max){
 
@@ -255,18 +331,46 @@ public class GameScene extends BaseScene
 
         return randomNum;
     }
-   
+    
+    private MoleModel getRandomMole(int moleCode,int[] coordinates){
+    	float speed = 1;
+    	MoleModel newMole = null;
+    	switch(moleCode){
+    	case 1:
+    		newMole = createMoleNormy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 2:
+    		newMole = createMoleHatty(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;	
+    	case 3:
+    		newMole = createMoleTanky(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 4:
+    		newMole = createMoleGoldy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 5:
+    		newMole = createMoleSpeedy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 6:
+    		newMole = createMoleSniffy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 7:
+    		newMole = createMoleIcy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 8:
+    		newMole = createMoleSmogy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 9:
+    		newMole = createMoleBurny(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	}
+    	return newMole;
+    }
 
     private int[] getRandomPosition() {
         int[] xCoordinates = new int[] {43,297,546};
         int[] yCoordinates = new int[] {250,649,1071 };
         return new int[] {xCoordinates[randInt(0,2)],yCoordinates[randInt(0,2)]};
 	}
-
-	public VertexBufferObjectManager getVbom() {
-		return vbom;
-	}
-  
-
-
+	*/
 }
