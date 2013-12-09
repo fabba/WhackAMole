@@ -56,8 +56,10 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
             public void onUpdate(float pSecondsElapsed) {
                 super.onUpdate(pSecondsElapsed);
                 camera.onUpdate(0.1f);
-                if (getY() > beginY) {                    
+                if (getY() > beginY) {     
+                	
                     onDie();
+                    body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0)); 
                 }
                 
                 if (getY() < ( beginY - 150)) {    

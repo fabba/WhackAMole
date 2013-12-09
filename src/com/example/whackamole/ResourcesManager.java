@@ -56,6 +56,7 @@ public class ResourcesManager
     public ITiledTextureRegion mole_normy;
     public ITiledTextureRegion mole_hatty;
     public ITextureRegion back;
+    public ITextureRegion smog;
     public ITiledTextureRegion mole_tanky;
     public ITiledTextureRegion mole_icy;
     public ITiledTextureRegion mole_sniffy;
@@ -129,6 +130,7 @@ public class ResourcesManager
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1090, 1800, TextureOptions.BILINEAR);
         background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ground1.png");
+        
         mole_normy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "normy.png", 1, 1);
         mole_burny = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "burny.png", 1, 1);
         back = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "back.png");

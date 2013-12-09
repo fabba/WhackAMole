@@ -27,6 +27,7 @@ public class SmogyModel extends MoleModel {
 		HUD gameHUD = gameScene.getGameHUD();
 		if(pSceneTouchEvent.isActionDown()){
 			gameScene.addToScore(2);
+			
 			gameHUD.detachChild(this);
 			gameHUD.unregisterTouchArea(this);
 			return true;

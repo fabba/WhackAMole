@@ -1,6 +1,7 @@
 package com.example.whackamole;
 
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -52,12 +53,6 @@ public class GameScene extends BaseScene
     private HUD gameHUD;
     private Text scoreText;
     private PhysicsWorld physicsWorld;
-    private float horzLeft = 43;
-    private float horzMid = 297;
-    private float horzRight = 546;
-    private float vertUp = 250;
-    private float vertMid = 649;
-    private float vertDown = 1071;
     
 	@Override
     public void createScene()
@@ -110,7 +105,6 @@ public class GameScene extends BaseScene
     private void createHUD()
     {
         gameHUD = new HUD();
-        
         // CREATE SCORE TEXT
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
@@ -178,47 +172,49 @@ public class GameScene extends BaseScene
     	return gameHUD;
     }
     
+    
     private void loadLevel(int levelID)
     {
-    	float horzLeft = 43 ;
-        float horzMid = 297 ;
-        float horzRight = 546 ;
-        float vertUp = 250 ;
-        float vertMid = 649 ;
-        float vertDown = 1071 ;
-		
-		
-    	
-		MoleModel moleHatty = createMoleHatty(horzLeft, vertUp, vertUp, 1);
-		moleHatty.jump();
-    	gameHUD.attachChild(moleHatty);
-    	gameHUD.registerTouchArea(moleHatty);
-    	gameHUD.attachChild( new Sprite(horzLeft, vertUp, resourcesManager.back, vbom));
-    	
-    	
+    	ArrayList<Integer> level1 = new ArrayList<Integer>();
+    	level1.add(1);
+    	level1.add(1);
+    	level1.add(6);
+    	level1.add(2);
+    	level1.add(5);
+    	level1.add(4);
+    	level1.add(3);
+    	level1.add(1);
+    	level1.add(8);
+    	level1.add(2);
+    	level1.add(2);
+    	level1.add(1);
     	Timer t = new Timer();
+    	int delay = 0;
+    	while(!level1.isEmpty()){
+    		int pickRandomIndex = randInt(0,level1.size()-1);
+    		int moleCode = level1.get(pickRandomIndex);
+    		level1.remove(pickRandomIndex);
+    		createNewMole(t,delay,moleCode);
+    		delay += 4000;
+    	}	
+
+    	
+    }
+    private void createNewMole(Timer t, int delay, final int listLevel){
     	t.schedule(new TimerTask() {
 
-    	            @Override
-    	            public void run() {
-    	            	float horzLeft = 43 ;
-    	                float horzMid = 297 ;
-    	                float horzRight = 546 ;
-    	                float vertUp = 250 ;
-    	                float vertMid = 649 ;
-    	                float vertDown = 1071 ;
-    	            	MoleModel moleNormy = createMoleNormy(horzMid, vertMid, vertMid, 1);
-    	        		moleNormy.jump();
-    	        		gameHUD.attachChild(moleNormy);
-    	            	gameHUD.registerTouchArea(moleNormy);
-    	            	gameHUD.attachChild( new Sprite(horzMid, vertMid, resourcesManager.back, vbom));
-    	            	
+            @Override
+            public void run() {
+            	int[] coordinates = getRandomPosition();
+            	MoleModel moleNormy = getRandomMole(listLevel, coordinates);
+        		moleNormy.jump();
+        		gameHUD.attachChild(moleNormy);
+            	gameHUD.registerTouchArea(moleNormy);
+            	gameHUD.attachChild( new Sprite(coordinates[0], coordinates[1], resourcesManager.back, vbom));
+            	
 
-    	            }
-    	        }, 8000,4000);
-    	
-
-    	
+            }
+        }, delay ,4000);
     }
     private int randInt(int min, int max){
 
@@ -231,7 +227,42 @@ public class GameScene extends BaseScene
 
         return randomNum;
     }
-   
+    
+    private MoleModel getRandomMole(int moleCode,int[] coordinates){
+    	
+    	float speed = 1;
+    	MoleModel newMole = null;
+    	switch(moleCode){
+    	case 1:
+    		newMole = createMoleNormy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 2:
+    		newMole = createMoleHatty(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;	
+    	case 3:
+    		newMole = createMoleTanky(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 4:
+    		newMole = createMoleGoldy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 5:
+    		newMole = createMoleSpeedy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 6:
+    		newMole = createMoleSniffy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 7:
+    		newMole = createMoleIcy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 8:
+    		newMole = createMoleSmogy(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	case 9:
+    		newMole = createMoleBurny(coordinates[0], coordinates[1] , coordinates[1], speed);
+    		break;
+    	}
+    	return newMole;
+    }
 
     private int[] getRandomPosition() {
         int[] xCoordinates = new int[] {43,297,546};

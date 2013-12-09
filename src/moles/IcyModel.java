@@ -17,7 +17,7 @@ public class IcyModel extends MoleModel {
 	
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-
+	
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
 	}
@@ -26,6 +26,7 @@ public class IcyModel extends MoleModel {
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
 		HUD gameHUD = gameScene.getGameHUD();
 		if(pSceneTouchEvent.isActionDown()){
+			
 			gameScene.addToScore(2);
 			gameHUD.detachChild(this);
 			gameHUD.unregisterTouchArea(this);
