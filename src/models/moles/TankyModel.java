@@ -12,17 +12,22 @@ import com.example.whackamole.ResourcesManager;
 
 public class TankyModel extends MoleModel {
 
+	private boolean touched;
 	public TankyModel(LocationModel location, float speed, float time,
 			float appearanceTime, ITiledTextureRegion moleSprite,
 			GameScene scene) {
 		super(location, speed, time, appearanceTime, moleSprite, scene);
+		touched = false;
 	}
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-		
-		gameHUD.detachChild(this);
-		gameHUD.unregisterTouchArea(this);
+		if(!touched){
+			gameHUD.detachChild(this);
+			gameHUD.unregisterTouchArea(this);
+			gameScene.loseLife();
+			this.dispose();
+		}
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
@@ -45,6 +50,8 @@ public class TankyModel extends MoleModel {
 				gameHUD.detachChild(this);
 		    	gameHUD.unregisterTouchArea(this);
 		    	gameScene.addToScore(1);
+		    	touched = true;
+		    	this.dispose();
 				return true;
 			}
 	    	

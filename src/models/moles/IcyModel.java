@@ -13,17 +13,22 @@ import com.example.whackamole.ResourcesManager;
 
 public class IcyModel extends MoleModel {
 
+	private boolean touched;
 	public IcyModel(LocationModel location, float speed, float time,
 			float appearanceTime, ITiledTextureRegion moleSprite,
 			GameScene scene) {
 		super(location, speed, time, appearanceTime, moleSprite, scene);
+		touched = false;
 	}
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-	
-		gameHUD.detachChild(this);
-		gameHUD.unregisterTouchArea(this);
+		if(!touched){
+			gameHUD.detachChild(this);
+			gameHUD.unregisterTouchArea(this);
+			gameScene.loseLife();
+			this.dispose();
+		}
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
@@ -34,6 +39,8 @@ public class IcyModel extends MoleModel {
 			gameScene.addToScore(2);
 			gameHUD.detachChild(this);
 			gameHUD.unregisterTouchArea(this);
+			touched = true;
+			this.dispose();
 			return true;
 		}
 		return false;

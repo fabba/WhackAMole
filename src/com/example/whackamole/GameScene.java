@@ -56,6 +56,7 @@ public class GameScene extends BaseScene
     private HUD gameHUD;
   
     private Text scoreText;
+    private Text lifeText;
     private PhysicsWorld physicsWorld;
     private int lives;
     private ArrayList<TiledSprite> spriteLives;
@@ -118,25 +119,63 @@ public class GameScene extends BaseScene
         scoreText.setSkewCenter(0, 0);    
         scoreText.setText("Score: 0");
         gameHUD.attachChild(scoreText);
-        lives = 5;
+        
+        lives = 6;
+        lifeText = new Text(510, 20, resourcesManager.font, "0123456789 *", new TextOptions(HorizontalAlign.LEFT), vbom);
+        lifeText.setSkewCenter(0, 0);
+        lifeText.setText("");
+        
         spriteLives = new ArrayList<TiledSprite>();
-        for(int i = 0 ; i < lives ; i++){
+        for(int i = 0 ; i < 5 ; i++){
         	spriteLives.add(new TiledSprite(600 - 80 * i,20,resourcesManager.life, vbom));
         	gameHUD.attachChild(spriteLives.get(i));
         }
+        if(lives > 5){
+        	for(int i = 1 ; i < 5  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(1);
+        		lifeText.setText(Integer.toString(lives) + " * ");
+        	}
+        }
+        gameHUD.attachChild(lifeText);
         camera.setHUD(gameHUD);
     }
     
     public void loseGame(){
     }
+    
+    public void addLife(int addLives){
+    	lives += addLives;
+    	if ( lives > 5){
+    		for(int i = 1 ; i < 5  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(1);
+        	}
+    		lifeText.setText(Integer.toString(lives) + " * ");
+    	}
+    	else{
+    		for(int i = 1 ; i < lives  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(0);
+        	}
+        	
+    	}
+    }
     public void loseLife(){	
-    	
+    	lives -= 1;
     	if ( lives <= 0){
     		loseGame();
     	}
+    	else if ( lives > 5){
+    		lifeText.setText(Integer.toString(lives) + " * ");
+    	}
+    	else if ( lives == 5){
+    		for(int i = 1 ; i < 5  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(0);
+        		lifeText.setText("");
+        	}
+    	}
     	else{
-    		spriteLives.get(lives - 1).setCurrentTileIndex(1);
-        	lives -= 1;
+    		lives -= 1;
+    		spriteLives.get(lives).setCurrentTileIndex(1);
+        	
     	}
     	
     }
