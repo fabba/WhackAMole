@@ -23,11 +23,12 @@ public class ManualActivity extends Activity implements OnSeekBarChangeListener 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_manual);
 		image = (ImageView) findViewById(R.id.picture);
-		
-		name = (TextView) findViewById(R.id.name);
+		System.out.println(findViewById(R.id.nameManual));
+		name = (TextView) findViewById(R.id.nameManual);
 		description = (TextView) findViewById(R.id.description);
 		touched = (TextView) findViewById(R.id.touched);
 		notTouched = (TextView) findViewById(R.id.notTouched);
+		
 		setNormy(false);
 		SeekBar levelSelect = (SeekBar) findViewById(R.id.seekBar);
 		levelSelect.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -53,6 +54,7 @@ public class ManualActivity extends Activity implements OnSeekBarChangeListener 
 
             }
         });
+		levelSelect.setProgress(0);
 	}
 	
 	private void setNormy(boolean onlyPic){
