@@ -3,6 +3,7 @@ package models.moles;
 import models.levels.LocationModel;
 
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.entity.scene.ITouchArea;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
@@ -25,7 +26,7 @@ public class GoldyModel extends MoleModel {
 		gameHUD.unregisterTouchArea(this);
 	}
 
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,ITouchArea pTouchArea,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
 		HUD gameHUD = gameScene.getGameHUD();
 		if(pSceneTouchEvent.isActionDown()){

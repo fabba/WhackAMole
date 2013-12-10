@@ -44,7 +44,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
         this.gameScene.getCamera().setChaseEntity(this);
     }
 
-    private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
+    private void createPhysics(final Camera camera, final PhysicsWorld physicsWorld)
     {        
         body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
         body.setFixedRotation(true);
@@ -58,16 +58,22 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 
                 if (getY() > location.getBeginY()) {
                     onDie();
-                    body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0)); 
+                    destroy(this);
+                    
                 }
                 
-                if (getY() < (location.getBeginY() - 150)) {    
+                else if (getY() < (location.getBeginY() - 150)) {    
                 	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed)); 
                 }
             }
         });
     }
     
+    public void destroy(PhysicsConnector tPhysicsConnector){
+    	PhysicsWorld physicsWorld = this.gameScene.getPhysicsWorld();
+    	physicsWorld.unregisterPhysicsConnector(tPhysicsConnector);
+    	physicsWorld.destroyBody(tPhysicsConnector.getBody());
+    }
     public float getSpeed(){	
     	return this.speed;
     }

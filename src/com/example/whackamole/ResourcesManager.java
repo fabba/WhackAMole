@@ -56,6 +56,7 @@ public class ResourcesManager
     // Game Texture Regions
     public ITiledTextureRegion mole_normy;
     public ITiledTextureRegion mole_hatty;
+    public ITiledTextureRegion life;
     public ITextureRegion back;
     public ITextureRegion smog;
     public ITiledTextureRegion mole_tanky;
@@ -131,11 +132,11 @@ public class ResourcesManager
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1090, 1800, TextureOptions.BILINEAR);
         background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ground1.png");
-        ice = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ice.png");
         mole_normy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "normy.png", 1, 1);
         mole_burny = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "burny.png", 1, 1);
         back = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "back.png");
         mole_hatty = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "hatty.png", 1, 2);
+        life = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "life.png", 1, 2);
         mole_tanky = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "tanky.png", 1, 3);
         mole_icy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "icy.png", 1, 1);
         mole_smogy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "smogy.png", 1, 1);

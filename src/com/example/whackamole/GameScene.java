@@ -28,6 +28,7 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
@@ -56,7 +57,8 @@ public class GameScene extends BaseScene
   
     private Text scoreText;
     private PhysicsWorld physicsWorld;
-
+    private int lives;
+    private ArrayList<TiledSprite> spriteLives;
     private ArrayList<LocationModel> locations;
     
 	@Override
@@ -115,12 +117,29 @@ public class GameScene extends BaseScene
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
         scoreText.setText("Score: 0");
-        addToScore(1);
         gameHUD.attachChild(scoreText);
-        
+        lives = 5;
+        spriteLives = new ArrayList<TiledSprite>();
+        for(int i = 0 ; i < lives ; i++){
+        	spriteLives.add(new TiledSprite(600 - 80 * i,20,resourcesManager.life, vbom));
+        	gameHUD.attachChild(spriteLives.get(i));
+        }
         camera.setHUD(gameHUD);
     }
-   
+    
+    public void loseGame(){
+    }
+    public void loseLife(){	
+    	
+    	if ( lives <= 0){
+    		loseGame();
+    	}
+    	else{
+    		spriteLives.get(lives - 1).setCurrentTileIndex(1);
+        	lives -= 1;
+    	}
+    	
+    }
     public NormyModel createMoleNormy(LocationModel location,
     		float speed, float time, float appearanceTime) {
     	return new NormyModel(location, speed, time, appearanceTime,
@@ -301,7 +320,7 @@ public class GameScene extends BaseScene
         
         // get all moles in the round
         ArrayList<MoleModel> moles = round.getMoles();
-        
+        System.out.println(moles);
         // make the first mole jump
         moles.get(0).jump();
         	

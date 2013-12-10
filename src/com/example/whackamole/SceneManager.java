@@ -95,19 +95,11 @@ public class SceneManager
     {
     	
     	ResourcesManager.getInstance().loadFonts();
-        loadingScene = new LoadingScene();
-        //disposeSplashScene();
-        setScene(loadingScene);
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() 
-        {
-            public void onTimePassed(final TimerHandler pTimerHandler) 
-            {
-                mEngine.unregisterUpdateHandler(pTimerHandler);
-                ResourcesManager.getInstance().loadGameResources();
-                gameScene = new GameScene();
+        disposeSplashScene();
+        ResourcesManager.getInstance().loadGameResources();
+            gameScene = new GameScene();
                 setScene(gameScene);
-            }
-        }));
+         
     }
     
     public void loadMenuScene(final Engine mEngine)

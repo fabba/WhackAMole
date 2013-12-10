@@ -37,7 +37,6 @@ public class GameActivity extends BaseGameActivity
 
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException
     {
-    	SceneManager.getInstance().loadGameScene(mEngine);
     	SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
     }
 
@@ -48,6 +47,7 @@ public class GameActivity extends BaseGameActivity
     	        public void onTimePassed(final TimerHandler pTimerHandler) 
     	        {
     	            mEngine.unregisterUpdateHandler(pTimerHandler);
+    	            SceneManager.getInstance().loadGameScene(mEngine);
     	        }
     	    }));
     	    pOnPopulateSceneCallback.onPopulateSceneFinished();
