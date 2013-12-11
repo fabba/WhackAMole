@@ -333,26 +333,8 @@ public class GameScene extends BaseScene
     	}
     }
     
-    public void freeze(){
-    	//allFore.setCurrentTileIndex(1);
-    	for( LocationModel location : currentLevel.getLocations()){
-    		long startTime = currentLevel.getStartTime();
-    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
-    		if(mole != null){
-    			mole.freeze();
-    		}
-    	}
-    }
-    
-    public void unfreeze(){
-    	//allFore.setCurrentTileIndex(2);
-    	for( LocationModel location : currentLevel.getLocations()){
-    		long startTime = currentLevel.getStartTime();
-    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
-    		if(mole != null){
-    			mole.unfreeze();
-    		}
-    	}
+    public void freeze(long time){
+    	this.currentLevel.freeze(time);
     }
     
     public void smog(){
@@ -362,7 +344,6 @@ public class GameScene extends BaseScene
     public void unsmog(){
     	//allFore.setCurrentTileIndex(2);
     }
-    
     
     public void blur(){
     }

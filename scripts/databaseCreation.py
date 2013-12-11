@@ -81,13 +81,26 @@ def insertLevel1(cursor):
 
 def insertRound1(cursor, levelId):
 	# insert first round, with 1 mole with moleId 0 time 0 and appearanceTime 3
-	insertRecord(cursor, ROUND_TABLE_NAME, None, 1, levelId, 0, 0, 3)
+	roundId = 1
+	for moleId in range(9):
+		insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, moleId, 0, 3)
 
 def insertRound2(cursor, levelId):
-	insertRecord(cursor, ROUND_TABLE_NAME, None, 2, levelId, 0, 0, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, 2, levelId, 1, 0, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, 2, levelId, 0, 0, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, 2, levelId, 1, 0, 3)
+	roundId = 2
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 0, 0, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 1, 0, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 0, 0, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 1, 0, 3)
+
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 2, 12, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 3, 12, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 2, 12, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 3, 12, 3)
+
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 4, 24, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 5, 24, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 4, 24, 3)
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 5, 24, 3)
 
 def insertLocations1(cursor, levelId):
 	verticalLocations = [250, 649, 1071]

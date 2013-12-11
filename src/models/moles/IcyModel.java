@@ -23,17 +23,14 @@ public class IcyModel extends MoleModel {
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-		if(!touched){
-			
+		
+		if (!touched) {
 			gameHUD.detachChild(this);
 			gameHUD.unregisterTouchArea(this);
 			gameScene.loseLife();
-			this.dispose();
 		}
-		else{
-			gameScene.unfreeze();
-			this.dispose();
-		}
+		
+		this.dispose();
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
@@ -48,12 +45,11 @@ public class IcyModel extends MoleModel {
 	
 	public void touched(){
 		HUD gameHUD = gameScene.getGameHUD();
-		gameScene.freeze();
+		gameScene.freeze(2000);
 		gameScene.addToScore(2);
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
 		touched = true;
-	
 	}
 }
 

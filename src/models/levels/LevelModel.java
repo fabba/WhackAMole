@@ -1,6 +1,8 @@
 package models.levels;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import models.moles.MoleModel;
 
@@ -24,6 +26,11 @@ public class LevelModel {
 		this.currentRound = round;
 		this.numberOfRounds = numberOfRounds;
 		this.startTime = System.currentTimeMillis();
+		
+		// synchronize startTimes.
+		for (LocationModel location : locations) {
+			location.setStartTime(this.startTime);
+		}
 	}
 	
 	public static LevelModel loadLevel(int numLevel, int numRound, GameScene scene) {
@@ -59,7 +66,6 @@ public class LevelModel {
 		}
 	}
 	
-
     public void burnOthers(){
     	for( LocationModel location : locations){
     		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
@@ -69,23 +75,10 @@ public class LevelModel {
     	}
     }
     
-    public void freeze(){
+    public void freeze(long time){
     	//allFore.setCurrentTileIndex(1);
-    	for( LocationModel location : locations){
-    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
-    		if(mole != null){
-    			mole.freeze();
-    		}
-    	}
-    }
-    
-    public void unfreeze(){
-    	//allFore.setCurrentTileIndex(2);
-    	for( LocationModel location : locations){
-    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
-    		if(mole != null){
-    			mole.unfreeze();
-    		}
+    	for (LocationModel location : locations) {
+    		location.freeze(time);
     	}
     }
     
@@ -100,11 +93,49 @@ public class LevelModel {
     
     public void blur(){
     }
-	
+    
+    private void scheduleMolePopUp(final MoleModel mole, final float time, final float prevTime) {
+    	System.out.println("Schedule time: " + (long)(time - prevTime) * 1000 + " prevTime: " + prevTime + 
+    			" time: " + time);
+    	
+    	new Timer().schedule(
+			new TimerTask() {
+				float popUpTime = time;
+				MoleModel popUpMole = mole;
+				
+				@Override
+				public void run() {
+					LocationModel location = popUpMole.getLocation();
+					
+					if (location.isPopUpTime(popUpMole, popUpTime)) {
+						location.setNextActiveMole();
+						popUpMole.jump();
+						
+						// schedule next mole if there is one.
+						MoleModel nextActiveMole = location.getNextActiveMole();
+						if (nextActiveMole != null) {
+							float nextPopUpTime = location.getPopUpTime(nextActiveMole);
+							
+							System.out.println("nextPopUpTime: " + nextPopUpTime + " time: " + time);
+							
+							scheduleMolePopUp(nextActiveMole, nextPopUpTime, time);
+						}
+					} else {
+						scheduleMolePopUp(popUpMole, location.getPopUpTime(popUpMole), time);
+					}
+				}
+			},
+			(long)(time - prevTime) * 1000
+		);
+    }
+    
 	public void playRound() {
-		// TODO write this function :)
-		for (MoleModel mole : currentRound.getMoles()) {
-			mole.jump();
+		for (LocationModel location : locations) {
+			MoleModel mole = location.getFirstMole();
+			
+			if (mole != null) {
+				scheduleMolePopUp(mole, location.getPopUpTime(mole), 0);
+			}
 		}
 	}
 	

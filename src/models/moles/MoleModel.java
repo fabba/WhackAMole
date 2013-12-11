@@ -25,7 +25,8 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     protected GameScene gameScene;
     private LocationModel location;
     private Body body;
-	
+	public boolean isJumping;
+    
     public MoleModel(LocationModel location, float speed, float time, float appearanceTime,
     		ITiledTextureRegion moleSprite, GameScene scene)
     {
@@ -35,13 +36,12 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	
     	this.time = time;
     	this.appearanceTime = appearanceTime;
-        
+        this.isJumping = false;
+    	
     	this.gameScene = scene;
         //this.vbo = this.gameScene.getVbom();
         //this.camera = this.gameScene.getCamera();
         //this.physicsWorld = this.gameScene.getPhysicsWorld();
-        createPhysics(this.gameScene.getCamera(), this.gameScene.getPhysicsWorld());
-        this.gameScene.getCamera().setChaseEntity(this);
     }
 
     private void createPhysics(final Camera camera, final PhysicsWorld physicsWorld)
@@ -90,6 +90,10 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     public float getAppearanceTime() {
     	return this.appearanceTime;
     }
+    
+    public LocationModel getLocation() {
+    	return this.location;
+    }
 
     public void freeze(){
     	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0));
@@ -100,18 +104,22 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     }
     
     public void jump() {
-        body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed));
-        
-        HUD gameHUD = this.gameScene.getGameHUD();
-        ResourcesManager resourcesManager = this.gameScene.getResourcesManager();
-        
-        gameHUD.attachChild(this);
-    	gameHUD.registerTouchArea(this);
-    	gameHUD.attachChild( new Sprite(location.getX(), location.getY(),
-    			resourcesManager.back, gameScene.getVbom()));
-    	//gameHUD.detachChild(gameScene.allFore);
-    	//gameHUD.attachChild( gameScene.allFore);
-    	
+    	if (!isJumping) {
+    		createPhysics(this.gameScene.getCamera(), this.gameScene.getPhysicsWorld());
+            this.gameScene.getCamera().setChaseEntity(this);
+    		
+	        body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed));
+	        
+	        HUD gameHUD = this.gameScene.getGameHUD();
+	        ResourcesManager resourcesManager = this.gameScene.getResourcesManager();
+	        
+	        gameHUD.attachChild(this);
+	    	gameHUD.registerTouchArea(this);
+	    	gameHUD.attachChild( new Sprite(location.getX(), location.getY(),
+	    			resourcesManager.back, gameScene.getVbom()));
+	    	
+	    	isJumping = true;
+    	}
     }
     
     public VertexBufferObjectManager getVbo(){
