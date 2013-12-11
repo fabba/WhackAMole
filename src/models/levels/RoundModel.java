@@ -6,22 +6,16 @@ import models.moles.MoleModel;
 
 public class RoundModel {
 	
-	private int level;
 	private int numRound;
 	private ArrayList<MoleModel> moles;
 	
-	public RoundModel(int numRound, int level, ArrayList<MoleModel> moles) {
-		this.level = level;
+	public RoundModel(int numRound, ArrayList<MoleModel> moles) {
 		this.moles = moles;
 		this.numRound = numRound;
 	}
 	
 	public ArrayList<MoleModel> getMoles() {
 		return this.moles;
-	}
-	
-	public int getLevel() {
-		return this.level;
 	}
 	
 	public int getNumRound() {

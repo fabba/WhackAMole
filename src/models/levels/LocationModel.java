@@ -7,12 +7,18 @@ import models.moles.MoleModel;
 public class LocationModel {
 	private float x, y, beginY;
 	private ArrayList<MoleModel> moles;
+	private MoleModel currentMole;
+	
+	public LocationModel(float x, float y) {
+		this(x, y, y);
+	}
 	
 	public LocationModel(float x, float y, float beginY) {
 		this.x = x;
 		this.y = y;
 		this.beginY = beginY;
 		this.moles = new ArrayList<MoleModel>();
+		this.currentMole = null;
 	}
 	
 	public float getBeginY() {
@@ -40,15 +46,19 @@ public class LocationModel {
 		float nextMoleTime = Float.MAX_VALUE;
 		
 		for (MoleModel mole : moles) {
+			
 			if (mole.getTime() + mole.getAppearanceTime() < time) {
 				prevMoleTime = mole.getTime() + mole.getAppearanceTime();
 			}
-			else if (mole.getTime() > time) {
+			else if (mole.getTime() >= time) {
 				nextMoleTime = mole.getTime();
 				break;
 			}
 		}
 		
+		// TODO remove on final release.
+		//System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
+		//		" appearanceTime: " + appearanceTime + " islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
 		return nextMoleTime - prevMoleTime >= appearanceTime;
 	}
 
@@ -73,5 +83,23 @@ public class LocationModel {
 		}
 		
 		return false;
+	}
+	
+	public boolean setCurrentMole(MoleModel mole) {
+		if (moles.contains(mole) || mole == null) {
+			this.currentMole = mole;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public MoleModel getCurrentMole() {
+		return this.currentMole;
+	}
+	
+	public void reset() {
+		this.moles.clear();
+		this.currentMole = null;
 	}
 }

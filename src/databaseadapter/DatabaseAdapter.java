@@ -1,11 +1,9 @@
 package databaseadapter;
 
 
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import com.example.whackamole.WhackAMole;
@@ -23,7 +21,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public abstract class DatabaseAdapter {
  
     // Database Version
-    private static final int DATABASE_VERSION = 34;
+    private static final int DATABASE_VERSION = 38;
     // Database Name
     private static final String DATABASE_NAME = "whackAMole.db";
 	
@@ -177,18 +175,13 @@ public abstract class DatabaseAdapter {
 	 
 	    @Override
 	    public void onCreate(SQLiteDatabase db) {
-	    	System.out.println("_-------------------ccccc--------------------");
-	    	
+	    	System.out.println("Database being created.");
 	    	createDataBase(true);
-	    	
-	    	//db.execSQL(TABLE_CREATE_SCORES); // create scores table
-	        //db.execSQL(TABLE_CREATE_GAMES); // create game table
 	    }
 	    
 	    @Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	    	
-	    	System.out.println("_-------uuuuu---------------");
+	    	System.out.println("Database updating.");
 	    	WhackAMole.getContext().deleteDatabase(DATABASE_NAME);
 	    	onCreate(db);
 		}
@@ -199,9 +192,6 @@ public abstract class DatabaseAdapter {
     }
 
     public DatabaseAdapter open() throws SQLException {
-    	System.out.println(mCtx);
-    	
-    	
     	dbHelper = new DatabaseHelper(mCtx);
  
         try {

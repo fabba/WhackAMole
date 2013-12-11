@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import models.levels.LevelModel;
 import models.levels.LocationModel;
 import models.levels.RoundModel;
 import models.moles.BurnyModel;
@@ -19,6 +20,7 @@ import models.moles.SmogyModel;
 import models.moles.SniffyModel;
 import models.moles.SpeedyModel;
 import models.moles.TankyModel;
+import models.users.UserModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -48,7 +50,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.example.whackamole.BaseScene;
 import com.example.whackamole.SceneManager.SceneType;
 
-import databaseadapter.RoundAdapter;
+import databaseadapter.LevelAdapter;
+import databaseadapter.ScoreAdapter;
 
 public class GameScene extends BaseScene
 {
@@ -59,7 +62,6 @@ public class GameScene extends BaseScene
     private PhysicsWorld physicsWorld;
     private int lives;
     private ArrayList<TiledSprite> spriteLives;
-    private ArrayList<LocationModel> locations;
     
 	@Override
     public void createScene()
@@ -230,7 +232,8 @@ public class GameScene extends BaseScene
     }
 	
     public ArrayList<MoleModel> createMoles(ArrayList<Class<?>> moleClasses,
-    		ArrayList<Float> times, ArrayList<Float> appearanceTimes) {
+    		ArrayList<Float> times, ArrayList<Float> appearanceTimes,
+    		ArrayList<LocationModel> locations) {
     	
     	ArrayList<MoleModel> moles = new ArrayList<MoleModel>();
     	float speed = 1;
@@ -241,8 +244,6 @@ public class GameScene extends BaseScene
     		float appearanceTime = appearanceTimes.get(i);
     		Class<?> moleClass = moleClasses.get(i);
     		
-	    	Random random = new Random();
-	    	
 	    	ArrayList<Integer> shuffledIndexes = new ArrayList<Integer>();
 	    	for (int j = 0; j < locations.size(); j++) {
 	    		shuffledIndexes.add(j);
@@ -300,31 +301,46 @@ public class GameScene extends BaseScene
     {
     	// TODO load from database instead.
     	// create all locations for the moles to jump from
-        float[] horz = {43, 297, 546};
-        float[] vert = {250, 649, 1071};
-        
-        this.locations = new ArrayList<LocationModel>();
-        for (float hor : horz) {
-        	for (float ver : vert) {
-        		this.locations.add(new LocationModel(hor, ver, ver));
-        	}
-        }
-        
         System.out.println("Level loading!");
         
-        // get a round from the database
-        RoundAdapter roundAdapter = new RoundAdapter();
-        roundAdapter.open();
-        RoundModel round = roundAdapter.getRound(levelID, this);
-        roundAdapter.close();
+        // get a level from the database
+        LevelModel level = LevelModel.loadLevel(1, 1, this);
         
-        // get all moles in the round
-        ArrayList<MoleModel> moles = round.getMoles();
-        System.out.println(moles);
-        // make the first mole jump
-        moles.get(0).jump();
-        	
+        // load the next round
+        System.out.println("Switching round : " + level.nextRound());
+        
+        System.out.println("Current round: " + level.getCurrentRound().getNumRound());
+        System.out.println("Moles in current round: " + level.getCurrentRound().getMoles());
+        
+        // make the moles jump
+        level.playRound();
+        
     	System.out.println("Loading level: finished");
+    	
+    	for (LocationModel location : level.getLocations()) {
+    		System.out.print("Moles in location " + location.getX() + " , " + location.getY() + " ");
+    		for (MoleModel mole : location.getMoles()) {
+    			System.out.print(mole.getClass() + ", ");
+    		}
+    		System.out.println(".");
+    	}
+    	
+    	UserModel user = new UserModel(1, "jelle");
+    	
+    	System.out.println("Loading score!");
+    	ScoreAdapter scoreAdapter = new ScoreAdapter();
+    	scoreAdapter.open();
+    	int score = scoreAdapter.getScore(user, level);
+    	System.out.println("Loading score: finished");
+    	
+    	System.out.println("Loaded score = " + score);
+    	
+    	System.out.println("Adding new score!");
+    	boolean succesScore = scoreAdapter.addScore(score + 1, user, level);
+    	System.out.println("Finished adding new score!" + succesScore);
+    	
+    	System.out.println("New score = " + scoreAdapter.getScore(user, level));
+    	scoreAdapter.close();
     }
    
     /*
