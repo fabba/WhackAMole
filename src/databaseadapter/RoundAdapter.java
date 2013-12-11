@@ -7,9 +7,16 @@ import com.example.whackamole.GameScene;
 import com.example.whackamole.WhackAMole;
 
 import models.levels.RoundModel;
+import models.moles.BurnyModel;
+import models.moles.GoldyModel;
 import models.moles.HattyModel;
+import models.moles.IcyModel;
 import models.moles.MoleModel;
 import models.moles.NormyModel;
+import models.moles.SmogyModel;
+import models.moles.SniffyModel;
+import models.moles.SpeedyModel;
+import models.moles.TankyModel;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -37,8 +44,16 @@ public class RoundAdapter extends DatabaseAdapter {
         super(context);
         System.out.println("roundadapter test" + context);
         
-        typeToMoleClass.put(0, NormyModel.class);
+        typeToMoleClass.put(6, NormyModel.class);
         typeToMoleClass.put(1, HattyModel.class);
+        typeToMoleClass.put(5, TankyModel.class);
+        typeToMoleClass.put(2, SniffyModel.class);
+        typeToMoleClass.put(4, GoldyModel.class);
+        typeToMoleClass.put(3, SpeedyModel.class);
+        typeToMoleClass.put(7, BurnyModel.class);
+        typeToMoleClass.put(0, IcyModel.class);
+        typeToMoleClass.put(8, SmogyModel.class);
+
         
         for (Integer type : typeToMoleClass.keySet()) {
         	moleClassToType.put(typeToMoleClass.get(type), type);

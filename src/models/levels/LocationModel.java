@@ -74,4 +74,14 @@ public class LocationModel {
 		
 		return false;
 	}
+	
+	public MoleModel getActiveMole(float time){
+		MoleModel activeMole = null;
+		for (MoleModel mole : moles) {
+			if ((mole.getTime()  < time) && (mole.getTime() + mole.getAppearanceTime() * 3> time)) {
+				activeMole = mole;
+			}
+		}
+		return activeMole;
+	}
 }

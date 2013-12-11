@@ -54,13 +54,15 @@ public class GameScene extends BaseScene
 {
     private int score = 0;
     private HUD gameHUD;
-  
+
     private Text scoreText;
     private Text lifeText;
     private PhysicsWorld physicsWorld;
     private int lives;
+    public TiledSprite allFore;
     private ArrayList<TiledSprite> spriteLives;
     private ArrayList<LocationModel> locations;
+    private long startTime;
     
 	@Override
     public void createScene()
@@ -113,7 +115,8 @@ public class GameScene extends BaseScene
     private void createHUD()
     {
         gameHUD = new HUD();
-    
+       
+        //allFore = new TiledSprite(0,0,ResourcesManager.getInstance().allFore,vbom);
         // CREATE SCORE TEXT
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
@@ -137,7 +140,11 @@ public class GameScene extends BaseScene
         	}
         }
         gameHUD.attachChild(lifeText);
+        
+        //gameHUD.attachChild(allFore);
+        //allFore.setCurrentTileIndex(2);
         camera.setHUD(gameHUD);
+      
     }
     
     public void loseGame(){
@@ -315,6 +322,46 @@ public class GameScene extends BaseScene
     	return moles;
     }
     
+    public void burnOthers(){
+    	for( LocationModel location : locations){
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.touched();
+    		}
+    	}
+    }
+    
+    public void freeze(){
+    	//allFore.setCurrentTileIndex(1);
+    	for( LocationModel location : locations){
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.freeze();
+    		}
+    	}
+    }
+    
+    public void unfreeze(){
+    	//allFore.setCurrentTileIndex(2);
+    	for( LocationModel location : locations){
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.unfreeze();
+    		}
+    	}
+    }
+    
+    public void smog(){
+    	//allFore.setCurrentTileIndex(0);
+    }
+    
+    public void unsmog(){
+    	//allFore.setCurrentTileIndex(2);
+    }
+    
+    
+    public void blur(){
+    }
     public Camera getCamera() {
     	return camera;
     }
@@ -359,10 +406,10 @@ public class GameScene extends BaseScene
         
         // get all moles in the round
         ArrayList<MoleModel> moles = round.getMoles();
+        startTime = System.currentTimeMillis();
         System.out.println(moles);
         // make the first mole jump
         moles.get(0).jump();
-        	
     	System.out.println("Loading level: finished");
     }
    

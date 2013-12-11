@@ -32,16 +32,21 @@ public class SpeedyModel extends MoleModel {
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
+		
 		if(pSceneTouchEvent.isActionDown()){
-			gameScene.addToScore(2);
-			gameHUD.detachChild(this);
-			gameHUD.unregisterTouchArea(this);
-			touched = true;
-			this.dispose();
+			touched();
 			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		gameScene.addToScore(2);
+		gameHUD.detachChild(this);
+		gameHUD.unregisterTouchArea(this);
+		touched = true;
+		this.dispose();
 	}
 }
 

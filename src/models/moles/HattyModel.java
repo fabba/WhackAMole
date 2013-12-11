@@ -32,25 +32,28 @@ public class HattyModel extends MoleModel {
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
+	
 		if(pSceneTouchEvent.isActionDown()){
-			if(getCurrentTileIndex() == 0){
-				setCurrentTileIndex(1);
-				gameScene.addToScore(1);
-				return true;
-				
-			}
-			else{
-				gameHUD.detachChild(this);
-		    	gameHUD.unregisterTouchArea(this);
-		    	gameScene.addToScore(1);
-		    	this.dispose();
-		    	touched = true;
-				return true;
-			}
-	    	
+			touched();
+			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		if(getCurrentTileIndex() == 0){
+			setCurrentTileIndex(1);
+			gameScene.addToScore(1);
+			
+		}
+		else{
+			gameHUD.detachChild(this);
+	    	gameHUD.unregisterTouchArea(this);
+	    	gameScene.addToScore(1);
+	    	this.dispose();
+	    	touched = true;		
+		}
 	}
 }
 

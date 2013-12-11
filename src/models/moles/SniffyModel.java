@@ -33,16 +33,21 @@ public class SniffyModel extends MoleModel {
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
+		
 		if(pSceneTouchEvent.isActionDown()){
-			gameScene.loseLife();
-			gameHUD.detachChild(this);
-			gameHUD.unregisterTouchArea(this);
-			touched = true;
-			this.dispose();
+			touched();
 			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		gameScene.loseLife();
+		gameHUD.detachChild(this);
+		gameHUD.unregisterTouchArea(this);
+		touched = true;
+		this.dispose();
 	}
 }
 

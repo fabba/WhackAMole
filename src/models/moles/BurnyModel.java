@@ -32,18 +32,22 @@ public class BurnyModel extends MoleModel {
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
-			ITouchArea pTouchArea,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
+		
 		if(pSceneTouchEvent.isActionDown()){
-			gameScene.addToScore(2);
-			gameHUD.detachChild(this);
-			gameHUD.unregisterTouchArea(this);
-			touched = true;
-			this.dispose();
+			gameScene.burnOthers();
 			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		gameScene.addToScore(2);
+		gameHUD.detachChild(this);
+		gameHUD.unregisterTouchArea(this);
+		touched = true;
+		this.dispose();
 	}
 
 	

@@ -88,3 +88,6 @@ if __name__ == "__main__":
 
 	    insertRecord(cursor, METADATA_TABLE_NAME, 'en_US')
 	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 0, 0, 3)
+	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 6, 0, 3)
+	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 0, 0, 3)
+	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 0, 8, 3)
