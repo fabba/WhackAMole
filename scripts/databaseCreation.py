@@ -113,7 +113,6 @@ if __name__ == "__main__":
 	    remakeTable(connection, cursor, METADATA_TABLE_NAME, METADATA_TABLE_CONTENT)
 
 	    insertRecord(cursor, METADATA_TABLE_NAME, 'en_US')
-<<<<<<< HEAD
 	    
 	    insertLevels(cursor)
 
@@ -122,9 +121,4 @@ if __name__ == "__main__":
 
 	    # insert first score by userId 1 on levelId 1 and roundId 1 with score 10
 	    insertRecord(cursor, SCORE_TABLE_NAME, None, 1, 1, 1, 10)
-=======
-	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 0, 0, 3)
-	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 6, 0, 3)
-	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 0, 0, 3)
-	    insertRecord(cursor, ROUND_TABLE_NAME, None, 0, 0, 8, 3)
->>>>>>> f4584d876015e6160326b298b869d764b95a56c9
+
