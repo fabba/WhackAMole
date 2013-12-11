@@ -85,21 +85,18 @@ public class LocationModel {
 		return false;
 	}
 	
-	public boolean setCurrentMole(MoleModel mole) {
-		if (moles.contains(mole) || mole == null) {
-			this.currentMole = mole;
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	public MoleModel getCurrentMole() {
-		return this.currentMole;
-	}
-	
 	public void reset() {
 		this.moles.clear();
-		this.currentMole = null;
+	}
+	
+	// TODO make more efficient!
+	public MoleModel getActiveMole(float time){
+		MoleModel activeMole = null;
+		for (MoleModel mole : moles) {
+			if ((mole.getTime()  < time) && (mole.getTime() + mole.getAppearanceTime() * 3> time)) {
+				activeMole = mole;
+			}
+		}
+		return activeMole;
 	}
 }

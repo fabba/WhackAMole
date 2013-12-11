@@ -12,30 +12,41 @@ import com.example.whackamole.ResourcesManager;
 
 public class SpeedyModel extends MoleModel {
 
+	private boolean touched;
 	public SpeedyModel(LocationModel location, float speed, float time,
 			float appearanceTime, ITiledTextureRegion moleSprite,
 			GameScene scene) {
 		super(location, speed, time, appearanceTime, moleSprite, scene);
-		// TODO Auto-generated constructor stub
+		touched = false;
 	}
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-
-		gameHUD.detachChild(this);
-		gameHUD.unregisterTouchArea(this);
+		if(!touched){
+			gameHUD.detachChild(this);
+			gameHUD.unregisterTouchArea(this);
+			gameScene.loseLife();
+			this.dispose();
+		}
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
+		
 		if(pSceneTouchEvent.isActionDown()){
-			gameScene.addToScore(2);
-			gameHUD.detachChild(this);
-			gameHUD.unregisterTouchArea(this);
+			touched();
 			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		gameScene.addToScore(2);
+		gameHUD.detachChild(this);
+		gameHUD.unregisterTouchArea(this);
+		touched = true;
+		this.dispose();
 	}
 }
 

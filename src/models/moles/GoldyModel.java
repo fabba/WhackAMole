@@ -13,29 +13,41 @@ import com.example.whackamole.ResourcesManager;
 
 public class GoldyModel extends MoleModel {
 
-	
+	private boolean touched;
 	public GoldyModel(LocationModel location, float speed, float time,
 			float appearanceTime, ITiledTextureRegion moleSprite,
 			GameScene scene) {
 		super(location, speed, time, appearanceTime, moleSprite, scene);
+		touched = false;
 	}
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-		gameHUD.detachChild(this);
-		gameHUD.unregisterTouchArea(this);
-	}
-
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,ITouchArea pTouchArea,
-			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
-		if(pSceneTouchEvent.isActionDown()){
-			gameScene.addToScore(5);
+		if(!touched){
 			gameHUD.detachChild(this);
 			gameHUD.unregisterTouchArea(this);
+			gameScene.loseLife();
+			this.dispose();
+		}
+	}
+
+	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+			float pTouchAreaLocalX, float pTouchAreaLocalY) {
+		
+		if(pSceneTouchEvent.isActionDown()){
+			touched();
 			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		gameScene.addToScore(5);
+		gameHUD.detachChild(this);
+		gameHUD.unregisterTouchArea(this);
+		touched = true;
+		this.dispose();
 	}
 }
 

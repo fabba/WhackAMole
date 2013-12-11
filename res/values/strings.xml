@@ -7,5 +7,6 @@
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_score">ScoreActivity</string>
     <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_manual">ManualActivity</string>
 
 </resources>

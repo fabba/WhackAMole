@@ -6,4 +6,5 @@ public interface MoleInterface {
 	public void onDie();
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY);
+	public void touched();
 }

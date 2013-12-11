@@ -12,44 +12,56 @@ import com.example.whackamole.ResourcesManager;
 
 public class TankyModel extends MoleModel {
 
+	private boolean touched;
 	public TankyModel(LocationModel location, float speed, float time,
 			float appearanceTime, ITiledTextureRegion moleSprite,
 			GameScene scene) {
 		super(location, speed, time, appearanceTime, moleSprite, scene);
+		touched = false;
 	}
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-		
-		gameHUD.detachChild(this);
-		gameHUD.unregisterTouchArea(this);
+		if(!touched){
+			gameHUD.detachChild(this);
+			gameHUD.unregisterTouchArea(this);
+			gameScene.loseLife();
+			this.dispose();
+		}
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
+		
 		if(pSceneTouchEvent.isActionDown()){
-			if(getCurrentTileIndex() == 0){
-				setCurrentTileIndex(1);
-				gameScene.addToScore(1);
-				return true;
-				
-			}
-			else if(getCurrentTileIndex() == 1){
-				setCurrentTileIndex(2);
-				gameScene.addToScore(1);
-				return true;
-				
-			}
-			else{
-				gameHUD.detachChild(this);
-		    	gameHUD.unregisterTouchArea(this);
-		    	gameScene.addToScore(1);
-				return true;
-			}
-	    	
+			touched();
+			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		if(getCurrentTileIndex() == 0){
+			setCurrentTileIndex(1);
+			gameScene.addToScore(1);
+
+			
+		}
+		else if(getCurrentTileIndex() == 1){
+			setCurrentTileIndex(2);
+			gameScene.addToScore(1);
+
+			
+		}
+		else{
+			gameHUD.detachChild(this);
+	    	gameHUD.unregisterTouchArea(this);
+	    	gameScene.addToScore(1);
+	    	touched = true;
+	    	this.dispose();
+
+		}
 	}
 }
 

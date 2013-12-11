@@ -41,6 +41,10 @@ public class MainActivity extends Activity {
 	    	Intent intent = new Intent (view.getContext(), SettingActivity.class);
 	    	startActivityForResult(intent,0);
 		}
+		else if (view.getId() == R.id.manual) {
+	    	Intent intent = new Intent (view.getContext(), ManualActivity.class);
+	    	startActivityForResult(intent,0);
+		}
 	}
 }
 

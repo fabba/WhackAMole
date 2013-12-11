@@ -12,28 +12,42 @@ import com.example.whackamole.ResourcesManager;
 
 public class SniffyModel extends MoleModel {
 
+	private boolean touched;
 	public SniffyModel(LocationModel location, float speed, float time,
 			float appearanceTime, ITiledTextureRegion moleSprite,
 			GameScene scene) {
 		super(location, speed, time, appearanceTime, moleSprite, scene);
+		touched = false;
 	}
 
 	public void onDie() {
 		HUD gameHUD = gameScene.getGameHUD();
-		gameScene.addToScore(1);
-		gameHUD.detachChild(this);
-		gameHUD.unregisterTouchArea(this);
+		
+		if(!touched){
+			gameHUD.detachChild(this);
+			gameHUD.unregisterTouchArea(this);
+			gameScene.addToScore(1);
+			this.dispose();
+		}
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		HUD gameHUD = gameScene.getGameHUD();
+		
 		if(pSceneTouchEvent.isActionDown()){
-			gameHUD.detachChild(this);
-			gameHUD.unregisterTouchArea(this);
+			touched();
 			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		gameScene.loseLife();
+		gameHUD.detachChild(this);
+		gameHUD.unregisterTouchArea(this);
+		touched = true;
+		this.dispose();
 	}
 }
 

@@ -14,6 +14,7 @@ public class LevelModel {
 	private ArrayList<LocationModel> locations;
 	private GameScene gameScene;
 	private RoundModel currentRound;
+	private long startTime;
 	
 	public LevelModel(int numLevel, int numberOfRounds, ArrayList<LocationModel> locations,
 			RoundModel round, GameScene scene) {
@@ -22,6 +23,7 @@ public class LevelModel {
 		this.gameScene = scene;
 		this.currentRound = round;
 		this.numberOfRounds = numberOfRounds;
+		this.startTime = System.currentTimeMillis();
 	}
 	
 	public static LevelModel loadLevel(int numLevel, int numRound, GameScene scene) {
@@ -57,11 +59,57 @@ public class LevelModel {
 		}
 	}
 	
+
+    public void burnOthers(){
+    	for( LocationModel location : locations){
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.touched();
+    		}
+    	}
+    }
+    
+    public void freeze(){
+    	//allFore.setCurrentTileIndex(1);
+    	for( LocationModel location : locations){
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.freeze();
+    		}
+    	}
+    }
+    
+    public void unfreeze(){
+    	//allFore.setCurrentTileIndex(2);
+    	for( LocationModel location : locations){
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.unfreeze();
+    		}
+    	}
+    }
+    
+    public void smog(){
+    	//allFore.setCurrentTileIndex(0);
+    }
+    
+    public void unsmog(){
+    	//allFore.setCurrentTileIndex(2);
+    }
+    
+    
+    public void blur(){
+    }
+	
 	public void playRound() {
 		// TODO write this function :)
 		for (MoleModel mole : currentRound.getMoles()) {
 			mole.jump();
 		}
+	}
+	
+	public long getStartTime() {
+		return this.startTime;
 	}
 	
 	public int getNumLevel() {

@@ -36,14 +36,18 @@ public class NormyModel extends MoleModel {
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
 		if(pSceneTouchEvent.isActionDown()){
-			HUD gameHUD = gameScene.getGameHUD();
-			gameHUD.detachChild(this);
-	    	gameHUD.unregisterTouchArea(this);
-	    	gameScene.addToScore(1);
-	    	this.dispose();
-	    	touched = true;
+			touched();
 			return true;
 		}
 		return false;
+	}
+	
+	public void touched(){
+		HUD gameHUD = gameScene.getGameHUD();
+		gameHUD.detachChild(this);
+    	gameHUD.unregisterTouchArea(this);
+    	gameScene.addToScore(1);
+    	this.dispose();
+    	touched = true;
 	}
 }

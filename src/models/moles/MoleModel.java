@@ -30,7 +30,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     		ITiledTextureRegion moleSprite, GameScene scene)
     {
     	super(location.getX(), location.getY(), moleSprite, scene.getVbom());
-    	this.speed = speed;
+    	this.speed = -speed;
     	this.location = location;
     	
     	this.time = time;
@@ -63,6 +63,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
                 }
                 
                 else if (getY() < (location.getBeginY() - 150)) {    
+                	speed = -speed;
                 	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed)); 
                 }
             }
@@ -90,8 +91,16 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	return this.appearanceTime;
     }
 
+    public void freeze(){
+    	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0));
+    }
+    
+    public void unfreeze(){
+    	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, this.getSpeed()));
+    }
+    
     public void jump() {
-        body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, -speed));
+        body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed));
         
         HUD gameHUD = this.gameScene.getGameHUD();
         ResourcesManager resourcesManager = this.gameScene.getResourcesManager();
@@ -100,6 +109,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	gameHUD.registerTouchArea(this);
     	gameHUD.attachChild( new Sprite(location.getX(), location.getY(),
     			resourcesManager.back, gameScene.getVbom()));
+    	//gameHUD.detachChild(gameScene.allFore);
+    	//gameHUD.attachChild( gameScene.allFore);
+    	
     }
     
     public VertexBufferObjectManager getVbo(){
@@ -113,4 +125,5 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     public PhysicsWorld getPhysicsWorld(){
     	return this.gameScene.getPhysicsWorld();
     }
+
 }

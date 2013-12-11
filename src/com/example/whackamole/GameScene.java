@@ -57,11 +57,14 @@ public class GameScene extends BaseScene
 {
     private int score = 0;
     private HUD gameHUD;
-  
+
     private Text scoreText;
+    private Text lifeText;
     private PhysicsWorld physicsWorld;
     private int lives;
+    public TiledSprite allFore;
     private ArrayList<TiledSprite> spriteLives;
+    public LevelModel currentLevel;
     
 	@Override
     public void createScene()
@@ -114,31 +117,74 @@ public class GameScene extends BaseScene
     private void createHUD()
     {
         gameHUD = new HUD();
-    
+       
+        //allFore = new TiledSprite(0,0,ResourcesManager.getInstance().allFore,vbom);
         // CREATE SCORE TEXT
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
         scoreText.setText("Score: 0");
         gameHUD.attachChild(scoreText);
-        lives = 5;
+        
+        lives = 6;
+        lifeText = new Text(510, 20, resourcesManager.font, "0123456789 *", new TextOptions(HorizontalAlign.LEFT), vbom);
+        lifeText.setSkewCenter(0, 0);
+        lifeText.setText("");
+        
         spriteLives = new ArrayList<TiledSprite>();
-        for(int i = 0 ; i < lives ; i++){
+        for(int i = 0 ; i < 5 ; i++){
         	spriteLives.add(new TiledSprite(600 - 80 * i,20,resourcesManager.life, vbom));
         	gameHUD.attachChild(spriteLives.get(i));
         }
+        if(lives > 5){
+        	for(int i = 1 ; i < 5  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(1);
+        		lifeText.setText(Integer.toString(lives) + " * ");
+        	}
+        }
+        gameHUD.attachChild(lifeText);
+        
+        //gameHUD.attachChild(allFore);
+        //allFore.setCurrentTileIndex(2);
         camera.setHUD(gameHUD);
+      
     }
     
     public void loseGame(){
     }
+    
+    public void addLife(int addLives){
+    	lives += addLives;
+    	if ( lives > 5){
+    		for(int i = 1 ; i < 5  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(1);
+        	}
+    		lifeText.setText(Integer.toString(lives) + " * ");
+    	}
+    	else{
+    		for(int i = 1 ; i < lives  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(0);
+        	}
+        	
+    	}
+    }
     public void loseLife(){	
-    	
+    	lives -= 1;
     	if ( lives <= 0){
     		loseGame();
     	}
+    	else if ( lives > 5){
+    		lifeText.setText(Integer.toString(lives) + " * ");
+    	}
+    	else if ( lives == 5){
+    		for(int i = 1 ; i < 5  ; i++){
+        		spriteLives.get(i).setCurrentTileIndex(0);
+        		lifeText.setText("");
+        	}
+    	}
     	else{
-    		spriteLives.get(lives - 1).setCurrentTileIndex(1);
-        	lives -= 1;
+    		lives -= 1;
+    		spriteLives.get(lives).setCurrentTileIndex(1);
+        	
     	}
     	
     }
@@ -277,6 +323,49 @@ public class GameScene extends BaseScene
     	return moles;
     }
     
+    public void burnOthers(){
+    	for( LocationModel location : currentLevel.getLocations()){
+    		long startTime = currentLevel.getStartTime();
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.touched();
+    		}
+    	}
+    }
+    
+    public void freeze(){
+    	//allFore.setCurrentTileIndex(1);
+    	for( LocationModel location : currentLevel.getLocations()){
+    		long startTime = currentLevel.getStartTime();
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.freeze();
+    		}
+    	}
+    }
+    
+    public void unfreeze(){
+    	//allFore.setCurrentTileIndex(2);
+    	for( LocationModel location : currentLevel.getLocations()){
+    		long startTime = currentLevel.getStartTime();
+    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    		if(mole != null){
+    			mole.unfreeze();
+    		}
+    	}
+    }
+    
+    public void smog(){
+    	//allFore.setCurrentTileIndex(0);
+    }
+    
+    public void unsmog(){
+    	//allFore.setCurrentTileIndex(2);
+    }
+    
+    
+    public void blur(){
+    }
     public Camera getCamera() {
     	return camera;
     }
@@ -304,20 +393,20 @@ public class GameScene extends BaseScene
         System.out.println("Level loading!");
         
         // get a level from the database
-        LevelModel level = LevelModel.loadLevel(1, 1, this);
+        currentLevel = LevelModel.loadLevel(1, 1, this);
         
         // load the next round
-        System.out.println("Switching round : " + level.nextRound());
+        System.out.println("Switching round : " + currentLevel.nextRound());
         
-        System.out.println("Current round: " + level.getCurrentRound().getNumRound());
-        System.out.println("Moles in current round: " + level.getCurrentRound().getMoles());
+        System.out.println("Current round: " + currentLevel.getCurrentRound().getNumRound());
+        System.out.println("Moles in current round: " + currentLevel.getCurrentRound().getMoles());
         
         // make the moles jump
-        level.playRound();
+        currentLevel.playRound();
         
     	System.out.println("Loading level: finished");
     	
-    	for (LocationModel location : level.getLocations()) {
+    	for (LocationModel location : currentLevel.getLocations()) {
     		System.out.print("Moles in location " + location.getX() + " , " + location.getY() + " ");
     		for (MoleModel mole : location.getMoles()) {
     			System.out.print(mole.getClass() + ", ");
@@ -330,16 +419,16 @@ public class GameScene extends BaseScene
     	System.out.println("Loading score!");
     	ScoreAdapter scoreAdapter = new ScoreAdapter();
     	scoreAdapter.open();
-    	int score = scoreAdapter.getScore(user, level);
+    	int score = scoreAdapter.getScore(user, currentLevel);
     	System.out.println("Loading score: finished");
     	
     	System.out.println("Loaded score = " + score);
     	
     	System.out.println("Adding new score!");
-    	boolean succesScore = scoreAdapter.addScore(score + 1, user, level);
+    	boolean succesScore = scoreAdapter.addScore(score + 1, user, currentLevel);
     	System.out.println("Finished adding new score!" + succesScore);
     	
-    	System.out.println("New score = " + scoreAdapter.getScore(user, level));
+    	System.out.println("New score = " + scoreAdapter.getScore(user, currentLevel));
     	scoreAdapter.close();
     }
    
