@@ -1,5 +1,10 @@
 package databaseadapter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.example.whackamole.WhackAMole;
 
 import models.levels.LevelModel;
@@ -70,5 +75,20 @@ public class ScoreAdapter extends DatabaseAdapter {
         }
     	
     	return score;
+    }
+    
+    public List<Map<String, String>> getAllPoints() {
+    	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    	
+    	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME + " order by " + KEY_SCORE + " desc LIMIT 10", null);
+    	if (cursor.moveToFirst()) {
+        	do{ 
+        		HashMap<String, String> scores = new HashMap<String, String>(2);
+        		scores.put("Name", cursor.getString(1));
+      		    scores.put("Score", cursor.getString(4));
+      		    data.add(scores);
+        	} while (cursor.moveToNext());
+        } 
+      return data;
     }
 }
