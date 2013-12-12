@@ -122,13 +122,24 @@ public class LevelAdapter extends DatabaseAdapter {
     }
     
     public int getNumberOfRounds(int numLevel) {
-    	Cursor cursor = db.rawQuery("SELECT " + ROUND_KEY_ID + " FROM " + ROUND_TABLE_NAME +
+    	Cursor cursor = db.rawQuery("SELECT " + ROUND_KEY_ROUND_ID + " FROM " + ROUND_TABLE_NAME +
     			" WHERE " + ROUND_KEY_LEVEL_ID + " = " + numLevel, null);
     	
     	int numberOfRounds = 0;
-    	while (cursor.moveToNext()) {
+    	int currentNumRound = 0;
+    	if (cursor.moveToFirst()) {
+    		currentNumRound = cursor.getInt(0);
     		numberOfRounds++;
     	}
+    	
+    	while (cursor.moveToNext()) {
+    		int nextNumRound = cursor.getInt(0);
+    		if (currentNumRound != nextNumRound) {
+    			currentNumRound = nextNumRound;
+        		numberOfRounds++;
+    		}
+    	}
+    	
     	return numberOfRounds;
     }
     

@@ -29,8 +29,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     protected boolean isTouched;
 	
     public MoleModel(LocationModel location, float speed, float time, float appearanceTime,
-    		ITiledTextureRegion moleSprite, GameScene scene)
-    {
+    		ITiledTextureRegion moleSprite, GameScene scene) {
     	super(location.getX(), location.getY(), moleSprite, scene.getVbom());
     	this.speed = -speed;
     	this.location = location;
@@ -47,9 +46,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 			gameScene.loseLife();
 		}
 		
-		this.gameScene.onMoleDeath(this);
-		
 		this.destroyMole();
+		
+		this.gameScene.onMoleDeath();
 	}
     
     protected void destroyMole() {

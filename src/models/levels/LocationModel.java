@@ -25,12 +25,7 @@ public class LocationModel {
 		this.y = y;
 		this.beginY = beginY;
 		this.moles = new ArrayList<MoleModel>();
-		this.activeMole = null;
-		this.activeMoleIndex = -1;
-		this.timeOffset = 0;
-		this.freezeTime = -1;
-		this.freezeDuration = 0;
-		this.startTime = System.currentTimeMillis();
+		this.reset();
 	}
 	
 	public void setStartTime(long time) {
@@ -128,6 +123,12 @@ public class LocationModel {
 	
 	public void reset() {
 		this.moles.clear();
+		this.activeMole = null;
+		this.activeMoleIndex = -1;
+		this.timeOffset = 0;
+		this.freezeTime = -1;
+		this.freezeDuration = 0;
+		this.startTime = System.currentTimeMillis();
 	}
 	
 	public boolean setNextActiveMole() {

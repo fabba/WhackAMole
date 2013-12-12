@@ -21,9 +21,9 @@ public class SniffyModel extends MoleModel {
 			gameScene.addToScore(1);
 		}
 				
-		this.gameScene.onMoleDeath(this);
-		
 		this.destroyMole();
+		
+		this.gameScene.onMoleDeath();
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,

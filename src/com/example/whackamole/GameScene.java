@@ -39,7 +39,6 @@ import databaseadapter.ScoreAdapter;
 
 public class GameScene extends BaseScene
 {
-    private int score = 0;
     private HUD gameHUD;
 
     private Text scoreText;
@@ -81,10 +80,9 @@ public class GameScene extends BaseScene
     }
     
     public void addToScore(int i) {
-        score += i;
-        scoreText.setText("Score: " + score);
+        this.currentLevel.addToScore(i);
+    	scoreText.setText("Score: " + this.currentLevel.getScore());
     }
-    
 
     private void createPhysics() {
         physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 0), false); 
@@ -161,8 +159,17 @@ public class GameScene extends BaseScene
     	}	
     }
     
-    public void onMoleDeath(MoleModel mole) {
-    	this.currentLevel.onMoleDeath(mole);
+    public void onMoleDeath() {
+    	this.currentLevel.onMoleDeath();
+    }
+    
+    public void onRoundEnd(LevelModel level) {
+    	// TODO set score, congratulate user etc. etc.
+    	if (level.nextRound()) {
+    		level.playRound();
+    	} else {
+    		// TODO load next level?
+    	}
     }
     
     public NormyModel createMoleNormy(LocationModel location,
@@ -346,7 +353,7 @@ public class GameScene extends BaseScene
         currentLevel = LevelModel.loadLevel(1, 1, this);
         
         // load the next round
-        System.out.println("Switching round : " + currentLevel.nextRound());
+        // System.out.println("Switching round : " + currentLevel.nextRound());
         
         System.out.println("Current round: " + currentLevel.getCurrentRound().getNumRound());
         System.out.println("Moles in current round: " + currentLevel.getCurrentRound().getMoles());
