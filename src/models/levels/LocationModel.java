@@ -58,26 +58,27 @@ public class LocationModel {
 	}
 	
 	public boolean isRoomForMole(float time, float appearanceTime) {
-		float prevMoleTime = 0;
-		float nextMoleTime = Float.MAX_VALUE;
+		float currentMoleGoDownTime = time + appearanceTime;
 		
 		for (MoleModel mole : moles) {
 			float moleGoUpTime = getPopUpTime(mole);
 			float moleGoDownTime = moleGoUpTime + mole.getAppearanceTime();
 			
-			if (moleGoUpTime >= time && time < moleGoDownTime) {
-				// TODO remove on final release.
-				System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
-						" current moletime = " + time + " appearanceTime: " + appearanceTime +
-						" islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
+			if (!(moleGoDownTime <= time || time < moleGoUpTime)) {
+				return false;
+			}
+			else if (!(moleGoUpTime >= currentMoleGoDownTime || currentMoleGoDownTime > moleGoDownTime)) {
+				return false;
+			}
+			else if (!(time >= moleGoDownTime || moleGoDownTime > currentMoleGoDownTime)) {
 				return false;
 			}
 		}
 		
 		// TODO remove on final release.
-		System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
-				" current moletime = " + time + " appearanceTime: " + appearanceTime +
-				" islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
+		//System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
+		//		" current moletime = " + time + " appearanceTime: " + appearanceTime +
+		//		" islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
 		return true;
 	}
 
