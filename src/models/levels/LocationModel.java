@@ -1,7 +1,6 @@
 package models.levels;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -12,7 +11,7 @@ public class LocationModel {
 	private ArrayList<MoleModel> moles;
 	private MoleModel activeMole;
 	private int activeMoleIndex;
-	private int timeOffset;
+	private float timeOffset;
 	private float freezeTime;
 	private float freezeDuration;
 	private long startTime;
@@ -63,20 +62,23 @@ public class LocationModel {
 		float nextMoleTime = Float.MAX_VALUE;
 		
 		for (MoleModel mole : moles) {
+			float moleGoUpTime = getPopUpTime(mole);
+			float moleGoDownTime = moleGoUpTime + mole.getAppearanceTime();
 			
-			if (mole.getTime() + mole.getAppearanceTime() < time) {
-				prevMoleTime = mole.getTime() + mole.getAppearanceTime();
-			}
-			else if (mole.getTime() >= time) {
-				nextMoleTime = mole.getTime();
-				break;
+			if (moleGoUpTime >= time && time < moleGoDownTime) {
+				// TODO remove on final release.
+				System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
+						" current moletime = " + time + " appearanceTime: " + appearanceTime +
+						" islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
+				return false;
 			}
 		}
 		
 		// TODO remove on final release.
-		//System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
-		//		" appearanceTime: " + appearanceTime + " islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
-		return nextMoleTime - prevMoleTime >= appearanceTime;
+		System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
+				" current moletime = " + time + " appearanceTime: " + appearanceTime +
+				" islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
+		return true;
 	}
 
 	public MoleModel getFirstMole() {
@@ -88,8 +90,8 @@ public class LocationModel {
 	}
 	
 	public boolean isPopUpTime(MoleModel mole, float time) {
-		float moleGoUpTime = mole.getTime() + this.timeOffset;
-		float moleGoDownTime = moleGoUpTime + mole.getAppearanceTime() * 3; // TODO remove * 3	
+		float moleGoUpTime = getPopUpTime(mole);
+		float moleGoDownTime = moleGoUpTime + mole.getAppearanceTime();	
 		return (time >= moleGoUpTime) && (moleGoDownTime > time);
 	}
 	
@@ -104,11 +106,13 @@ public class LocationModel {
 			
 			for (int i = 0; i < moles.size(); i++) {
 				MoleModel curMole = moles.get(i);
+				float curMoleGoUpTime = getPopUpTime(curMole);
+				float curMoleGoDownTime = curMoleGoUpTime + curMole.getAppearanceTime(); 
 				
-				if (curMole.getTime() + curMole.getAppearanceTime() < time) {
+				if (curMoleGoDownTime < time) {
 					index = i;
 				}
-				else if (curMole.getTime() > time) {
+				else if (curMoleGoUpTime > time) {
 					break;
 				}
 			}
@@ -144,55 +148,8 @@ public class LocationModel {
 		}
 	}
 	
-	// TODO remove parameter
-	public MoleModel getActiveMole(float time) {
+	public MoleModel getActiveMole() {
 		return this.activeMole;
-		
-		/*
-		// is location currently frozen?
-		if (this.freezeTime > 0) {
-			
-			// if frozen time has passed, 'unfreeze', continue like it is not frozen.
-			// else, return active mole, and stay frozen.
-			if (time > this.freezeTime + this.freezeDuration) {
-				this.freezeTime = -1;
-				this.freezeDuration = 0;
-				
-				if (this.activeMole != null) {
-					this.activeMole.unfreeze();
-				}
-				
-				System.out.println("Unfreezing at time: " + time);
-			} else {
-				System.out.println("Still FROZEN at time: " + time);
-				return activeMole;
-			}
-		}
-		
-		// has current mole passed his time, yes? remove.
-		if (this.activeMole != null) {
-			float moleGoDownTime = this.activeMole.getTime() + this.timeOffset +
-					this.activeMole.getAppearanceTime() * 3; // TODO remove * 3
-			if (moleGoDownTime <= time) {
-				activeMole = null;
-			}
-		}
-		
-		// is there no mole currently present, and is there a next mole,
-		// see if it is time to load the next mole.
-		if (this.activeMole == null && this.activeMoleIndex < this.moles.size() - 1) {
-			MoleModel mole = this.moles.get(this.activeMoleIndex + 1);
-			float moleGoUpTime = mole.getTime() + this.timeOffset;
-			float moleGoDownTime = moleGoUpTime + mole.getAppearanceTime() * 3; // TODO remove * 3
-			
-			if ((time >= moleGoUpTime) && (moleGoDownTime > time)) {
-				activeMole = mole;
-				this.activeMoleIndex++;
-			}
-		}
-		
-		return activeMole;
-		*/
 	}
 	
 	public void freeze(final long time) {

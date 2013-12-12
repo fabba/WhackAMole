@@ -3,13 +3,9 @@ package com.example.whackamole;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import models.levels.LevelModel;
 import models.levels.LocationModel;
-import models.levels.RoundModel;
 import models.moles.BurnyModel;
 import models.moles.GoldyModel;
 import models.moles.HattyModel;
@@ -24,9 +20,6 @@ import models.users.UserModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.entity.IEntity;
-import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
@@ -34,23 +27,14 @@ import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.HorizontalAlign;
-import org.andengine.util.SAXUtils;
-import org.andengine.util.color.Color;
 
-import android.content.Intent;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.example.whackamole.BaseScene;
 import com.example.whackamole.SceneManager.SceneType;
 
-import databaseadapter.LevelAdapter;
 import databaseadapter.ScoreAdapter;
 
 public class GameScene extends BaseScene
@@ -67,8 +51,7 @@ public class GameScene extends BaseScene
     public LevelModel currentLevel;
     
 	@Override
-    public void createScene()
-    {
+    public void createScene() {
     	 createBackground();
     	 createHUD();
     	 createPhysics();
@@ -76,46 +59,39 @@ public class GameScene extends BaseScene
     }
 
     @Override
-    public void onBackKeyPressed()
-    {
+    public void onBackKeyPressed() {
+    	// TODO
     }
 
     @Override
-    public SceneType getSceneType()
-    {
+    public SceneType getSceneType() {
         return SceneType.SCENE_GAME;
     }
 
     @Override
-    public void disposeScene()
-    {
+    public void disposeScene() {
     	 camera.setHUD(null);
     	 camera.setCenter(400, 240);
-
     }
     
-    private void createBackground()
-    {
+    private void createBackground() {
     	ParallaxBackground background = new ParallaxBackground(0, 0, 0);
 		background.attachParallaxEntity(new ParallaxEntity(0, new Sprite(0, 0, resourcesManager.background_region, vbom)));
         setBackground(background);
     }
     
-    public void addToScore(int i)
-    {
+    public void addToScore(int i) {
         score += i;
         scoreText.setText("Score: " + score);
     }
     
 
-    private void createPhysics()
-    {
+    private void createPhysics() {
         physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 0), false); 
         registerUpdateHandler(physicsWorld);
     }
     
-    private void createHUD()
-    {
+    private void createHUD() {
         gameHUD = new HUD();
        
         //allFore = new TiledSprite(0,0,ResourcesManager.getInstance().allFore,vbom);
@@ -149,45 +125,46 @@ public class GameScene extends BaseScene
       
     }
     
-    public void loseGame(){
+    public void loseGame() {
     }
     
-    public void addLife(int addLives){
+    public void addLife(int addLives) {
     	lives += addLives;
-    	if ( lives > 5){
-    		for(int i = 1 ; i < 5  ; i++){
+    	if (lives > 5) {
+    		for (int i = 1 ; i < 5  ; i++) {
         		spriteLives.get(i).setCurrentTileIndex(1);
         	}
     		lifeText.setText(Integer.toString(lives) + " * ");
-    	}
-    	else{
-    		for(int i = 1 ; i < lives  ; i++){
+    	} else {
+    		for (int i = 1 ; i < lives  ; i++) {
         		spriteLives.get(i).setCurrentTileIndex(0);
         	}
-        	
     	}
     }
-    public void loseLife(){	
+    
+    public void loseLife() {	
     	lives -= 1;
-    	if ( lives <= 0){
+    	if (lives <= 0) {
     		loseGame();
     	}
-    	else if ( lives > 5){
+    	else if (lives > 5) {
     		lifeText.setText(Integer.toString(lives) + " * ");
     	}
-    	else if ( lives == 5){
-    		for(int i = 1 ; i < 5  ; i++){
+    	else if (lives == 5) {
+    		for (int i = 1 ; i < 5  ; i++) {
         		spriteLives.get(i).setCurrentTileIndex(0);
         		lifeText.setText("");
         	}
-    	}
-    	else{
+    	} else {
     		lives -= 1;
-    		spriteLives.get(lives).setCurrentTileIndex(1);
-        	
-    	}
-    	
+    		spriteLives.get(lives).setCurrentTileIndex(1);	
+    	}	
     }
+    
+    public void onMoleDeath(MoleModel mole) {
+    	this.currentLevel.onMoleDeath(mole);
+    }
+    
     public NormyModel createMoleNormy(LocationModel location,
     		float speed, float time, float appearanceTime) {
     	return new NormyModel(location, speed, time, appearanceTime,
@@ -323,30 +300,25 @@ public class GameScene extends BaseScene
     	return moles;
     }
     
-    public void burnOthers(){
-    	for( LocationModel location : currentLevel.getLocations()){
-    		long startTime = currentLevel.getStartTime();
-    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
-    		if(mole != null){
-    			mole.touched();
-    		}
-    	}
+    public void burnOthers() {
+    	this.currentLevel.burnOthers();
     }
     
-    public void freeze(long time){
+    public void freeze(long time) {
     	this.currentLevel.freeze(time);
     }
     
-    public void smog(){
+    public void smog() {
     	//allFore.setCurrentTileIndex(0);
     }
     
-    public void unsmog(){
+    public void unsmog() {
     	//allFore.setCurrentTileIndex(2);
     }
     
-    public void blur(){
+    public void blur() {
     }
+    
     public Camera getCamera() {
     	return camera;
     }
@@ -367,11 +339,8 @@ public class GameScene extends BaseScene
     	return resourcesManager;
     }
     
-    private void loadLevel(int levelID)
-    {
-    	// TODO load from database instead.
-    	// create all locations for the moles to jump from
-        System.out.println("Level loading!");
+    private void loadLevel(int levelID) {
+    	System.out.println("Level loading!");
         
         // get a level from the database
         currentLevel = LevelModel.loadLevel(1, 1, this);

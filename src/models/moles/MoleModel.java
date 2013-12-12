@@ -9,7 +9,6 @@ import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
@@ -25,8 +24,10 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     protected GameScene gameScene;
     private LocationModel location;
     private Body body;
-	public boolean isJumping;
-    
+	private boolean isJumping;
+	PhysicsConnector physicsConnector;
+    protected boolean isTouched;
+	
     public MoleModel(LocationModel location, float speed, float time, float appearanceTime,
     		ITiledTextureRegion moleSprite, GameScene scene)
     {
@@ -39,17 +40,31 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
         this.isJumping = false;
     	
     	this.gameScene = scene;
-        //this.vbo = this.gameScene.getVbom();
-        //this.camera = this.gameScene.getCamera();
-        //this.physicsWorld = this.gameScene.getPhysicsWorld();
     }
 
-    private void createPhysics(final Camera camera, final PhysicsWorld physicsWorld)
-    {        
+    public void onDie() {
+		if (!isTouched) {
+			gameScene.loseLife();
+		}
+		
+		this.gameScene.onMoleDeath(this);
+		
+		this.destroyMole();
+	}
+    
+    protected void destroyMole() {
+    	HUD gameHUD = gameScene.getGameHUD();
+		gameHUD.detachChild(this);
+		gameHUD.unregisterTouchArea(this);
+		this.dispose();
+		destroy(physicsConnector);
+    }
+    
+    private void createPhysics(final Camera camera, final PhysicsWorld physicsWorld) {
         body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
         body.setFixedRotation(true);
         
-        physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false) {
+        this.physicsConnector = new PhysicsConnector(this, body, true, false) {
             
         	@Override
             public void onUpdate(float pSecondsElapsed) {
@@ -58,8 +73,6 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 
                 if (getY() > location.getBeginY()) {
                     onDie();
-                    destroy(this);
-                    
                 }
                 
                 else if (getY() < (location.getBeginY() - 150)) {    
@@ -67,7 +80,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
                 	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed)); 
                 }
             }
-        });
+        };
+        
+        physicsWorld.registerPhysicsConnector(physicsConnector);
     }
     
     public void destroy(PhysicsConnector tPhysicsConnector){
@@ -75,6 +90,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	physicsWorld.unregisterPhysicsConnector(tPhysicsConnector);
     	physicsWorld.destroyBody(tPhysicsConnector.getBody());
     }
+    
     public float getSpeed(){	
     	return this.speed;
     }
@@ -95,11 +111,11 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	return this.location;
     }
 
-    public void freeze(){
+    public void freeze() {
     	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0));
     }
     
-    public void unfreeze(){
+    public void unfreeze() {
     	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, this.getSpeed()));
     }
     
@@ -122,16 +138,15 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	}
     }
     
-    public VertexBufferObjectManager getVbo(){
+    public VertexBufferObjectManager getVbo() {
     	return this.gameScene.getVbom();
     }
     
-    public Camera getCamera(){
+    public Camera getCamera() {
     	return this.gameScene.getCamera();
     }
     
-    public PhysicsWorld getPhysicsWorld(){
+    public PhysicsWorld getPhysicsWorld() {
     	return this.gameScene.getPhysicsWorld();
     }
-
 }

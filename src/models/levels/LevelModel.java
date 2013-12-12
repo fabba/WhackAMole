@@ -17,6 +17,7 @@ public class LevelModel {
 	private GameScene gameScene;
 	private RoundModel currentRound;
 	private long startTime;
+	private int molesRemaining;
 	
 	public LevelModel(int numLevel, int numberOfRounds, ArrayList<LocationModel> locations,
 			RoundModel round, GameScene scene) {
@@ -26,6 +27,7 @@ public class LevelModel {
 		this.currentRound = round;
 		this.numberOfRounds = numberOfRounds;
 		this.startTime = System.currentTimeMillis();
+		this.molesRemaining = this.currentRound.getMoles().size();
 		
 		// synchronize startTimes.
 		for (LocationModel location : locations) {
@@ -57,8 +59,17 @@ public class LevelModel {
 			
 			LevelAdapter levelAdapter = new LevelAdapter();
 			levelAdapter.open();
-			currentRound = levelAdapter.getRound(currentRound.getNumRound() + 1, numLevel, locations, gameScene);
+			this.currentRound = levelAdapter.getRound(currentRound.getNumRound() + 1,
+					numLevel, locations, gameScene);
 			levelAdapter.close();
+			
+			this.startTime = System.currentTimeMillis();
+			this.molesRemaining = this.currentRound.getMoles().size();
+			
+			// synchronize startTimes.
+			for (LocationModel location : locations) {
+				location.setStartTime(this.startTime);
+			}
 			
 			return true;
 		} else {
@@ -66,9 +77,14 @@ public class LevelModel {
 		}
 	}
 	
+	public void onMoleDeath(MoleModel mole) {
+		this.molesRemaining--;
+		System.out.println("Remaining moles: " + this.molesRemaining);
+	}
+	
     public void burnOthers(){
-    	for( LocationModel location : locations){
-    		MoleModel mole = location.getActiveMole((float)((System.currentTimeMillis() - startTime) / 1000));
+    	for(LocationModel location : locations){
+    		MoleModel mole = location.getActiveMole();
     		if(mole != null){
     			mole.touched();
     		}

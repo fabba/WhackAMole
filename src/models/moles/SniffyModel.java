@@ -2,39 +2,34 @@ package models.moles;
 
 import models.levels.LocationModel;
 
-import org.andengine.engine.camera.hud.HUD;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
-import com.example.whackamole.ResourcesManager;
 
 public class SniffyModel extends MoleModel {
 
-	private boolean touched;
 	public SniffyModel(LocationModel location, float speed, float time,
 			float appearanceTime, ITiledTextureRegion moleSprite,
 			GameScene scene) {
 		super(location, speed, time, appearanceTime, moleSprite, scene);
-		touched = false;
 	}
 
+	@Override
 	public void onDie() {
-		HUD gameHUD = gameScene.getGameHUD();
-		
-		if(!touched){
-			gameHUD.detachChild(this);
-			gameHUD.unregisterTouchArea(this);
+		if (!isTouched) {
 			gameScene.addToScore(1);
-			this.dispose();
 		}
+				
+		this.gameScene.onMoleDeath(this);
+		
+		this.destroyMole();
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
 		
-		if(pSceneTouchEvent.isActionDown()){
+		if (pSceneTouchEvent.isActionDown()) {
 			touched();
 			return true;
 		}
@@ -42,12 +37,9 @@ public class SniffyModel extends MoleModel {
 	}
 	
 	public void touched(){
-		HUD gameHUD = gameScene.getGameHUD();
 		gameScene.loseLife();
-		gameHUD.detachChild(this);
-		gameHUD.unregisterTouchArea(this);
-		touched = true;
-		this.dispose();
+		isTouched = true;
+		onDie();
 	}
 }
 
