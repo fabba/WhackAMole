@@ -81,10 +81,12 @@ public class ScoreAdapter extends DatabaseAdapter {
     	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     	
     	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME + " order by " + KEY_SCORE + " desc LIMIT 10", null);
+    	
     	if (cursor.moveToFirst()) {
         	do{ 
         		HashMap<String, String> scores = new HashMap<String, String>(2);
-        		scores.put("Name", cursor.getString(1));
+        		Cursor cursorUser = db.rawQuery("SELECT name FROM users WHERE id = " + cursor.getInt(1) , null);
+        		scores.put("Name", cursorUser.getString(0));
       		    scores.put("Score", cursor.getString(4));
       		    data.add(scores);
         	} while (cursor.moveToNext());

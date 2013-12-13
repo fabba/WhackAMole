@@ -102,24 +102,7 @@ public class ResourcesManager
     
     private void loadMenuGraphics()
     {
-    	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-    	menuTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 720, 1280, TextureOptions.BILINEAR);
-    	menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "menu_background.png");
-    	play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play.png");
-    	resume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "resume.png");
-    	settings_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "settings.png");
-    	score_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "score.png");
-    	manual_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "manual.png");
- 
-    	try 
-    	{
-    	    this.menuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-    	    this.menuTextureAtlas.load();
-    	} 
-    	catch (final TextureAtlasBuilderException e)
-    	{
-    	        Debug.e(e);
-    	}
+    	
     }
     
     private void loadMenuAudio()

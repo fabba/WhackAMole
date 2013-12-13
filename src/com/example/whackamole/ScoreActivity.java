@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import models.levels.LevelModel;
+import models.users.UserModel;
+
 import databaseadapter.ScoreAdapter;
 
 import android.os.Bundle;
