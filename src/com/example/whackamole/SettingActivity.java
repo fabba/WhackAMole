@@ -3,6 +3,16 @@ package com.example.whackamole;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.users.UserModel;
+
+import com.example.whackamole.R;
+import com.example.whackamole.R.id;
+import com.example.whackamole.R.layout;
+import com.example.whackamole.R.menu;
+
+import databaseadapter.ScoreAdapter;
+import databaseadapter.UserAdapter;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -33,6 +43,7 @@ public class SettingActivity extends Activity implements OnSeekBarChangeListener
 	private ListView userListView;
 	private TextView userTextField;
 	private int startLevel;
+	private int startRound;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +53,19 @@ public class SettingActivity extends Activity implements OnSeekBarChangeListener
 	
 	private void setContentViewSetting() {
 		setContentView(R.layout.activity_setting);
+	
+		SharedPreferences setting = getSharedPreferences("Setting", MODE_PRIVATE);
+		String name = setting.getString("Name", "");
+		UserAdapter user = new UserAdapter(this);
+		user.open();
+		UserModel userName = user.getUser(name);
+		user.close();
+		ScoreAdapter score = new ScoreAdapter(this);
+		score.open();
+		int[] level = score.getLevel(userName);
+		score.close();
 		SeekBar levelSelect = (SeekBar) findViewById(R.id.startLevelSelect);
-		levelSelect.setMax(5);
+		levelSelect.setMax(level[0]);
 		levelSelect.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override
@@ -69,12 +91,46 @@ public class SettingActivity extends Activity implements OnSeekBarChangeListener
             }
         });
    
-        SharedPreferences setting = getSharedPreferences("Setting", MODE_PRIVATE);
+        
         startLevel = setting.getInt("Startlevel", 1);
         TextView textProgress = (TextView)findViewById(R.id.showStartLevel);
         textProgress.setText(Integer.toString(startLevel));
    
         levelSelect.setProgress(startLevel);
+        
+        SeekBar roundSelect = (SeekBar) findViewById(R.id.startRoundSelect);
+		roundSelect.setMax(level[1]);
+		roundSelect.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                    boolean fromUser) {
+                // TODO Auto-generated method stub
+            	TextView textProgress = (TextView)findViewById(R.id.showStartRound);
+            	textProgress.setText(Integer.toString(progress));
+                startRound = progress;
+
+            }
+        });
+   
+        
+        startRound = setting.getInt("Startround", 1);
+        TextView textProgressRound = (TextView)findViewById(R.id.showStartRound);
+        textProgressRound.setText(Integer.toString(startRound));
+   
+        roundSelect.setProgress(startRound);
 	}
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -90,80 +146,17 @@ public class SettingActivity extends Activity implements OnSeekBarChangeListener
 
 	}
 
-	/* private void setContentViewSelectUser() {
-		setContentView(R.layout.select_user);
-		GamesTable db = new GamesTable(this);
-		db.open();
-		this.userNames = db.getUserNames();
-		db.close();
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, 
-				android.R.layout.simple_list_item_1, this.userNames);
-		this.userListView = (ListView)findViewById(R.id.selectUser);
-		this.userListView.setAdapter(adapter);
-		
-        // ListView Item Click Listener
-        this.userListView.setOnItemClickListener(new OnItemClickListener() {
-
-        	@Override
-        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        		String userName = (String)userListView.getItemAtPosition(position);
-        		  
-				boolean succes = setUserName(view, userName);
-				
-				if (succes) {
-					setContentViewSetting();
-				}
-        	}
-        });
-        
-        this.userTextField = (TextView)findViewById(R.id.userTextField);
-        
-        this.userTextField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			
-			@Override
-			public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-				
-				boolean succes = setUserName(view, view.getText().toString());
-
-				if (succes) {
-					setContentViewSetting();
-				}
-				return true;
-			}
-		});
-	}
-	*/
-	private boolean setUserName(View view, String userName) {
-		if (userName.length() < 1) {
-			((TextView)findViewById(R.id.selectUserError)).setText(
-					"Username must be atleast 1 letter long.");
-			return false;
-		}
-		
-		SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
-		editor.putString("name", userName);
-		editor.commit();
-		return true;
-	}
-	
-	public void addUsers(View v, String userName) {
-		this.userNames.add(userName);
-		this.adapter.notifyDataSetChanged();
-	}
-
     public void onClick(View view) {
     	if (view.getId() == R.id.save) {
     	
 	    	
 	        SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
-		    editor.putInt("Startlevel", startLevel); // TODO hardcoded magic String, fab
+		    editor.putInt("Startlevel", startLevel); // TODO hardcoded magic String, fab\
+		    editor.putInt("Startround", startRound); // TODO hardcoded magic String, fab
 		    editor.commit();
 		    
 	    	Intent intent = new Intent (view.getContext(), MainActivity.class);
 	    	startActivityForResult(intent, 0);
-    	}
-    	else if (view.getId() == R.id.selectUser) {
-    		//setContentViewSelectUser();
     	}
     }
     @Override

@@ -7,6 +7,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
 
+
+
 public class TankyModel extends MoleModel {
 
 	public TankyModel(LocationModel location, float speed, float time,

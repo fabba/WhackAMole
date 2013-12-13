@@ -1,5 +1,11 @@
 package com.example.whackamole;
 
+import com.example.whackamole.R;
+import com.example.whackamole.R.drawable;
+import com.example.whackamole.R.id;
+import com.example.whackamole.R.layout;
+import com.example.whackamole.R.menu;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;

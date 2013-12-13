@@ -1,6 +1,11 @@
 package com.example.whackamole;
 
 import com.example.whackamole.GameActivity;
+import com.example.whackamole.R;
+import com.example.whackamole.R.id;
+import com.example.whackamole.R.layout;
+
+import databaseadapter.UserAdapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -28,8 +33,10 @@ public class MainActivity extends Activity {
 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 	}
 	
 	public void onClick(View view) {

@@ -20,6 +20,8 @@ import models.users.UserModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.entity.scene.IOnSceneTouchListener;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
@@ -28,14 +30,20 @@ import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.HorizontalAlign;
+
+
+import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.badlogic.gdx.math.Vector2;
 import com.example.whackamole.BaseScene;
 import com.example.whackamole.SceneManager.SceneType;
 
 import databaseadapter.ScoreAdapter;
+import databaseadapter.UserAdapter;
 
 public class GameScene extends BaseScene
 {
@@ -48,18 +56,56 @@ public class GameScene extends BaseScene
     public TiledSprite allFore;
     private ArrayList<TiledSprite> spriteLives;
     public LevelModel currentLevel;
+    private boolean endRound;
+    private boolean endGame;
+    private LevelModel levelComplete;
+    private Text clickText;
+    private Text finishText;
+    private Text finish2Text;
+    private Text finish3Text;
+    private UserModel user;
     
 	@Override
     public void createScene() {
+		endRound = false;
+		endGame  = false;
+		this.setOnSceneTouchListener(new IOnSceneTouchListener() {
+
+            @Override
+            public boolean onSceneTouchEvent(Scene pScene,TouchEvent pSceneTouchEvent) {
+            	 if(pSceneTouchEvent.isActionDown()) {
+            		 if( endRound ){
+            			 if (levelComplete.nextRound()) {
+            		    		levelComplete.playRound();
+            		    	} 
+            			 else {
+            		    		loadLevel(levelComplete.getNumLevel() + 1,1);
+            		    	}
+            			 gameHUD.detachChild(clickText);
+            			 gameHUD.detachChild(finishText);
+            			 gameHUD.detachChild(finish2Text);
+            			 gameHUD.detachChild(finish3Text);
+            			 endRound = false;
+            			 return true;
+            		 }
+            		
+            	 }
+               return false;
+            }
+        });
     	 createBackground();
     	 createHUD();
     	 createPhysics();
-    	 loadLevel(1);
+    	 UserAdapter user = new UserAdapter();
+    	 user.open();
+    	 this.user = user.getUser(GameActivity.getName());
+    	 user.close();
+    	 loadLevel(GameActivity.getStartLevel(),GameActivity.getStartRound());
     }
 
     @Override
     public void onBackKeyPressed() {
-    	// TODO
+    	GameActivity.gotTomain();
     }
 
     @Override
@@ -91,7 +137,7 @@ public class GameScene extends BaseScene
     
     private void createHUD() {
         gameHUD = new HUD();
-       
+        
         //allFore = new TiledSprite(0,0,ResourcesManager.getInstance().allFore,vbom);
         // CREATE SCORE TEXT
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
@@ -124,6 +170,33 @@ public class GameScene extends BaseScene
     }
     
     public void loseGame() {
+    	 finishText = new Text(30, 300, resourcesManager.font, "Too bad, ", new TextOptions(HorizontalAlign.LEFT), vbom);
+   	     finish2Text = new Text(30, 360, resourcesManager.font, "you made it until, ", new TextOptions(HorizontalAlign.LEFT), vbom);
+   	     finish3Text = new Text(30, 420, resourcesManager.font, "level : " + currentLevel.getNumLevel() + " and round : " + currentLevel.getNumRound(), new TextOptions(HorizontalAlign.LEFT), vbom);
+	   	 finishText.setSkewCenter(0, 0);    
+	     gameHUD.attachChild(finishText);
+	     finish2Text.setSkewCenter(0, 0);    
+	     gameHUD.attachChild(finish2Text);
+	     finish2Text.setSkewCenter(0, 0);    
+	     gameHUD.attachChild(finish3Text);
+	     try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	     ScoreAdapter db = new ScoreAdapter();
+		 db.open();
+		 db.addScore(currentLevel.getScore(), user, currentLevel);
+		 db.close();
+	     GameActivity.gotToscore();
+		 gameHUD.detachChild(clickText);
+		 gameHUD.detachChild(finishText);
+		 gameHUD.detachChild(finish2Text);
+		 gameHUD.detachChild(finish3Text);
+		 endRound = false;
+
+	     
     }
     
     public void addLife(int addLives) {
@@ -140,7 +213,7 @@ public class GameScene extends BaseScene
     	}
     }
     
-    public void loseLife() {	
+    public void loseLife()  {	
     	lives -= 1;
     	if (lives <= 0) {
     		loseGame();
@@ -154,22 +227,35 @@ public class GameScene extends BaseScene
         		lifeText.setText("");
         	}
     	} else {
-    		lives -= 1;
+    		
     		spriteLives.get(lives).setCurrentTileIndex(1);	
     	}	
     }
     
-    public void onMoleDeath() {
-    	this.currentLevel.onMoleDeath();
+    public void onMoleDeath(MoleModel mole) {
+    	this.currentLevel.onMoleDeath(mole);
     }
     
     public void onRoundEnd(LevelModel level) {
-    	// TODO set score, congratulate user etc. etc.
-    	if (level.nextRound()) {
-    		level.playRound();
-    	} else {
-    		// TODO load next level?
-    	}
+    	 ScoreAdapter db = new ScoreAdapter();
+		 db.open();
+		 db.addScore(level.getScore(), user, level);
+		 db.printAll();
+		 db.close();
+		 
+    	 finishText = new Text(30, 300, resourcesManager.font, "Congratulations, ", new TextOptions(HorizontalAlign.LEFT), vbom);
+   	     finish2Text = new Text(30, 360, resourcesManager.font, "You have finished, ", new TextOptions(HorizontalAlign.LEFT), vbom);
+   	     finish3Text = new Text(30, 420, resourcesManager.font, "level : " + level.getNumLevel() + " and round : " + level.getNumRound(), new TextOptions(HorizontalAlign.LEFT), vbom);
+  
+    	 finishText.setSkewCenter(0, 0);    
+         gameHUD.attachChild(finishText);
+         finish2Text.setSkewCenter(0, 0);    
+         gameHUD.attachChild(finish2Text);
+         finish2Text.setSkewCenter(0, 0);    
+         gameHUD.attachChild(finish3Text);
+
+         levelComplete = level;
+	     endRound = true;
     }
     
     public NormyModel createMoleNormy(LocationModel location,
@@ -346,12 +432,11 @@ public class GameScene extends BaseScene
     	return resourcesManager;
     }
     
-    private void loadLevel(int levelID) {
+    private void loadLevel(int level, int round) {
     	System.out.println("Level loading!");
         
         // get a level from the database
-        currentLevel = LevelModel.loadLevel(1, 1, this);
-        
+        currentLevel = LevelModel.loadLevel(level, round, this);
         // load the next round
         // System.out.println("Switching round : " + currentLevel.nextRound());
         

@@ -7,6 +7,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
 
+
+
 public class SniffyModel extends MoleModel {
 
 	public SniffyModel(LocationModel location, float speed, float time,
@@ -23,7 +25,7 @@ public class SniffyModel extends MoleModel {
 				
 		this.destroyMole();
 		
-		this.gameScene.onMoleDeath();
+		this.gameScene.onMoleDeath(this);
 	}
 
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
@@ -39,6 +41,11 @@ public class SniffyModel extends MoleModel {
 	public void touched(){
 		gameScene.loseLife();
 		isTouched = true;
+		onDie();
+	}
+	
+	@Override
+	public void unavoidableTouched() {
 		onDie();
 	}
 }

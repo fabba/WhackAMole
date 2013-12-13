@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.example.whackamole.GameScene;
+
+
 import models.moles.MoleModel;
 
-import com.example.whackamole.GameScene;
 
 import databaseadapter.LevelAdapter;
 
@@ -77,9 +79,11 @@ public class LevelModel {
 		}
 	}
 	
-	public void onMoleDeath() {
+	public void onMoleDeath(MoleModel mole) {
 		this.molesRemaining--;
 		System.out.println("Remaining moles: " + this.molesRemaining);
+		
+		mole.getLocation().onMoleDeath(mole);
 		
 		if (this.molesRemaining == 0) {
 			gameScene.onRoundEnd(this);
@@ -94,7 +98,7 @@ public class LevelModel {
     	for(LocationModel location : locations){
     		MoleModel mole = location.getActiveMole();
     		if(mole != null){
-    			mole.touched();
+    			mole.unavoidableTouched();
     		}
     	}
     }
@@ -140,6 +144,7 @@ public class LevelModel {
 						if (nextActiveMole != null) {
 							float nextPopUpTime = location.getPopUpTime(nextActiveMole);
 							
+							// TODO remove on final
 							System.out.println("nextPopUpTime: " + nextPopUpTime + " time: " + time);
 							
 							scheduleMolePopUp(nextActiveMole, nextPopUpTime, time);
