@@ -11,6 +11,8 @@ import org.andengine.engine.camera.Camera;
 
 import com.example.whackamole.SceneManager.SceneType;
 
+
+
 public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener {
 
 	@Override

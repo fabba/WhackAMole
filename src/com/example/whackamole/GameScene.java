@@ -31,6 +31,7 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.HorizontalAlign;
 
+
 import com.badlogic.gdx.math.Vector2;
 import com.example.whackamole.BaseScene;
 import com.example.whackamole.SceneManager.SceneType;
@@ -159,8 +160,8 @@ public class GameScene extends BaseScene
     	}	
     }
     
-    public void onMoleDeath() {
-    	this.currentLevel.onMoleDeath();
+    public void onMoleDeath(MoleModel mole) {
+    	this.currentLevel.onMoleDeath(mole);
     }
     
     public void onRoundEnd(LevelModel level) {

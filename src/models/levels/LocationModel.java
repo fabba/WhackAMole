@@ -131,6 +131,12 @@ public class LocationModel {
 		this.startTime = System.currentTimeMillis();
 	}
 	
+	public void onMoleDeath(MoleModel mole) {
+		if (this.activeMole.equals(mole)) {
+			this.activeMole = null;
+		}
+	}
+	
 	public boolean setNextActiveMole() {
 		this.activeMole = getNextActiveMole();
 		

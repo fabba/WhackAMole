@@ -7,4 +7,5 @@ public interface MoleInterface {
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 			float pTouchAreaLocalX, float pTouchAreaLocalY);
 	public void touched();
+	public void unavoidableTouched();
 }

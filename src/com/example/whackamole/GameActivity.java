@@ -14,6 +14,7 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
 
+
 public class GameActivity extends BaseGameActivity
 {
 	private Camera camera;

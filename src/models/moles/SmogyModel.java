@@ -7,6 +7,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
 
+
+
 public class SmogyModel extends MoleModel {
 
 	public SmogyModel(LocationModel location, float speed, float time,

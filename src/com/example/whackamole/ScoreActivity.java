@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.example.whackamole.R;
+import com.example.whackamole.R.id;
+import com.example.whackamole.R.layout;
+import com.example.whackamole.R.menu;
+
 import databaseadapter.ScoreAdapter;
 
 import android.os.Bundle;

@@ -1,6 +1,9 @@
 package com.example.whackamole;
 
 import com.example.whackamole.GameActivity;
+import com.example.whackamole.R;
+import com.example.whackamole.R.id;
+import com.example.whackamole.R.layout;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -16,9 +16,9 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
+
 import android.graphics.Color;
 
-import com.example.whackamole.GameActivity;
 
 /**
  * @author Mateusz Mysliwiec

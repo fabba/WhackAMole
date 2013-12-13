@@ -7,6 +7,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
 
+
+
 public class IcyModel extends MoleModel {
 
 	public IcyModel(LocationModel location, float speed, float time,

@@ -3,6 +3,7 @@ package databaseadapter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+
 import com.example.whackamole.GameScene;
 import com.example.whackamole.WhackAMole;
 

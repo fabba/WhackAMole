@@ -7,6 +7,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
 
+
+
 public class GoldyModel extends MoleModel {
 
 	public GoldyModel(LocationModel location, float speed, float time,

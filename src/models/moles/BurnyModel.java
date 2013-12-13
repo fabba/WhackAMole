@@ -7,6 +7,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
 
+
+
 public class BurnyModel extends MoleModel {
 	
 	public BurnyModel(LocationModel location, float speed, float time,

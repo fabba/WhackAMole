@@ -3,6 +3,11 @@ package com.example.whackamole;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.whackamole.R;
+import com.example.whackamole.R.id;
+import com.example.whackamole.R.layout;
+import com.example.whackamole.R.menu;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.SuppressLint;

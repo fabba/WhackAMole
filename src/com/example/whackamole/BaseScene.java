@@ -5,10 +5,12 @@ import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.Scene;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import android.app.Activity;
-
 import com.example.whackamole.ResourcesManager;
 import com.example.whackamole.SceneManager.SceneType;
+
+
+import android.app.Activity;
+
 
 /**
  * @author Mateusz Mysliwiec

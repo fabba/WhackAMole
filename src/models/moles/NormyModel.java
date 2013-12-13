@@ -7,6 +7,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.example.whackamole.GameScene;
 
+
+
 public class NormyModel extends MoleModel {
 	
 	public NormyModel(LocationModel location, float speed, float time,

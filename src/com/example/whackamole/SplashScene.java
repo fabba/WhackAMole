@@ -7,6 +7,8 @@ import org.andengine.opengl.util.GLState;
 import com.example.whackamole.BaseScene;
 import com.example.whackamole.SceneManager.SceneType;
 
+
+
 /**
  * @author Mateusz Mysliwiec
  * @author www.matim-dev.com
