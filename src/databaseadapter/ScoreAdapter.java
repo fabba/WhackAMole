@@ -77,18 +77,47 @@ public class ScoreAdapter extends DatabaseAdapter {
     	return score;
     }
     
+    public int[] getLevel(UserModel user) {
+    	Cursor cursor = db.rawQuery("SELECT " + KEY_LEVEL_ID +" AND " + KEY_ROUND_ID + " FROM " + TABLE_NAME +
+    			" WHERE " + KEY_USER_ID + " = " + user.getId(), null);
+        
+    	int[] level = new int[2];
+    	if (cursor.moveToFirst()) {
+			level[0] = cursor.getInt(0);
+			level[1] = cursor.getInt(1);
+        }
+    	
+    	return level;
+    }
+    
     public List<Map<String, String>> getAllPoints() {
     	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     	
     	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME + " order by " + KEY_SCORE + " desc LIMIT 10", null);
+    	
     	if (cursor.moveToFirst()) {
         	do{ 
         		HashMap<String, String> scores = new HashMap<String, String>(2);
-        		scores.put("Name", cursor.getString(1));
-      		    scores.put("Score", cursor.getString(4));
+        		Cursor cursorUser = db.rawQuery("SELECT  name FROM users WHERE _id = " + cursor.getInt(1), null);
+        		if (cursorUser.moveToFirst()) {
+                	do{ 
+                		scores.put("Name", cursorUser.getString(0));
+                		scores.put("Score", cursor.getString(4));
+                	}while (cursorUser.moveToNext());
+        		}
       		    data.add(scores);
         	} while (cursor.moveToNext());
         } 
       return data;
+    }
+    
+    public void printAll(){
+    	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME , null);
+    	
+    	if (cursor.moveToFirst()) {
+        	do{ 
+        		System.out.println(cursor.getInt(0) + " " + cursor.getString(1) + " " + cursor.getString(2) + " " + cursor.getString(3) + " " + cursor.getString(4));
+        	}while (cursor.moveToNext());
+    }
     }
 }

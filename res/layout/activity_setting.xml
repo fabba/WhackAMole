@@ -10,32 +10,13 @@
     tools:context=".Setting" >
 
 		
-    <TextView
-        android:id="@+id/currentUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/startLevelSelect"
-        android:layout_marginTop="20dp"
-        android:text="Current User"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Button
-        android:id="@+id/selectUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/currentUser"
-        android:layout_marginTop="20dp"
-        android:onClick="onClick"
-        android:text="Change User" />
-
+    
     <Button
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/startLevelSelect"
-        android:layout_below="@+id/selectUser"
+        android:layout_alignLeft="@+id/startRoundSelect"
+        android:layout_below="@+id/startRoundSelect"
         android:layout_marginTop="20dp"
         android:onClick="onClick"
         android:text="Save" />
@@ -55,6 +36,23 @@
         android:layout_alignLeft="@+id/startLevelSelect"
         android:layout_alignParentTop="true"
         android:layout_marginTop="165dp"
+        android:text="Start Level:"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <SeekBar
+        android:id="@+id/startRoundSelect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView2"
+        android:max="1" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/startLevelSelect"
+        android:layout_below="@+id/startLevelSelect"
         android:text="Start round:"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -62,9 +60,18 @@
         android:id="@+id/showStartLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_marginLeft="23dp"
-        android:layout_toRightOf="@+id/selectUser"
+        android:layout_above="@+id/startLevelSelect"
+        android:layout_centerHorizontal="true"
+        android:text="1"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/showStartRound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView2"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_alignLeft="@+id/showStartLevel"
         android:text="1"
         android:textAppearance="?android:attr/textAppearanceLarge" />
    

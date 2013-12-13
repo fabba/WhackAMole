@@ -1,5 +1,8 @@
 package com.example.whackamole;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import java.io.IOException;
@@ -19,6 +22,8 @@ public class GameActivity extends BaseGameActivity
 {
 	private Camera camera;
 	private ResourcesManager resourcesManager;
+	private static SharedPreferences staticSetting = null;
+	private static Context mContext;
 
     public EngineOptions onCreateEngineOptions()
     {
@@ -34,13 +39,32 @@ public class GameActivity extends BaseGameActivity
     	ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
         resourcesManager = ResourcesManager.getInstance();
         pOnCreateResourcesCallback.onCreateResourcesFinished();
+        staticSetting = this.getPreferences("Setting", MODE_PRIVATE);
+        mContext = this;
     }
 
+    
+    public static void gotToscore(){
+    	Intent intent = new Intent (mContext, ScoreActivity.class);
+    	mContext.startActivity(intent);
+    }
+    
+    public static void gotTomain(){
+    	Intent intent = new Intent (mContext, MainActivity.class);
+    	mContext.startActivity(intent);
+    }
+    
+    private SharedPreferences getPreferences(String string, int modePrivate) {
+		return getSharedPreferences(string,modePrivate);
+	}
+    
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException
     {
     	SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
     }
 
+    
+    
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException
     {
     	 mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 
@@ -49,11 +73,25 @@ public class GameActivity extends BaseGameActivity
     	        {
     	            mEngine.unregisterUpdateHandler(pTimerHandler);
     	            SceneManager.getInstance().loadGameScene(mEngine);
+    	            
     	        }
+				
     	    }));
     	    pOnPopulateSceneCallback.onPopulateSceneFinished();
     }
-
+    
+    public static String getName() {
+		return staticSetting.getString("Name", "Player");
+	}
+	
+	public static int getStartLevel() {
+		return staticSetting.getInt("Startlevel", 1);
+	}
+	
+	public static int getStartRound() {
+		return staticSetting.getInt("Startround", 1);
+	}
+	
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) 
     {  

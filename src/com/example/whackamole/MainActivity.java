@@ -5,6 +5,8 @@ import com.example.whackamole.R;
 import com.example.whackamole.R.id;
 import com.example.whackamole.R.layout;
 
+import databaseadapter.UserAdapter;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,8 +33,10 @@ public class MainActivity extends Activity {
 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 	}
 	
 	public void onClick(View view) {
@@ -42,6 +46,10 @@ public class MainActivity extends Activity {
 		}
 		else if (view.getId() == R.id.setting) {
 	    	Intent intent = new Intent (view.getContext(), SettingActivity.class);
+	    	startActivityForResult(intent,0);
+		}
+		else if (view.getId() == R.id.score) {
+	    	Intent intent = new Intent (view.getContext(), ScoreActivity.class);
 	    	startActivityForResult(intent,0);
 		}
 		else if (view.getId() == R.id.manual) {

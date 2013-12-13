@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+import models.levels.LevelModel;
+import models.users.UserModel;
+
 import com.example.whackamole.R;
 import com.example.whackamole.R.id;
 import com.example.whackamole.R.layout;
 import com.example.whackamole.R.menu;
 
+
 import databaseadapter.ScoreAdapter;
+import databaseadapter.UserAdapter;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -37,10 +43,10 @@ public class ScoreActivity extends Activity {
 		data = db.getAllPoints();
 		ListView score_list= (ListView) findViewById(R.id.listView1);
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
-		                                          android.R.layout.simple_list_item_2,
-		                                          new String[] {"Name", "Score"},
-		                                          new int[] {android.R.id.text1,
-		                                                     android.R.id.text2});
+                android.R.layout.simple_list_item_2,
+                new String[] {"Name", "Score"},
+                new int[] {android.R.id.text1,
+                           android.R.id.text2});
 		score_list.setAdapter(adapter);
 		db.close();
 	}
