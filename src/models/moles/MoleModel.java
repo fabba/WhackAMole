@@ -5,6 +5,9 @@ import models.levels.LocationModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.MoveModifier;
+import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -37,6 +40,8 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     		ITiledTextureRegion moleSprite, LevelModel level) {
     	super(location.getX(), location.getY(), moleSprite, level.getGameScene().getVbom());
     	this.speed = -1; // TODO calculate from time.
+    	// MoveModifier mod1=new MoveModifier(constanttime,fromX,toX,fromY,toY);
+    	// sprite.registerEntityModifier(mod1);
     	this.location = location;
     	
     	this.time = time;
@@ -80,12 +85,40 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 		destroy(physicsConnector);
     }
     
+    private void goUp() {
+    	// TODO finish, test, fix.
+    	
+    	MoveYModifier moveY = new MoveYModifier(appearanceTime, location.getY(), location.getY() - 150){
+        	@Override
+        	protected void onModifierFinished(IEntity pItem) {
+                super.onModifierFinished(pItem);
+                goDown();
+        	}
+        };
+        moveY.setAutoUnregisterWhenFinished(true);
+        this.registerEntityModifier(moveY);
+    }
+    
+    private void goDown() {
+    	// TODO finish, test, fix. 
+    	
+    	MoveYModifier moveY = new MoveYModifier(appearanceTime, location.getY() - 150, location.getY()){
+         	@Override
+         	protected void onModifierFinished(IEntity pItem) {
+                super.onModifierFinished(pItem);
+                onDie();
+         	}
+         };
+         moveY.setAutoUnregisterWhenFinished(true); 
+         registerEntityModifier(moveY);
+    }
+    
     private void createPhysics(final Camera camera, final PhysicsWorld physicsWorld) {
         body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
         body.setFixedRotation(true);
         
         this.physicsConnector = new PhysicsConnector(this, body, true, false) {
-            
+            // TODO replace
         	@Override
             public void onUpdate(float pSecondsElapsed) {
                 super.onUpdate(pSecondsElapsed);
