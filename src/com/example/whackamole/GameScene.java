@@ -124,7 +124,7 @@ public class GameScene extends BaseScene
         
         allFore = new TiledSprite(0,0,ResourcesManager.getInstance().allFore,vbom);
         allFore.setCurrentTileIndex(2);
-        allFore.setZIndex(1);
+        allFore.setZIndex(4);
         gameHUD.attachChild(allFore);
         
         // CREATE SCORE TEXT
@@ -146,7 +146,7 @@ public class GameScene extends BaseScene
         }
         
         gameHUD.attachChild(lifeText);
-        
+        gameHUD.sortChildren();
         camera.setHUD(gameHUD);
       
     }
@@ -162,34 +162,12 @@ public class GameScene extends BaseScene
 
     public void onGameLost() {
     	normalFore();
-    	finishText = new Text(30, 300, resourcesManager.font, "Too bad, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	    finish2Text = new Text(30, 360, resourcesManager.font, "you made it until, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	    finish3Text = new Text(30, 420, resourcesManager.font, "level : " + currentLevel.getNumLevel() + " and round : " + currentLevel.getNumRound(), new TextOptions(HorizontalAlign.LEFT), vbom);
-	   	finishText.setSkewCenter(0, 0);    
-	    gameHUD.attachChild(finishText);
-	    finish2Text.setSkewCenter(0, 0);    
-	    gameHUD.attachChild(finish2Text);
-	    finish3Text.setSkewCenter(0, 0);    
-	    gameHUD.attachChild(finish3Text);
-	    
-	    try {
-	    	Thread.sleep(3000);
-	    } catch (InterruptedException e) {
-			e.printStackTrace();
-	    }
-	     
 	    ScoreAdapter db = new ScoreAdapter();
 		db.open();
 		db.addScore(currentLevel.getScore(), user, currentLevel);
 		db.close();
 	    
 		GameActivity.gotToscore();
-		 
-		gameHUD.detachChild(clickText);
-		gameHUD.detachChild(finishText);
-		gameHUD.detachChild(finish2Text);
-		gameHUD.detachChild(finish3Text);
-		endRound = false;
     }
     
     public void onLivesUpdated(int lives) {
@@ -249,10 +227,12 @@ public class GameScene extends BaseScene
     }
     public void onFreeze() {
     	allFore.setCurrentTileIndex(1);
+    	System.out.println("FREEZZEEEE");
     }
     
     public void onSmog() {
     	allFore.setCurrentTileIndex(0);
+    	allFore.setZIndex(1);
     }
     
     public void blur() {

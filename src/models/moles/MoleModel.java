@@ -190,7 +190,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 	    			resourcesManager.back, gameScene.getVbom());
 	    	back.setZIndex(3);
 	    	gameHUD.attachChild( back);
-	    	
+	    	gameHUD.sortChildren();
 	    	isJumping = true;
     	}
     }

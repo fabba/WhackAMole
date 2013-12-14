@@ -115,13 +115,12 @@ public class ResourcesManager
     private void loadGameGraphics()
     {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-        gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1800, 2800, TextureOptions.BILINEAR);
-        foreTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 750, 4000, TextureOptions.BILINEAR);
+        gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2400, 2800, TextureOptions.BILINEAR);
         background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ground1.png");
         mole_normy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "normy.png", 1, 1);
         mole_burny = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "burny.png", 1, 1);
         back = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "back.png");
-        allFore = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(foreTextureAtlas, activity, "allFore.png", 1, 3);
+        allFore = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "allFore.png", 3,1);
         mole_hatty = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "hatty.png", 1, 2);
         life = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "life.png", 1, 2);
         mole_tanky = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "tanky.png", 1, 3);
