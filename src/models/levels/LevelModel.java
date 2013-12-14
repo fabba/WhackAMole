@@ -16,6 +16,8 @@ import databaseadapter.LevelAdapter;
 public class LevelModel {
 
 	private int numLevel, numberOfRounds, score, molesRemaining, lives;
+	private float freezeTime, freezeDuration, timeOffset;
+	
 	private ArrayList<LocationModel> locations;
 	private GameScene gameScene;
 	private RoundModel currentRound;
@@ -27,6 +29,9 @@ public class LevelModel {
 		this.gameScene = scene;
 		this.currentRound = null;
 		this.numberOfRounds = -1;
+		this.timeOffset = 0;
+		this.freezeTime = -1;
+		this.freezeDuration = 0;
 	}
 	
 	public static LevelModel loadLevel(int numLevel, int numRound, GameScene scene) {
@@ -196,13 +201,49 @@ public class LevelModel {
     	gameScene.onBurn();
     }
     
-    public void freeze(long time) {
-    	for (LocationModel location : locations) {
-    		location.freeze(time);
-    	}
-    	
-    	gameScene.onFreeze();
+    public void freeze(final long time) {
+    	this.freeze(((float)time) / 1000);
     }
+    
+    public void freeze(final float time) {
+		this.freezeTime = (System.currentTimeMillis() - startTime) / 1000;
+		this.freezeDuration = time;
+		this.timeOffset += this.freezeDuration;
+		
+		System.out.println("FREEZING for time: " + time + " at: " + this.freezeTime);
+		
+		for (LocationModel location : locations) {
+    		location.freeze(this.freezeDuration);
+    	}
+		
+		unfreeze(this.freezeTime + this.freezeDuration);
+		
+		gameScene.onFreeze();
+	}
+	
+	public void unfreeze(final float time) {
+		new Timer().schedule(
+			new TimerTask() {
+				
+				@Override
+				public void run() {
+					if (time >= freezeTime + freezeDuration) {
+						freezeTime = -1;
+						freezeDuration = 0;
+						
+						for (LocationModel location : locations) {
+				    		location.unfreeze();
+				    	}
+						
+						gameScene.onUnfreeze();
+						
+						System.out.println("Unfreezing at time: " + time);
+					}
+				}
+			},
+			(long)(time) * 1000
+		);
+	}
     
     public void smog() {
     	gameScene.onSmog();

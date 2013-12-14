@@ -99,9 +99,8 @@ public class SceneManager
     	ResourcesManager.getInstance().loadFonts();
         disposeSplashScene();
         ResourcesManager.getInstance().loadGameResources();
-            gameScene = new GameScene();
-                setScene(gameScene);
-         
+        gameScene = new GameScene();
+        setScene(gameScene);
     }
     
     public void loadMenuScene(final Engine mEngine)

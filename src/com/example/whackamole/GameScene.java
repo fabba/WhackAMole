@@ -8,6 +8,7 @@ import models.levels.LocationModel;
 import models.moles.MoleModel;
 import models.users.UserModel;
 
+import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
@@ -49,6 +50,7 @@ public class GameScene extends BaseScene
     private Text finish2Text;
     private Text finish3Text;
     private UserModel user;
+    private Engine mEngine;
     
 	@Override
     public void createScene() {
@@ -222,12 +224,17 @@ public class GameScene extends BaseScene
     	// TODO some effect?
     }
     
-    public void normalFore(){
+    public void normalFore() {
     	allFore.setCurrentTileIndex(2);
     }
+    
     public void onFreeze() {
     	allFore.setCurrentTileIndex(1);
     	System.out.println("FREEZZEEEE");
+    }
+    
+    public void onUnfreeze() {
+    	this.normalFore();
     }
     
     public void onSmog() {
