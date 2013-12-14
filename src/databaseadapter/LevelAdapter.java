@@ -84,13 +84,14 @@ public class LevelAdapter extends DatabaseAdapter {
     	}
     }
     
-    public RoundModel getRound(int numRound, int numLevel,
-    		ArrayList<LocationModel> locations, GameScene scene) {
+    public RoundModel getRound(int numRound, LevelModel level) {
     	printTableNames();
     	
-    	Cursor cursor = db.rawQuery("SELECT * FROM " + ROUND_TABLE_NAME +
+    	Cursor cursor = db.rawQuery(
+    			"SELECT * FROM " + ROUND_TABLE_NAME +
     			" WHERE " + ROUND_KEY_ROUND_ID + " = " + numRound + 
-    			" AND " + ROUND_KEY_LEVEL_ID + " = " + numLevel, null);
+    			" AND " + ROUND_KEY_LEVEL_ID + " = " + level.getNumLevel(),
+    			null);
         
     	RoundModel round = null;
     	if (cursor.moveToFirst()) {
@@ -115,8 +116,8 @@ public class LevelAdapter extends DatabaseAdapter {
     			System.out.println("Class: " + c);
     		}
     		
-    		ArrayList<MoleModel> moles = scene.createMoles(moleClasses, times, appearanceTimes, locations);
-    		round = new RoundModel(numRound, moles);
+    		ArrayList<MoleModel> moles = level.createMoles(moleClasses, times, appearanceTimes);
+    		round = new RoundModel(numRound, moles, level);
         }
     	
     	return round;
@@ -157,32 +158,4 @@ public class LevelAdapter extends DatabaseAdapter {
         
     	return locations;
     }
-    
-    /*
-    public void printAllGames() {
-    	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_GAMES, null);
-    	if (cursor.moveToFirst()) {
-        	do {
-        		for (int i = 1; i < COLUMNS.length - 1; i++) {
-        			System.out.println(COLUMNS[i] + " : " + cursor.getString(i));
-        		}
-        	} while (cursor.moveToNext());
-        } 
-    } 
-    */
-    /*
-    public ArrayList<String> getUserNames() {
-    	Cursor cursor = db.rawQuery("SELECT " + KEY_NAME + " FROM " + TABLE_GAMES, null);
-    	
-    	ArrayList<String> userNames = new ArrayList<String>();
-    	
-    	if (cursor.moveToFirst()) {
-        	do {
-        		userNames.add(cursor.getString(0));
-        	} while (cursor.moveToNext());
-        }
-    	
-    	return userNames;
-    }
-    */
 }

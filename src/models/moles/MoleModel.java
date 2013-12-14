@@ -1,14 +1,19 @@
 package models.moles;
 
+import models.levels.LevelModel;
 import models.levels.LocationModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.MoveModifier;
+import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
@@ -26,38 +31,86 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     private LocationModel location;
     private Body body;
 	private boolean isJumping;
+	protected boolean isDead;
 	PhysicsConnector physicsConnector;
     protected boolean isTouched;
+    LevelModel level;
 	
-    public MoleModel(LocationModel location, float speed, float time, float appearanceTime,
-    		ITiledTextureRegion moleSprite, GameScene scene) {
-    	super(location.getX(), location.getY(), moleSprite, scene.getVbom());
-    	this.speed = -speed;
+    public MoleModel(LocationModel location, float time, float appearanceTime,
+    		ITiledTextureRegion moleSprite, LevelModel level) {
+    	super(location.getX(), location.getY(), moleSprite, level.getGameScene().getVbom());
+    	this.speed = -1; // TODO calculate from time.
+    	// MoveModifier mod1=new MoveModifier(constanttime,fromX,toX,fromY,toY);
+    	// sprite.registerEntityModifier(mod1);
     	this.location = location;
     	
     	this.time = time;
     	this.appearanceTime = appearanceTime;
         this.isJumping = false;
+    	this.isDead = false;
     	
-    	this.gameScene = scene;
+        this.level = level;
+    	this.gameScene = level.getGameScene();
     }
 
-    public void onDie() {
-		if (!isTouched) {
-			gameScene.loseLife();
+    public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+			float pTouchAreaLocalX, float pTouchAreaLocalY) {
+		
+		if (pSceneTouchEvent.isActionDown()) {
+			touched();
+			return true;
 		}
-		
-		this.destroyMole();
-		
-		this.gameScene.onMoleDeath(this);
+		return false;
+	}
+    
+    public synchronized void onDie() {
+    	if (!this.isDead) {
+			this.isDead = true;
+    		
+			if (!isTouched) {
+				level.loseLives(1);
+			}
+			
+			this.destroyMole();
+			
+			this.level.onMoleDeath(this);
+    	}
 	}
     
     protected void destroyMole() {
-    	HUD gameHUD = gameScene.getGameHUD();
+		HUD gameHUD = gameScene.getGameHUD();
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
 		this.dispose();
 		destroy(physicsConnector);
+    }
+    
+    private void goUp() {
+    	// TODO finish, test, fix.
+    	
+    	MoveYModifier moveY = new MoveYModifier(appearanceTime, location.getY(), location.getY() - 150){
+        	@Override
+        	protected void onModifierFinished(IEntity pItem) {
+                super.onModifierFinished(pItem);
+                goDown();
+        	}
+        };
+        moveY.setAutoUnregisterWhenFinished(true);
+        this.registerEntityModifier(moveY);
+    }
+    
+    private void goDown() {
+    	// TODO finish, test, fix. 
+    	
+    	MoveYModifier moveY = new MoveYModifier(appearanceTime, location.getY() - 150, location.getY()){
+         	@Override
+         	protected void onModifierFinished(IEntity pItem) {
+                super.onModifierFinished(pItem);
+                onDie();
+         	}
+         };
+         moveY.setAutoUnregisterWhenFinished(true); 
+         registerEntityModifier(moveY);
     }
     
     private void createPhysics(final Camera camera, final PhysicsWorld physicsWorld) {
@@ -65,7 +118,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
         body.setFixedRotation(true);
         
         this.physicsConnector = new PhysicsConnector(this, body, true, false) {
-            
+            // TODO replace
         	@Override
             public void onUpdate(float pSecondsElapsed) {
                 super.onUpdate(pSecondsElapsed);
@@ -85,7 +138,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
         physicsWorld.registerPhysicsConnector(physicsConnector);
     }
     
-    public void destroy(PhysicsConnector tPhysicsConnector){
+    public synchronized void destroy(PhysicsConnector tPhysicsConnector){
     	PhysicsWorld physicsWorld = this.gameScene.getPhysicsWorld();
     	physicsWorld.unregisterPhysicsConnector(tPhysicsConnector);
     	physicsWorld.destroyBody(tPhysicsConnector.getBody());
@@ -117,6 +170,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     
     public void unfreeze() {
     	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, this.getSpeed()));
+    	gameScene.normalFore();
     }
     
     public void jump() {
@@ -131,14 +185,17 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 	        
 	        gameHUD.attachChild(this);
 	    	gameHUD.registerTouchArea(this);
-	    	gameHUD.attachChild( new Sprite(location.getX(), location.getY(),
-	    			resourcesManager.back, gameScene.getVbom()));
+	    	this.setZIndex(2);
+	    	Sprite back = new Sprite(location.getX(), location.getY(),
+	    			resourcesManager.back, gameScene.getVbom());
+	    	back.setZIndex(3);
+	    	gameHUD.attachChild( back);
 	    	
 	    	isJumping = true;
     	}
     }
     
-    public void unavoidableTouched() {
+    public synchronized void unavoidableTouched() {
 		touched();
 	}
     
@@ -152,5 +209,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     
     public PhysicsWorld getPhysicsWorld() {
     	return this.gameScene.getPhysicsWorld();
+    }
+    
+    public boolean isDead() {
+    	return this.isDead;
     }
 }

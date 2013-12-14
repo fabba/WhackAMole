@@ -1,51 +1,41 @@
 package models.moles;
 
+import models.levels.LevelModel;
 import models.levels.LocationModel;
 
-import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.ITiledTextureRegion;
-
-import com.example.whackamole.GameScene;
-
-
+import com.example.whackamole.ResourcesManager;
 
 public class SniffyModel extends MoleModel {
 
-	public SniffyModel(LocationModel location, float speed, float time,
-			float appearanceTime, ITiledTextureRegion moleSprite,
-			GameScene scene) {
-		super(location, speed, time, appearanceTime, moleSprite, scene);
+	public SniffyModel(LocationModel location, float time,
+			float appearanceTime, LevelModel level) {
+		super(location, time, appearanceTime,
+				ResourcesManager.getInstance().mole_sniffy, level);
 	}
 
 	@Override
-	public void onDie() {
-		if (!isTouched) {
-			gameScene.addToScore(1);
+	public synchronized void onDie() {
+		if (!this.isDead()) {
+			this.isDead = true;
+			
+			if (!isTouched) {
+				level.addToScore(1);
+			}
+					
+			this.destroyMole();
+			
+			this.level.onMoleDeath(this);
 		}
-				
-		this.destroyMole();
-		
-		this.gameScene.onMoleDeath(this);
-	}
-
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
-			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		
-		if (pSceneTouchEvent.isActionDown()) {
-			touched();
-			return true;
-		}
-		return false;
 	}
 	
-	public void touched(){
-		gameScene.loseLife();
+	public synchronized void touched() {
+		level.loseLives(1);
 		isTouched = true;
 		onDie();
 	}
 	
 	@Override
-	public void unavoidableTouched() {
+	public synchronized void unavoidableTouched() {
 		onDie();
 	}
 }

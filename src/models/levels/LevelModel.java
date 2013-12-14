@@ -1,56 +1,63 @@
 package models.levels;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import com.example.whackamole.GameScene;
 
-
 import models.moles.MoleModel;
-
 
 import databaseadapter.LevelAdapter;
 
 public class LevelModel {
 
-	private int numLevel, numberOfRounds, score;
+	private int numLevel, numberOfRounds, score, molesRemaining, lives;
 	private ArrayList<LocationModel> locations;
 	private GameScene gameScene;
 	private RoundModel currentRound;
 	private long startTime;
-	private int molesRemaining;
 	
-	public LevelModel(int numLevel, int numberOfRounds, ArrayList<LocationModel> locations,
-			RoundModel round, GameScene scene) {
+	private LevelModel(int numLevel, GameScene scene) {
 		this.numLevel = numLevel;
-		this.locations = locations;
+		this.locations = null;
 		this.gameScene = scene;
-		this.currentRound = round;
-		this.numberOfRounds = numberOfRounds;
-		
-		initializeRound();
+		this.currentRound = null;
+		this.numberOfRounds = -1;
 	}
 	
 	public static LevelModel loadLevel(int numLevel, int numRound, GameScene scene) {
+		LevelModel level = new LevelModel(numLevel, scene);
+		
 		LevelAdapter levelAdapter = new LevelAdapter();
 		levelAdapter.open();
-		ArrayList<LocationModel> locations = levelAdapter.getLocations(numLevel);
-		RoundModel round = levelAdapter.getRound(numRound, numLevel, locations, scene);
+		level.setLocations(levelAdapter.getLocations(numLevel));
+		RoundModel round = levelAdapter.getRound(numRound, level);
 		int numberOfRounds = levelAdapter.getNumberOfRounds(numLevel);
 		levelAdapter.close();
 		
-		if (!locations.isEmpty() && round != null) {
-			return new LevelModel(numLevel, numberOfRounds, locations, round, scene);
+		if (!level.getLocations().isEmpty() && round != null) {
+			level.initializeRound(round, numberOfRounds);
 		} else {
-			return null;
+			// TODO raise exception
 		}
+		
+		return level;
 	}
 	
-	private void initializeRound() {
+	private void initializeRound(RoundModel round, int numberOfRounds) {
+		this.currentRound = round;
+		this.numberOfRounds = numberOfRounds;
+		
 		this.startTime = System.currentTimeMillis();
 		this.molesRemaining = this.currentRound.getMoles().size();
 		this.score = 0;
+		this.lives = 6; // TODO load from database?
+		
+		this.gameScene.onLivesUpdated(this.lives);
 		
 		// synchronize startTimes.
 		for (LocationModel location : locations) {
@@ -67,17 +74,86 @@ public class LevelModel {
 			
 			LevelAdapter levelAdapter = new LevelAdapter();
 			levelAdapter.open();
-			this.currentRound = levelAdapter.getRound(currentRound.getNumRound() + 1,
-					numLevel, locations, gameScene);
+			this.currentRound = levelAdapter.getRound(currentRound.getNumRound() + 1, this);
 			levelAdapter.close();
 			
-			initializeRound();
+			initializeRound(this.currentRound, this.numberOfRounds);
 			
 			return true;
 		} else {
 			return false;
 		}
 	}
+
+	public void setLocations(ArrayList<LocationModel> locations) {
+		this.locations = locations;
+	}
+    
+    public MoleModel createMole(Class<?> moleClass, LocationModel location,
+    		float time, float appearanceTime){
+    	
+    	try {
+    		Constructor<?> constructor = moleClass.getConstructor(
+					LocationModel.class, float.class, float.class, LevelModel.class);
+    		return (MoleModel)constructor.newInstance(location, time, appearanceTime, this);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
+	
+    public ArrayList<MoleModel> createMoles(ArrayList<Class<?>> moleClasses,
+    		ArrayList<Float> times, ArrayList<Float> appearanceTimes) {
+    	
+    	ArrayList<MoleModel> moles = new ArrayList<MoleModel>();
+    	int size = moleClasses.size();
+    	
+    	for (int i = 0; i < size; i++) {
+    		float time = times.get(i);
+    		float appearanceTime = appearanceTimes.get(i);
+    		Class<?> moleClass = moleClasses.get(i);
+    		
+	    	ArrayList<Integer> shuffledIndexes = new ArrayList<Integer>();
+	    	for (int j = 0; j < locations.size(); j++) {
+	    		shuffledIndexes.add(j);
+	    	}
+	    	Collections.shuffle(shuffledIndexes);
+	    	
+	    	boolean placementSucceeded = false;
+	    	for (int index : shuffledIndexes) {
+	    		LocationModel location = locations.get(index);
+	    		
+	    		System.out.println("Placement succeeded " + location.isRoomForMole(time, appearanceTime));
+	    		
+	    		if (location.isRoomForMole(time, appearanceTime)) {
+	    			MoleModel mole = createMole(moleClass, location, time, appearanceTime);
+	    			
+	    			if (mole != null) {
+	    				location.addMole(mole);
+	    				moles.add(mole);
+	    			}
+	    			
+	    			placementSucceeded = true;
+	    			break;
+	    		}
+	    	}
+	    	
+	    	if (!placementSucceeded) {
+	    		// TODO throw exception
+	    	}
+    	}
+    	
+    	return moles;
+    }
 	
 	public void onMoleDeath(MoleModel mole) {
 		this.molesRemaining--;
@@ -90,36 +166,54 @@ public class LevelModel {
 		}
 	}
 	
-	public void addToScore(int i) {
-        score += i;
+	public void addLives(int lives) {
+    	this.lives += lives;
+    	
+    	if (this.lives <= 0) {
+    		gameScene.onGameLost();
+    	}
+    	
+    	gameScene.onLivesUpdated(this.lives);
+    }
+    
+    public void loseLives(int lives) {	
+    	addLives(-lives);
     }
 	
-    public void burnOthers(){
-    	for(LocationModel location : locations){
+	public void addToScore(int score) {
+		this.score += score;
+        gameScene.onScoreUpdated();
+    }
+	
+    public void burn() {
+    	for (LocationModel location : locations) {
     		MoleModel mole = location.getActiveMole();
-    		if(mole != null){
+    		if (mole != null) {
     			mole.unavoidableTouched();
     		}
     	}
+    	
+    	gameScene.onBurn();
     }
     
-    public void freeze(long time){
-    	//allFore.setCurrentTileIndex(1);
+    public void freeze(long time) {
     	for (LocationModel location : locations) {
     		location.freeze(time);
     	}
+    	
+    	gameScene.onFreeze();
     }
     
-    public void smog(){
-    	//allFore.setCurrentTileIndex(0);
+    public void smog() {
+    	gameScene.onSmog();
     }
     
-    public void unsmog(){
-    	//allFore.setCurrentTileIndex(2);
+    public void unsmog() {
+    	// TODO implement
     }
     
-    
-    public void blur(){
+    public void blur() {
+    	// TODO implement
     }
     
     private void scheduleMolePopUp(final MoleModel mole, final float time, final float prevTime) {
@@ -198,5 +292,9 @@ public class LevelModel {
 	
 	public int getNumberOfRounds() {
 		return this.numberOfRounds;
+	}
+	
+	public int getLives() {
+		return this.lives;
 	}
 }
