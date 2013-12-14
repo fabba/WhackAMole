@@ -6,21 +6,15 @@ import models.levels.LocationModel;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
-import org.andengine.entity.modifier.MoveModifier;
 import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.example.whackamole.GameScene;
 import com.example.whackamole.ResourcesManager;
 
@@ -29,12 +23,14 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     private float time, speed, appearanceTime;
     protected GameScene gameScene;
     private LocationModel location;
-    private Body body;
-	private boolean isJumping;
+    private boolean isJumping;
 	protected boolean isDead;
 	PhysicsConnector physicsConnector;
     protected boolean isTouched;
     LevelModel level;
+	
+    MoveYModifier moveY;
+	private float from, to, pausedTime;
 	
     public MoleModel(LocationModel location, float time, float appearanceTime,
     		ITiledTextureRegion moleSprite, LevelModel level) {
@@ -51,6 +47,11 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	
         this.level = level;
     	this.gameScene = level.getGameScene();
+    	
+    	this.moveY = null;
+    	this.from = -1;
+    	this.to = -1;
+    	this.pausedTime = -1;
     }
 
     public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
@@ -82,13 +83,23 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
 		this.dispose();
-		destroy(physicsConnector);
+		//destroy(physicsConnector);
+    }
+    
+    private void goFromTo(float from, float to, float time) {
+    	if (from > to) {
+    		goUp(from, to, time);
+    	} else {
+    		goDown(from, to, time);
+    	}
     }
     
     private void goUp() {
-    	// TODO finish, test, fix.
-    	
-    	MoveYModifier moveY = new MoveYModifier(appearanceTime, location.getY(), location.getY() - 150){
+    	goUp(location.getY(), location.getY() - 150, appearanceTime / 2);
+    }
+    
+    private void goUp(float from, float to, float time) {
+    	this.moveY = new MoveYModifier(time, from, to){
         	@Override
         	protected void onModifierFinished(IEntity pItem) {
                 super.onModifierFinished(pItem);
@@ -100,48 +111,24 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     }
     
     private void goDown() {
-    	// TODO finish, test, fix. 
-    	
-    	MoveYModifier moveY = new MoveYModifier(appearanceTime, location.getY() - 150, location.getY()){
+    	goDown(location.getY() - 150, location.getY(), appearanceTime / 2);
+    }
+    
+    private void goDown(float from, float to, float time) {
+    	this.moveY = new MoveYModifier(time, from, to) {
          	@Override
          	protected void onModifierFinished(IEntity pItem) {
-                super.onModifierFinished(pItem);
-                onDie();
+         		gameScene.getEngine().runOnUpdateThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onDie();
+                        moveY = null;
+                    }
+                });
          	}
          };
          moveY.setAutoUnregisterWhenFinished(true); 
          registerEntityModifier(moveY);
-    }
-    
-    private void createPhysics(final Camera camera, final PhysicsWorld physicsWorld) {
-        body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
-        body.setFixedRotation(true);
-        
-        this.physicsConnector = new PhysicsConnector(this, body, true, false) {
-            // TODO replace
-        	@Override
-            public void onUpdate(float pSecondsElapsed) {
-                super.onUpdate(pSecondsElapsed);
-                camera.onUpdate(0.1f);
-
-                if (getY() > location.getBeginY()) {
-                    onDie();
-                }
-                
-                else if (getY() < (location.getBeginY() - 150)) {    
-                	speed = -speed;
-                	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed)); 
-                }
-            }
-        };
-        
-        physicsWorld.registerPhysicsConnector(physicsConnector);
-    }
-    
-    public synchronized void destroy(PhysicsConnector tPhysicsConnector){
-    	PhysicsWorld physicsWorld = this.gameScene.getPhysicsWorld();
-    	physicsWorld.unregisterPhysicsConnector(tPhysicsConnector);
-    	physicsWorld.destroyBody(tPhysicsConnector.getBody());
     }
     
     public float getSpeed(){	
@@ -165,31 +152,41 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     }
 
     public void freeze() {
-    	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0));
+    	if (moveY != null) {
+    		this.from = this.getY();
+    		this.to = moveY.getToValue();
+    		this.pausedTime = moveY.getSecondsElapsed();
+    		this.unregisterEntityModifier(moveY);
+    		moveY = null;
+    	}
+    	System.out.println("Mole: " + this + " is freezing!!!!!");
     }
     
     public void unfreeze() {
-    	body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, this.getSpeed()));
-    	gameScene.normalFore();
+    	if (moveY == null) {
+	    	this.goFromTo(this.from, this.to, (this.appearanceTime / 2) - this.pausedTime);
+	    	this.from = -1;
+	    	this.to = -1;
+	    	this.pausedTime = -1;
+    	}
     }
     
     public void jump() {
     	if (!isJumping) {
-    		createPhysics(this.gameScene.getCamera(), this.gameScene.getPhysicsWorld());
-            this.gameScene.getCamera().setChaseEntity(this);
+    		goUp();
     		
-	        body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, speed));
-	        
 	        HUD gameHUD = this.gameScene.getGameHUD();
-	        ResourcesManager resourcesManager = this.gameScene.getResourcesManager();
 	        
 	        gameHUD.attachChild(this);
 	    	gameHUD.registerTouchArea(this);
 	    	this.setZIndex(2);
-	    	Sprite back = new Sprite(location.getX(), location.getY(),
+	    	
+	    	ResourcesManager resourcesManager = this.gameScene.getResourcesManager();
+	        Sprite back = new Sprite(location.getX(), location.getY(),
 	    			resourcesManager.back, gameScene.getVbom());
 	    	back.setZIndex(3);
 	    	gameHUD.attachChild( back);
+	    	
 	    	gameHUD.sortChildren();
 	    	isJumping = true;
     	}

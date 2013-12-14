@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import java.io.IOException;
 
+import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -24,7 +25,8 @@ public class GameActivity extends BaseGameActivity
 	private ResourcesManager resourcesManager;
 	private static SharedPreferences staticSetting = null;
 	private static Context mContext;
-
+	//private static Engine mEngine;
+	
     public EngineOptions onCreateEngineOptions()
     {
     	camera = new Camera(0, 0, 720, 1280);
@@ -63,8 +65,6 @@ public class GameActivity extends BaseGameActivity
     	SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
     }
 
-    
-    
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException
     {
     	 mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 
@@ -73,7 +73,6 @@ public class GameActivity extends BaseGameActivity
     	        {
     	            mEngine.unregisterUpdateHandler(pTimerHandler);
     	            SceneManager.getInstance().loadGameScene(mEngine);
-    	            
     	        }
 				
     	    }));
@@ -93,20 +92,16 @@ public class GameActivity extends BaseGameActivity
 	}
 	
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) 
-    {  
-        if (keyCode == KeyEvent.KEYCODE_BACK)
-        {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {  
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             SceneManager.getInstance().getCurrentScene().onBackKeyPressed();
         }
         return false; 
     }
     
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
     	super.onDestroy();
             System.exit(0);	
     }
-
 }

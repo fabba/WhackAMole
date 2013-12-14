@@ -12,8 +12,6 @@ public class LocationModel {
 	private MoleModel activeMole;
 	private int activeMoleIndex;
 	private float timeOffset;
-	private float freezeTime;
-	private float freezeDuration;
 	private long startTime;
 	
 	public LocationModel(float x, float y) {
@@ -126,8 +124,6 @@ public class LocationModel {
 		this.activeMole = null;
 		this.activeMoleIndex = -1;
 		this.timeOffset = 0;
-		this.freezeTime = -1;
-		this.freezeDuration = 0;
 		this.startTime = System.currentTimeMillis();
 	}
 	
@@ -160,38 +156,17 @@ public class LocationModel {
 		return this.activeMole;
 	}
 	
-	public void freeze(final long time) {
-		this.freezeTime = (System.currentTimeMillis() - startTime) / 1000;
-		this.freezeDuration = time / 1000;
-		this.timeOffset += this.freezeDuration;
-		
-		System.out.println("FREEZING for time: " + time + " at: " + this.freezeTime);
-		
+	public void freeze(float time) {
 		if (activeMole != null) {
 			activeMole.freeze();
-			unfreeze(this.freezeTime + this.freezeDuration);
 		}
+		
+		this.timeOffset += time;
 	}
 	
-	public void unfreeze(final float time) {
-		new Timer().schedule(
-			new TimerTask() {
-				
-				@Override
-				public void run() {
-					if (time >= freezeTime + freezeDuration) {
-						freezeTime = -1;
-						freezeDuration = 0;
-						
-						if (activeMole != null) {
-							activeMole.unfreeze();
-						}
-						
-						System.out.println("Unfreezing at time: " + time);
-					}
-				}
-			},
-			(long)(time) * 1000
-		);
+	public void unfreeze() {
+		if (activeMole != null) {
+			activeMole.unfreeze();
+		}	
 	}
 }
