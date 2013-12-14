@@ -14,7 +14,7 @@ public class IcyModel extends MoleModel {
 	}
 	
 	public synchronized void touched(){
-		level.freeze(2000);
+		level.freeze(2000l);
 		level.addToScore(2);
 		isTouched = true;
 		onDie();

@@ -17,6 +17,7 @@ public class LevelModel {
 
 	private int numLevel, numberOfRounds, score, molesRemaining, lives;
 	private float freezeTime, freezeDuration, timeOffset;
+	private float smogTime, smogDuration;
 	
 	private ArrayList<LocationModel> locations;
 	private GameScene gameScene;
@@ -32,6 +33,8 @@ public class LevelModel {
 		this.timeOffset = 0;
 		this.freezeTime = -1;
 		this.freezeDuration = 0;
+		this.smogTime = -1;
+		this.smogDuration = 0;
 	}
 	
 	public static LevelModel loadLevel(int numLevel, int numRound, GameScene scene) {
@@ -245,12 +248,39 @@ public class LevelModel {
 		);
 	}
     
-    public void smog() {
+	public void smog(final long time) {
+    	this.smog(((float)time) / 1000);
+    }
+	
+    public void smog(final float time) {
+    	this.smogTime = (System.currentTimeMillis() - startTime) / 1000;
+		this.smogDuration = time;
+		
+		System.out.println("SMOGGING for time: " + time + " at: " + this.smogTime);
+		
+		unsmog(this.smogTime + this.smogDuration);
+		
     	gameScene.onSmog();
     }
     
-    public void unsmog() {
-    	// TODO implement
+    public void unsmog(final float time) {
+    	new Timer().schedule(
+			new TimerTask() {
+				
+				@Override
+				public void run() {
+					if (time >= smogTime + smogDuration) {
+						smogTime = -1;
+						smogDuration = 0;
+						
+						gameScene.onUnsmog();
+						
+						System.out.println("Unsmogging at time: " + time);
+					}
+				}
+			},
+			(long)(time) * 1000
+		);
     }
     
     public void blur() {
