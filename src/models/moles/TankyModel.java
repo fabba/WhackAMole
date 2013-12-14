@@ -1,43 +1,29 @@
 package models.moles;
 
+import models.levels.LevelModel;
 import models.levels.LocationModel;
 
-import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.ITiledTextureRegion;
-
-import com.example.whackamole.GameScene;
-
-
+import com.example.whackamole.ResourcesManager;
 
 public class TankyModel extends MoleModel {
 
-	public TankyModel(LocationModel location, float speed, float time,
-			float appearanceTime, ITiledTextureRegion moleSprite,
-			GameScene scene) {
-		super(location, speed, time, appearanceTime, moleSprite, scene);
-	}
-
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
-			float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		
-		if(pSceneTouchEvent.isActionDown()){
-			touched();
-			return true;
-		}
-		return false;
+	public TankyModel(LocationModel location, float time,
+			float appearanceTime, LevelModel level) {
+		super(location, time, appearanceTime,
+				ResourcesManager.getInstance().mole_tanky, level);
 	}
 	
 	public void touched(){
 		if(getCurrentTileIndex() == 0){
 			setCurrentTileIndex(1);
-			gameScene.addToScore(1);	
+			level.addToScore(1);
 		}
 		else if(getCurrentTileIndex() == 1){
 			setCurrentTileIndex(2);
-			gameScene.addToScore(1);
+			level.addToScore(1);
 		}
 		else{
-			gameScene.addToScore(1);
+			level.addToScore(1);
 	    	isTouched = true;
 	    	onDie();
 		}

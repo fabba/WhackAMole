@@ -1,5 +1,6 @@
 package models.moles;
 
+import models.levels.LevelModel;
 import models.levels.LocationModel;
 
 import org.andengine.engine.camera.Camera;
@@ -9,6 +10,7 @@ import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
@@ -28,20 +30,32 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 	private boolean isJumping;
 	PhysicsConnector physicsConnector;
     protected boolean isTouched;
+    LevelModel level;
 	
-    public MoleModel(LocationModel location, float speed, float time, float appearanceTime,
-    		ITiledTextureRegion moleSprite, GameScene scene) {
-    	super(location.getX(), location.getY(), moleSprite, scene.getVbom());
-    	this.speed = -speed;
+    public MoleModel(LocationModel location, float time, float appearanceTime,
+    		ITiledTextureRegion moleSprite, LevelModel level) {
+    	super(location.getX(), location.getY(), moleSprite, level.getGameScene().getVbom());
+    	this.speed = -1; // TODO calculate from time.
     	this.location = location;
     	
     	this.time = time;
     	this.appearanceTime = appearanceTime;
         this.isJumping = false;
     	
-    	this.gameScene = scene;
+        this.level = level;
+    	this.gameScene = level.getGameScene();
     }
 
+    public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+			float pTouchAreaLocalX, float pTouchAreaLocalY) {
+		
+		if (pSceneTouchEvent.isActionDown()) {
+			touched();
+			return true;
+		}
+		return false;
+	}
+    
     public void onDie() {
 		if (!isTouched) {
 			gameScene.loseLife();
@@ -49,7 +63,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 		
 		this.destroyMole();
 		
-		this.gameScene.onMoleDeath(this);
+		this.level.onMoleDeath(this);
 	}
     
     protected void destroyMole() {

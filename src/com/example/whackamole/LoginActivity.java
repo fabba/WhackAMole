@@ -85,7 +85,8 @@ public class LoginActivity extends Activity {
 					public void onClick(View view) {
 						attemptLogin();
 					}
-				});
+				}
+		);
 	}
 
 	@Override
@@ -153,7 +154,7 @@ public class LoginActivity extends Activity {
 			user.addUser(mEmail, mPassword);
 			user.close();
 			SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
-			editor.putString("Name",mEmail);
+			editor.putString("Name", mEmail);
 			editor.commit();
 			Intent intent = new Intent (this.getBaseContext(), MainActivity.class);
 	    	startActivityForResult(intent,0);
