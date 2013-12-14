@@ -8,7 +8,6 @@ import models.levels.LocationModel;
 import models.moles.MoleModel;
 import models.users.UserModel;
 
-import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
@@ -50,7 +49,10 @@ public class GameScene extends BaseScene
     private Text finish2Text;
     private Text finish3Text;
     private UserModel user;
-    private Engine mEngine;
+    
+    private boolean isFrozen;
+    private boolean isSmogged;
+    private boolean isBurned;
     
 	@Override
     public void createScene() {
@@ -83,11 +85,11 @@ public class GameScene extends BaseScene
     	 createBackground();
     	 createHUD();
     	 createPhysics();
-    	 UserAdapter user = new UserAdapter();
-    	 user.open();
-    	 this.user = user.getUser(GameActivity.getName());
-    	 user.close();
-    	 loadLevel(GameActivity.getStartLevel(),GameActivity.getStartRound());
+    	 UserAdapter userAdapter = new UserAdapter();
+    	 userAdapter.open();
+    	 this.user = userAdapter.getUser(GameActivity.getName());
+    	 userAdapter.close();
+    	 loadLevel(GameActivity.getStartLevel(), GameActivity.getStartRound());
     }
 
     @Override
@@ -134,8 +136,7 @@ public class GameScene extends BaseScene
         scoreText.setSkewCenter(0, 0);    
         scoreText.setText("Score: 0");
         gameHUD.attachChild(scoreText);
-        
-        
+            
         lifeText = new Text(510, 20, resourcesManager.font, "0123456789 *", new TextOptions(HorizontalAlign.LEFT), vbom);
         lifeText.setSkewCenter(0, 0);
         lifeText.setText("");
@@ -154,7 +155,7 @@ public class GameScene extends BaseScene
     }
     
     public void loseGame() {
-    	 normalFore();
+    	 resetFore();
 	     ScoreAdapter db = new ScoreAdapter();
 		 db.open();
 		 db.addScore(currentLevel.getScore(), user, currentLevel);
@@ -163,7 +164,7 @@ public class GameScene extends BaseScene
     }
 
     public void onGameLost() {
-    	normalFore();
+    	resetFore();
 	    ScoreAdapter db = new ScoreAdapter();
 		db.open();
 		db.addScore(currentLevel.getScore(), user, currentLevel);
@@ -193,7 +194,7 @@ public class GameScene extends BaseScene
     }
     
     public void onRoundEnd(LevelModel level) {
-    	 normalFore();
+    	 resetFore();
     	 ScoreAdapter db = new ScoreAdapter();
 		 db.open();
 		 db.addScore(level.getScore(), user, level);
@@ -224,22 +225,48 @@ public class GameScene extends BaseScene
     	// TODO some effect?
     }
     
-    public void normalFore() {
-    	allFore.setCurrentTileIndex(2);
+    public void setFore() {
+    	if (this.isSmogged) {
+    		allFore.setCurrentTileIndex(0);
+        	allFore.setZIndex(1);
+    	}
+    	else if (this.isFrozen) {
+    		allFore.setCurrentTileIndex(1);
+    	}
+    	else if (this.isBurned) {
+    		// TODO create foreground
+    		allFore.setCurrentTileIndex(2);
+    	}
+    	else {
+    		allFore.setCurrentTileIndex(2);
+    	}
+    }
+    
+    private void resetFore() {
+    	this.isFrozen = false;
+    	this.isSmogged = false;
+    	this.isBurned = false;
+    	setFore();
     }
     
     public void onFreeze() {
-    	allFore.setCurrentTileIndex(1);
-    	System.out.println("FREEZZEEEE");
+    	this.isFrozen = true;
+    	this.setFore();
     }
     
     public void onUnfreeze() {
-    	this.normalFore();
+    	this.isFrozen = false;
+    	this.setFore();
     }
     
     public void onSmog() {
-    	allFore.setCurrentTileIndex(0);
-    	allFore.setZIndex(1);
+    	this.isSmogged = true;
+    	this.setFore();
+    }
+    
+    public void onUnsmog() {
+    	this.isSmogged = false;
+    	this.setFore();
     }
     
     public void blur() {

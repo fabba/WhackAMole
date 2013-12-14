@@ -20,7 +20,7 @@ import com.example.whackamole.ResourcesManager;
 
 public abstract class MoleModel extends TiledSprite implements MoleInterface
 {
-    private float time, speed, appearanceTime;
+    private float time, appearanceTime;
     protected GameScene gameScene;
     private LocationModel location;
     private boolean isJumping;
@@ -35,9 +35,6 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     public MoleModel(LocationModel location, float time, float appearanceTime,
     		ITiledTextureRegion moleSprite, LevelModel level) {
     	super(location.getX(), location.getY(), moleSprite, level.getGameScene().getVbom());
-    	this.speed = -1; // TODO calculate from time.
-    	// MoveModifier mod1=new MoveModifier(constanttime,fromX,toX,fromY,toY);
-    	// sprite.registerEntityModifier(mod1);
     	this.location = location;
     	
     	this.time = time;
@@ -83,8 +80,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
 		this.dispose();
-		//destroy(physicsConnector);
-    }
+	}
     
     private void goFromTo(float from, float to, float time) {
     	if (from > to) {
@@ -129,10 +125,6 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
          };
          moveY.setAutoUnregisterWhenFinished(true); 
          registerEntityModifier(moveY);
-    }
-    
-    public float getSpeed(){	
-    	return this.speed;
     }
     
     public float getStartY(){
@@ -185,7 +177,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 	        Sprite back = new Sprite(location.getX(), location.getY(),
 	    			resourcesManager.back, gameScene.getVbom());
 	    	back.setZIndex(3);
-	    	gameHUD.attachChild( back);
+	    	gameHUD.attachChild(back);
 	    	
 	    	gameHUD.sortChildren();
 	    	isJumping = true;
