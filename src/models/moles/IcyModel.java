@@ -13,7 +13,7 @@ public class IcyModel extends MoleModel {
 				ResourcesManager.getInstance().mole_icy, level);
 	}
 	
-	public void touched(){
+	public synchronized void touched(){
 		level.freeze(2000);
 		level.addToScore(2);
 		isTouched = true;

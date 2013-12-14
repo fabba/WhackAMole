@@ -13,7 +13,7 @@ public class HattyModel extends MoleModel {
 				ResourcesManager.getInstance().mole_hatty, level);
 	}
 	
-	public void touched(){
+	public synchronized void touched(){
 		if (getCurrentTileIndex() == 0) {
 			setCurrentTileIndex(1);
 			level.addToScore(1);

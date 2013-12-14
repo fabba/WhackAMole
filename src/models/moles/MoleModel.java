@@ -28,6 +28,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     private LocationModel location;
     private Body body;
 	private boolean isJumping;
+	protected boolean isDead;
 	PhysicsConnector physicsConnector;
     protected boolean isTouched;
     LevelModel level;
@@ -41,6 +42,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	this.time = time;
     	this.appearanceTime = appearanceTime;
         this.isJumping = false;
+    	this.isDead = false;
     	
         this.level = level;
     	this.gameScene = level.getGameScene();
@@ -56,18 +58,22 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 		return false;
 	}
     
-    public void onDie() {
-		if (!isTouched) {
-			gameScene.loseLife();
-		}
-		
-		this.destroyMole();
-		
-		this.level.onMoleDeath(this);
+    public synchronized void onDie() {
+    	if (!this.isDead) {
+			this.isDead = true;
+    		
+			if (!isTouched) {
+				level.loseLives(1);
+			}
+			
+			this.destroyMole();
+			
+			this.level.onMoleDeath(this);
+    	}
 	}
     
     protected void destroyMole() {
-    	HUD gameHUD = gameScene.getGameHUD();
+		HUD gameHUD = gameScene.getGameHUD();
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
 		this.dispose();
@@ -99,7 +105,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
         physicsWorld.registerPhysicsConnector(physicsConnector);
     }
     
-    public void destroy(PhysicsConnector tPhysicsConnector){
+    public synchronized void destroy(PhysicsConnector tPhysicsConnector){
     	PhysicsWorld physicsWorld = this.gameScene.getPhysicsWorld();
     	physicsWorld.unregisterPhysicsConnector(tPhysicsConnector);
     	physicsWorld.destroyBody(tPhysicsConnector.getBody());
@@ -152,7 +158,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	}
     }
     
-    public void unavoidableTouched() {
+    public synchronized void unavoidableTouched() {
 		touched();
 	}
     
@@ -166,5 +172,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     
     public PhysicsWorld getPhysicsWorld() {
     	return this.gameScene.getPhysicsWorld();
+    }
+    
+    public boolean isDead() {
+    	return this.isDead;
     }
 }

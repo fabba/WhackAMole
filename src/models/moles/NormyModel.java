@@ -13,7 +13,7 @@ public class NormyModel extends MoleModel {
 				ResourcesManager.getInstance().mole_normy, level);
 	}
 	
-	public void touched() {
+	public synchronized void touched() {
 		level.addToScore(1);
 		isTouched = true;
     	onDie();

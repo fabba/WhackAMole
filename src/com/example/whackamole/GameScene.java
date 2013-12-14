@@ -38,7 +38,6 @@ public class GameScene extends BaseScene
     private Text scoreText;
     private Text lifeText;
     private PhysicsWorld physicsWorld;
-    private int lives;
     public TiledSprite allFore;
     private ArrayList<TiledSprite> spriteLives;
     public LevelModel currentLevel;
@@ -130,91 +129,70 @@ public class GameScene extends BaseScene
         scoreText.setText("Score: 0");
         gameHUD.attachChild(scoreText);
         
-        lives = 6;
+        
         lifeText = new Text(510, 20, resourcesManager.font, "0123456789 *", new TextOptions(HorizontalAlign.LEFT), vbom);
         lifeText.setSkewCenter(0, 0);
         lifeText.setText("");
         
         spriteLives = new ArrayList<TiledSprite>();
-        for(int i = 0 ; i < 5 ; i++){
+        
+        for (int i = 0 ; i < 5 ; i++) {
         	spriteLives.add(new TiledSprite(600 - 80 * i,20,resourcesManager.life, vbom));
         	gameHUD.attachChild(spriteLives.get(i));
         }
-        if(lives > 5){
-        	for(int i = 1 ; i < 5  ; i++){
-        		spriteLives.get(i).setCurrentTileIndex(1);
-        		lifeText.setText(Integer.toString(lives) + " * ");
-        	}
-        }
+        
         gameHUD.attachChild(lifeText);
         
-        //gameHUD.attachChild(allFore);
-        //allFore.setCurrentTileIndex(2);
         camera.setHUD(gameHUD);
       
     }
     
-    public void loseGame() {
-    	 finishText = new Text(30, 300, resourcesManager.font, "Too bad, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	     finish2Text = new Text(30, 360, resourcesManager.font, "you made it until, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	     finish3Text = new Text(30, 420, resourcesManager.font, "level : " + currentLevel.getNumLevel() + " and round : " + currentLevel.getNumRound(), new TextOptions(HorizontalAlign.LEFT), vbom);
-	   	 finishText.setSkewCenter(0, 0);    
-	     gameHUD.attachChild(finishText);
-	     finish2Text.setSkewCenter(0, 0);    
-	     gameHUD.attachChild(finish2Text);
-	     finish2Text.setSkewCenter(0, 0);    
-	     gameHUD.attachChild(finish3Text);
-	     try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+    public void onGameLost() {
+    	// TODO looks ugly, make pretty?
+    	finishText = new Text(30, 300, resourcesManager.font, "Too bad, ", new TextOptions(HorizontalAlign.LEFT), vbom);
+   	    finish2Text = new Text(30, 360, resourcesManager.font, "you made it until, ", new TextOptions(HorizontalAlign.LEFT), vbom);
+   	    finish3Text = new Text(30, 420, resourcesManager.font, "level : " + currentLevel.getNumLevel() + " and round : " + currentLevel.getNumRound(), new TextOptions(HorizontalAlign.LEFT), vbom);
+	   	finishText.setSkewCenter(0, 0);    
+	    gameHUD.attachChild(finishText);
+	    finish2Text.setSkewCenter(0, 0);    
+	    gameHUD.attachChild(finish2Text);
+	    finish3Text.setSkewCenter(0, 0);    
+	    gameHUD.attachChild(finish3Text);
+	    
+	    try {
+	    	Thread.sleep(3000);
+	    } catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-	     ScoreAdapter db = new ScoreAdapter();
-		 db.open();
-		 db.addScore(currentLevel.getScore(), user, currentLevel);
-		 db.close();
-	     GameActivity.gotToscore();
-		 gameHUD.detachChild(clickText);
-		 gameHUD.detachChild(finishText);
-		 gameHUD.detachChild(finish2Text);
-		 gameHUD.detachChild(finish3Text);
-		 endRound = false;
-
+	    }
 	     
+	    ScoreAdapter db = new ScoreAdapter();
+		db.open();
+		db.addScore(currentLevel.getScore(), user, currentLevel);
+		db.close();
+	    
+		GameActivity.gotToscore();
+		 
+		gameHUD.detachChild(clickText);
+		gameHUD.detachChild(finishText);
+		gameHUD.detachChild(finish2Text);
+		gameHUD.detachChild(finish3Text);
+		endRound = false;
     }
     
-    public void addLife(int addLives) {
-    	lives += addLives;
+    public void onLivesUpdated(int lives) {
     	if (lives > 5) {
-    		for (int i = 1 ; i < 5  ; i++) {
-        		spriteLives.get(i).setCurrentTileIndex(1);
+    		for (int i = 0; i < 5; i++) {
+        		spriteLives.get(i).setCurrentTileIndex(i > 0 ? 1 : 0);
         	}
-    		lifeText.setText(Integer.toString(lives) + " * ");
-    	} else {
-    		for (int i = 1 ; i < lives  ; i++) {
-        		spriteLives.get(i).setCurrentTileIndex(0);
-        	}
-    	}
-    }
-    
-    public void loseLife()  {	
-    	lives -= 1;
-    	if (lives <= 0) {
-    		loseGame();
-    	}
-    	else if (lives > 5) {
-    		lifeText.setText(Integer.toString(lives) + " * ");
-    	}
-    	else if (lives == 5) {
-    		for (int i = 1 ; i < 5  ; i++) {
-        		spriteLives.get(i).setCurrentTileIndex(0);
-        		lifeText.setText("");
-        	}
-    	} else {
     		
-    		spriteLives.get(lives).setCurrentTileIndex(1);	
-    	}	
+    		lifeText.setText(lives + " * ");
+    	} else {
+    		for (int i = 0; i < 5; i++) {
+        		spriteLives.get(i).setCurrentTileIndex(i < lives ? 0 : 1);
+        	}
+    		
+    		lifeText.setText("");
+    	}
     }
     
     public void onMoleDeath(MoleModel mole) {
@@ -228,15 +206,19 @@ public class GameScene extends BaseScene
 		 db.printAll();
 		 db.close();
 		 
-    	 finishText = new Text(30, 300, resourcesManager.font, "Congratulations, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	     finish2Text = new Text(30, 360, resourcesManager.font, "You have finished, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	     finish3Text = new Text(30, 420, resourcesManager.font, "level : " + level.getNumLevel() + " and round : " + level.getNumRound(), new TextOptions(HorizontalAlign.LEFT), vbom);
+    	 finishText = new Text(30, 300, resourcesManager.font, "Congratulations, ",
+    			 new TextOptions(HorizontalAlign.LEFT), vbom);
+   	     finish2Text = new Text(30, 360, resourcesManager.font, "You have finished, ",
+   	    		 new TextOptions(HorizontalAlign.LEFT), vbom);
+   	     finish3Text = new Text(30, 420, resourcesManager.font, "level : " +
+   	    		 level.getNumLevel() + " and round : " + level.getNumRound(),
+   	    		 new TextOptions(HorizontalAlign.LEFT), vbom);
   
     	 finishText.setSkewCenter(0, 0);    
          gameHUD.attachChild(finishText);
          finish2Text.setSkewCenter(0, 0);    
          gameHUD.attachChild(finish2Text);
-         finish2Text.setSkewCenter(0, 0);    
+         finish3Text.setSkewCenter(0, 0);    
          gameHUD.attachChild(finish3Text);
 
          levelComplete = level;
@@ -284,13 +266,14 @@ public class GameScene extends BaseScene
         
         // get a level from the database
         currentLevel = LevelModel.loadLevel(level, round, this);
+        
         // load the next round
         // System.out.println("Switching round : " + currentLevel.nextRound());
         
         System.out.println("Current round: " + currentLevel.getCurrentRound().getNumRound());
         System.out.println("Moles in current round: " + currentLevel.getCurrentRound().getMoles());
         
-        // make the moles jump
+        // play a round
         currentLevel.playRound();
         
     	System.out.println("Loading level: finished");
@@ -320,70 +303,4 @@ public class GameScene extends BaseScene
     	System.out.println("New score = " + scoreAdapter.getScore(user, currentLevel));
     	scoreAdapter.close();
     }
-   
-    /*
-    private void createNewMole(Timer t, int delay, final int listLevel){
-    	t.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-            	int[] coordinates = getRandomPosition();
-            	MoleModel moleNormy = getRandomMole(listLevel, coordinates);
-        		moleNormy.jump();
-        	}
-        }, delay);
-    }
-    private int randInt(int min, int max){
-
-        // Usually this can be a field rather than a method variable
-        Random rand = new Random();
-
-        // nextInt is normally exclusive of the top value,
-        // so add 1 to make it inclusive
-        int randomNum = rand.nextInt((max - min) + 1) + min;
-
-        return randomNum;
-    }
-    
-    private MoleModel getRandomMole(int moleCode,int[] coordinates){
-    	float speed = 1;
-    	MoleModel newMole = null;
-    	switch(moleCode){
-    	case 1:
-    		newMole = createMoleNormy(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	case 2:
-    		newMole = createMoleHatty(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;	
-    	case 3:
-    		newMole = createMoleTanky(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	case 4:
-    		newMole = createMoleGoldy(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	case 5:
-    		newMole = createMoleSpeedy(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	case 6:
-    		newMole = createMoleSniffy(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	case 7:
-    		newMole = createMoleIcy(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	case 8:
-    		newMole = createMoleSmogy(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	case 9:
-    		newMole = createMoleBurny(coordinates[0], coordinates[1] , coordinates[1], speed);
-    		break;
-    	}
-    	return newMole;
-    }
-
-    private int[] getRandomPosition() {
-        int[] xCoordinates = new int[] {43,297,546};
-        int[] yCoordinates = new int[] {250,649,1071 };
-        return new int[] {xCoordinates[randInt(0,2)],yCoordinates[randInt(0,2)]};
-	}
-	*/
 }

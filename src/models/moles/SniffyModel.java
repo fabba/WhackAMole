@@ -14,24 +14,28 @@ public class SniffyModel extends MoleModel {
 	}
 
 	@Override
-	public void onDie() {
-		if (!isTouched) {
-			level.addToScore(1);
+	public synchronized void onDie() {
+		if (!this.isDead()) {
+			this.isDead = true;
+			
+			if (!isTouched) {
+				level.addToScore(1);
+			}
+					
+			this.destroyMole();
+			
+			this.level.onMoleDeath(this);
 		}
-				
-		this.destroyMole();
-		
-		this.level.onMoleDeath(this);
 	}
 	
-	public void touched(){
-		gameScene.loseLife();
+	public synchronized void touched() {
+		level.loseLives(1);
 		isTouched = true;
 		onDie();
 	}
 	
 	@Override
-	public void unavoidableTouched() {
+	public synchronized void unavoidableTouched() {
 		onDie();
 	}
 }

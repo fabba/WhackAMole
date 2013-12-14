@@ -13,7 +13,7 @@ public class SpeedyModel extends MoleModel {
 				ResourcesManager.getInstance().mole_speedy, level);
 	}
 	
-	public void touched(){
+	public synchronized void touched(){
 		level.addToScore(2);
 		isTouched = true;
 		onDie();

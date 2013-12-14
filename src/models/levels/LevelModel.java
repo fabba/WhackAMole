@@ -15,12 +15,11 @@ import databaseadapter.LevelAdapter;
 
 public class LevelModel {
 
-	private int numLevel, numberOfRounds, score;
+	private int numLevel, numberOfRounds, score, molesRemaining, lives;
 	private ArrayList<LocationModel> locations;
 	private GameScene gameScene;
 	private RoundModel currentRound;
 	private long startTime;
-	private int molesRemaining;
 	
 	private LevelModel(int numLevel, GameScene scene) {
 		this.numLevel = numLevel;
@@ -56,6 +55,9 @@ public class LevelModel {
 		this.startTime = System.currentTimeMillis();
 		this.molesRemaining = this.currentRound.getMoles().size();
 		this.score = 0;
+		this.lives = 6; // TODO load from database?
+		
+		this.gameScene.onLivesUpdated(this.lives);
 		
 		// synchronize startTimes.
 		for (LocationModel location : locations) {
@@ -164,8 +166,22 @@ public class LevelModel {
 		}
 	}
 	
-	public void addToScore(int i) {
-        score += i;
+	public void addLives(int lives) {
+    	this.lives += lives;
+    	
+    	if (this.lives <= 0) {
+    		gameScene.onGameLost();
+    	}
+    	
+    	gameScene.onLivesUpdated(this.lives);
+    }
+    
+    public void loseLives(int lives) {	
+    	addLives(-lives);
+    }
+	
+	public void addToScore(int score) {
+		this.score += score;
         gameScene.onScoreUpdated();
     }
 	
@@ -276,5 +292,9 @@ public class LevelModel {
 	
 	public int getNumberOfRounds() {
 		return this.numberOfRounds;
+	}
+	
+	public int getLives() {
+		return this.lives;
 	}
 }

@@ -13,16 +13,15 @@ public class TankyModel extends MoleModel {
 				ResourcesManager.getInstance().mole_tanky, level);
 	}
 	
-	public void touched(){
-		if(getCurrentTileIndex() == 0){
+	public synchronized void touched() {
+		if (getCurrentTileIndex() == 0) {
 			setCurrentTileIndex(1);
 			level.addToScore(1);
 		}
-		else if(getCurrentTileIndex() == 1){
+		else if (getCurrentTileIndex() == 1) {
 			setCurrentTileIndex(2);
 			level.addToScore(1);
-		}
-		else{
+		} else {
 			level.addToScore(1);
 	    	isTouched = true;
 	    	onDie();

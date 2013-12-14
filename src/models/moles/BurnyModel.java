@@ -14,19 +14,23 @@ public class BurnyModel extends MoleModel {
 	}
 	
 	@Override
-	public void onDie() {
-		if (!isTouched) {
-			gameScene.loseLife();
+	public synchronized void onDie() {
+		if (!this.isDead()) {
+			this.isDead = true;
+	    		
+			if (!isTouched) {
+				level.loseLives(1);
+			}
+			
+			this.destroyMole();
+			
+			this.level.onMoleDeath(this);
+			
+			level.burn();
 		}
-		
-		this.destroyMole();
-		
-		this.level.onMoleDeath(this);
-		
-		level.burn();
 	}
 	
-	public void touched() {
+	public synchronized void touched() {
 		level.addToScore(2);
 		isTouched = true;
 		this.onDie();
