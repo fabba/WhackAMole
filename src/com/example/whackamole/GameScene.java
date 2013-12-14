@@ -170,32 +170,13 @@ public class GameScene extends BaseScene
     }
     
     public void loseGame() {
-    	 finishText = new Text(30, 300, resourcesManager.font, "Too bad, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	     finish2Text = new Text(30, 360, resourcesManager.font, "you made it until, ", new TextOptions(HorizontalAlign.LEFT), vbom);
-   	     finish3Text = new Text(30, 420, resourcesManager.font, "level : " + currentLevel.getNumLevel() + " and round : " + currentLevel.getNumRound(), new TextOptions(HorizontalAlign.LEFT), vbom);
-	   	 finishText.setSkewCenter(0, 0);    
-	     gameHUD.attachChild(finishText);
-	     finish2Text.setSkewCenter(0, 0);    
-	     gameHUD.attachChild(finish2Text);
-	     finish2Text.setSkewCenter(0, 0);    
-	     gameHUD.attachChild(finish3Text);
-	     try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+   
 	     ScoreAdapter db = new ScoreAdapter();
 		 db.open();
 		 db.addScore(currentLevel.getScore(), user, currentLevel);
 		 db.close();
 	     GameActivity.gotToscore();
-		 gameHUD.detachChild(clickText);
-		 gameHUD.detachChild(finishText);
-		 gameHUD.detachChild(finish2Text);
-		 gameHUD.detachChild(finish3Text);
-		 endRound = false;
-
+	
 	     
     }
     
@@ -455,9 +436,7 @@ public class GameScene extends BaseScene
     		}
     		System.out.println(".");
     	}
-    	
-    	UserModel user = new UserModel(1, "jelle");
-    	
+    
     	System.out.println("Loading score!");
     	ScoreAdapter scoreAdapter = new ScoreAdapter();
     	scoreAdapter.open();

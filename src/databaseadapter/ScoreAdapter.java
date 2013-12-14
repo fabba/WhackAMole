@@ -78,13 +78,13 @@ public class ScoreAdapter extends DatabaseAdapter {
     }
     
     public int[] getLevel(UserModel user) {
-    	Cursor cursor = db.rawQuery("SELECT " + KEY_LEVEL_ID +" AND " + KEY_ROUND_ID + " FROM " + TABLE_NAME +
+    	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME +
     			" WHERE " + KEY_USER_ID + " = " + user.getId(), null);
         
     	int[] level = new int[2];
     	if (cursor.moveToFirst()) {
-			level[0] = cursor.getInt(0);
-			level[1] = cursor.getInt(1);
+			level[0] = cursor.getInt(2);
+			level[1] = cursor.getInt(3);
         }
     	
     	return level;

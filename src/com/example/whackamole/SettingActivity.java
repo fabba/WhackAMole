@@ -151,6 +151,12 @@ public class SettingActivity extends Activity implements OnSeekBarChangeListener
     	
 	    	
 	        SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
+	        if(startLevel == 0){
+	        	startLevel = 1;
+	        }
+	        if(startRound == 0){
+	        	startRound = 1;
+	        }
 		    editor.putInt("Startlevel", startLevel); // TODO hardcoded magic String, fab\
 		    editor.putInt("Startround", startRound); // TODO hardcoded magic String, fab
 		    editor.commit();
