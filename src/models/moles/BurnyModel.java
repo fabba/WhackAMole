@@ -26,7 +26,7 @@ public class BurnyModel extends MoleModel {
 			
 			this.level.onMoleDeath(this);
 			
-			level.burn();
+			level.burn(500l);
 		}
 	}
 	

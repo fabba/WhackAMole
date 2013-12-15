@@ -3,6 +3,7 @@
 
 import sqlite3 as lite
 import sys
+import random
 
 DATABASE_NAME = "whackAMole.db"
 
@@ -31,6 +32,9 @@ ROUND_TABLE_CONTENT =  DEFAULT_ID_CONTENT + ", roundId integer, levelId integer,
 
 METADATA_TABLE_NAME = "android_metadata"
 METADATA_TABLE_CONTENT = "\"locale\" TEXT DEFAULT 'en_US'"
+
+MOLE_NAMES = ["icy", "hatty", "sniffy", "speedy", "goldy", "tanky", "normy", "burny", "smogy"]
+MOLE_NAME_TO_MOLE_ID = {name : id for id, name in zip(range(len(MOLE_NAMES)), MOLE_NAMES)}
 
 def clearTable(connection, cursor, name):
 	sql = "drop table if exists %s " %(name)
@@ -71,6 +75,12 @@ def insertRecord(cursor, name, *args):
 	else:
 		raise ValueError("No args given to insert in table %s!" %(name))
 
+def insertMole(cursor, roundId, levelId, moleName, time, appearanceTime):
+	if moleName == "speedy":
+		appearanceTime = appearanceTime / 2
+
+	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, MOLE_NAME_TO_MOLE_ID[moleName], time, appearanceTime)
+
 def insertLevels(cursor):
 	insertLevel1(cursor)
 
@@ -78,29 +88,70 @@ def insertLevel1(cursor):
 	insertLocations1(cursor, 1)
 	insertRound1(cursor, 1)
 	insertRound2(cursor, 1)
+	insertRound3(cursor, 1)
 
 def insertRound1(cursor, levelId):
-	# insert first round, with 1 mole with moleId 0 time 0 and appearanceTime 3
 	roundId = 1
-	for moleId in range(9):
-		insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, moleId, 0, 3)
+
+	def insertMoleRound1(moleName, time, appearanceTime):
+		insertMole(cursor, roundId, levelId, moleName, time, appearanceTime)
+			
+	insertMoleRound1("normy", 1, 5)
+
+	insertMoleRound1("normy", 3, 4)
+	insertMoleRound1("normy", 3, 4)
+
+	insertMoleRound1("normy", 6, 3.5)
+	insertMoleRound1("normy", 6, 3.5)
+	insertMoleRound1("normy", 6, 3.5)
+
+	insertMoleRound1("normy", 10, 3)
+	insertMoleRound1("normy", 10, 3)
+	insertMoleRound1("normy", 10, 3)
+	insertMoleRound1("normy", 10, 3)
+
+	insertMoleRound1("speedy", 15, 3)
+
+	insertMoleRound1("speedy", 17, 3)
+
+	insertMoleRound1("smogy", 20, 5)
+
+	insertMoleRound1("icy", 25, 3)
+	insertMoleRound1("tanky", 25, 7)
+	insertMoleRound1("tanky", 25, 7)
+	insertMoleRound1("tanky", 25, 7)
+	insertMoleRound1("tanky", 25, 7)
+	insertMoleRound1("hatty", 25, 7)
+	insertMoleRound1("hatty", 25, 7)
+
+	insertMoleRound1("burny", 32, 3)
+	insertMoleRound1("normy", 32, 5)
+	insertMoleRound1("normy", 32, 5)
+	insertMoleRound1("normy", 32, 5)
+	insertMoleRound1("normy", 32, 5)
+	insertMoleRound1("normy", 32, 5)
+	insertMoleRound1("normy", 32, 5)
+
+	insertMoleRound1("sniffy", 38, 5)
+	insertMoleRound1("sniffy", 38, 5)
+	insertMoleRound1("sniffy", 38, 7)
+	insertMoleRound1("sniffy", 38, 7)
+	insertMoleRound1("normy", 38, 5)
+	insertMoleRound1("normy", 38, 7)
+	insertMoleRound1("normy", 38, 7)
+
+	insertMoleRound1("goldy", 44, 6)	
 
 def insertRound2(cursor, levelId):
 	roundId = 2
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 0, 0, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 1, 0, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 0, 0, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 1, 0, 3)
+	simpleRoundGenerator(cursor, levelId, roundId, 5, 5, 3, 2, 3, 0)
 
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 2, 12, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 3, 12, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 2, 12, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 3, 12, 3)
-
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 4, 24, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 5, 24, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 4, 24, 3)
-	insertRecord(cursor, ROUND_TABLE_NAME, None, roundId, levelId, 5, 24, 3)
+def insertRound3(cursor, levelId):
+	roundId = 3
+	time = 0
+	appearanceTime = 3
+	for moleName in MOLE_NAMES:
+		insertMole(cursor, roundId, levelId, moleName, time, appearanceTime)
 
 def insertLocations1(cursor, levelId):
 	verticalLocations = [250, 649, 1071]
@@ -109,6 +160,14 @@ def insertLocations1(cursor, levelId):
 	for horizontalLoc in horizontalLocations:
 		for verticalLoc in verticalLocations:
 			insertRecord(cursor, LOCATION_TABLE_NAME, None, levelId, horizontalLoc, verticalLoc)
+
+def simpleRoundGenerator(cursor, levelId, roundId, numWaves, waveDuration, numMolesPerWave, variation, appearanceTime, seed):
+	randomGen = random.Random()
+	randomGen.seed(seed)
+
+	for time in range(0, numWaves * waveDuration + 1, waveDuration):
+		for i in range(numMolesPerWave):
+			insertMole(cursor, roundId, levelId, randomGen.choice(MOLE_NAMES), time + randomGen.random() * variation, appearanceTime)
 
 if __name__ == "__main__":
 	connection = lite.connect(DATABASE_NAME)

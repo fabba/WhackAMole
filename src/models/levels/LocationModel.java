@@ -103,7 +103,7 @@ public class LocationModel {
 				float curMoleGoUpTime = getPopUpTime(curMole);
 				float curMoleGoDownTime = curMoleGoUpTime + curMole.getAppearanceTime(); 
 				
-				if (curMoleGoDownTime < time) {
+				if (curMoleGoDownTime <= time) {
 					index = i;
 				}
 				else if (curMoleGoUpTime > time) {
@@ -154,6 +154,12 @@ public class LocationModel {
 	
 	public MoleModel getActiveMole() {
 		return this.activeMole;
+	}
+	
+	public void burn() {
+		if (activeMole != null) {
+			activeMole.unavoidableTouched();
+		}
 	}
 	
 	public void freeze(float time) {

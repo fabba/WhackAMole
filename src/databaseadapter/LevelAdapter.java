@@ -56,14 +56,14 @@ public class LevelAdapter extends DatabaseAdapter {
     public LevelAdapter(Context context) {
         super(context);
         
-        typeToMoleClass.put(6, NormyModel.class);
-        typeToMoleClass.put(1, HattyModel.class);
-        typeToMoleClass.put(5, TankyModel.class);
-        typeToMoleClass.put(2, SniffyModel.class);
-        typeToMoleClass.put(4, GoldyModel.class);
-        typeToMoleClass.put(3, SpeedyModel.class);
-        typeToMoleClass.put(7, BurnyModel.class);
         typeToMoleClass.put(0, IcyModel.class);
+        typeToMoleClass.put(1, HattyModel.class);
+        typeToMoleClass.put(2, SniffyModel.class);
+        typeToMoleClass.put(3, SpeedyModel.class);
+        typeToMoleClass.put(4, GoldyModel.class);
+        typeToMoleClass.put(5, TankyModel.class);
+        typeToMoleClass.put(6, NormyModel.class);
+        typeToMoleClass.put(7, BurnyModel.class);
         typeToMoleClass.put(8, SmogyModel.class);
         
         for (Integer type : typeToMoleClass.keySet()) {

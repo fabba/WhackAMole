@@ -13,8 +13,15 @@ public class SmogyModel extends MoleModel {
 				ResourcesManager.getInstance().mole_smogy, level);
 	}
 	
-	public synchronized void touched(){
+	public synchronized void touched() {
 		level.smog(2000l);
+		level.addToScore(2);
+		isTouched = true;
+		onDie();
+	}
+	
+	@Override
+	public synchronized void unavoidableTouched() {
 		level.addToScore(2);
 		isTouched = true;
 		onDie();

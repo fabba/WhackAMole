@@ -220,11 +220,6 @@ public class GameScene extends BaseScene
 	     endRound = true;
     }
     
-    
-    public void onBurn() {
-    	// TODO some effect?
-    }
-    
     public void setFore() {
     	if (this.isSmogged) {
     		allFore.setCurrentTileIndex(0);
@@ -234,8 +229,7 @@ public class GameScene extends BaseScene
     		allFore.setCurrentTileIndex(1);
     	}
     	else if (this.isBurned) {
-    		// TODO create foreground
-    		allFore.setCurrentTileIndex(2);
+    		allFore.setCurrentTileIndex(3);
     	}
     	else {
     		allFore.setCurrentTileIndex(2);
@@ -266,6 +260,16 @@ public class GameScene extends BaseScene
     
     public void onUnsmog() {
     	this.isSmogged = false;
+    	this.setFore();
+    }
+    
+    public void onBurn() {
+    	this.isBurned = true;
+    	this.setFore();
+    }
+    
+    public void onUnburn() {
+    	this.isBurned = false;
     	this.setFore();
     }
     
