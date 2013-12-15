@@ -3,8 +3,8 @@ WhackAMole
 
 How To Run:
 
-clone repo in workspace of eclipse.
-launch eclipse, load project and run.
+- Clone repo in workspace of eclipse.
+- Launch eclipse, load project and run.
 
 Naitive app studio project UvA
 
