@@ -76,7 +76,7 @@ Moles ( Name / Ability / Points )
 
 - Icy / Need 1 click to kill and will freeze the rest of the moles for 2 seconds / 1
 
-- Smogy / Need 1 click to kill and will blur your screen for 3 seconds if not killed in a certain time / 2
+- Smogy / Need 1 click to kill and will blur your screen for 3 seconds / 2
 
 
 
