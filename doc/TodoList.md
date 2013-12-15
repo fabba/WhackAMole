@@ -10,5 +10,4 @@ TODO
 - Fix some overall visual effects (moles + parts of the background overlapping effects).
 - Tons of Todo's in the code itself.
 - Should probably rename LevelModel to GameModel and move some logic to RoundModel.
-- Remove keyboard when going from login to menu.
 - (EXTRA) Select specific level + round?
