@@ -1,10 +1,14 @@
 WhackAMole
 ==========
 
+How To Run:
+
+clone repo in workspace of eclipse.
+launch eclipse, load project and run.
+
 Naitive app studio project UvA
 
-We implement a game of whack the mole. The purpose of the game is that when you see a mole you must whack ( click ) it.
-
+For our second project we build the game whack a mole.
 
 Features
 
@@ -14,8 +18,6 @@ Features
 
 - Our app consist of four levels with different backgrounds and different unique moles. If you finished these four levels there will be more moles and the moles will disappear quicker.
 
-- The moles will be generated random
-
 - When the users quits the game, it can resume the game at the start of a level.
 
 - Our app consist of title, a logo and one button that starts a new game.
@@ -24,12 +26,11 @@ Features
 
 - There will be a page with a manual on how to play the game and what the ability is of each mole
 
-- At the start you have five lives, for each mole you miss one life will be deleted. If all your lives are gone, you're score will be displayed and you will be linked to the highscore.
+- At the start you have six lives, for each mole you miss one life will be deleted. If all your lives are gone, you're score will be displayed and you will be linked to the highscore.
 
-- At the end of each round ( four levels ) you get one life extra.
+- At the end of each round you get one life extra.
 
-- If you finish a round ( four levels ) at the settings you can decide to always start at the next round. The points will be equal to if you wack all the moles in the previous rounds and the user will start with 5 lives
-
+- If you finish a level ( four rounds ), then you can continue in the next level, even though you quit the game.
 
 Technical requirements
 
@@ -65,17 +66,17 @@ Moles ( Name / Ability / Points )
 
 - Tanky / Need 3 clicks to kill / 3
 
-- Sniffy / Lose life if touched / 0 
+- Sniffy / Lose life if touched / 1 if not touched
 
-- Fasty / Need 1 click to kill and appearance time is shorter / 2
+- Speedy / Need 1 click to kill and appearance time is shorter / 2
 
 - Goldy / Need 1 click to kill and lots of poits / 5
 
-- Burny / Need 1 click to kill and will burn others if burny is not killed in a certain time( this will cost you a life ) /2
+- Burny / Need 1 click to kill and will burn other moles (equivalant to 1 click) / 2
 
-- Icy / Need 1 click to freeze the rest of the moles ( appearance time will be stuck for 2 seconds )/ 1
+- Icy / Need 1 click to kill and will freeze the rest of the moles for 2 seconds / 1
 
-- Smogy / Need 1 click to kill and will blur your screen if not killed in a certain time / 2
+- Smogy / Need 1 click to kill and will blur your screen for 3 seconds if not killed in a certain time / 2
 
 
 
