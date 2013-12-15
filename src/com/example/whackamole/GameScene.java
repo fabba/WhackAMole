@@ -223,16 +223,19 @@ public class GameScene extends BaseScene
     public void setFore() {
     	if (this.isSmogged) {
     		allFore.setCurrentTileIndex(0);
-        	allFore.setZIndex(1);
+        	allFore.setZIndex(3);
     	}
     	else if (this.isFrozen) {
     		allFore.setCurrentTileIndex(1);
+    		allFore.setZIndex(3);
     	}
     	else if (this.isBurned) {
     		allFore.setCurrentTileIndex(3);
+    		allFore.setZIndex(3);
     	}
     	else {
     		allFore.setCurrentTileIndex(2);
+    		allFore.setZIndex(3);
     	}
     }
     
