@@ -14,7 +14,7 @@ public class SmogyModel extends MoleModel {
 	}
 	
 	public synchronized void touched() {
-		level.smog(2000l);
+		level.smog(3000l);
 		level.addToScore(2);
 		isTouched = true;
 		onDie();
