@@ -3,8 +3,11 @@ WhackAMole
 
 How To Run:
 
-- Clone repo in workspace of eclipse.
-- Launch eclipse, load project and run.
+* Clone repo in workspace of eclipse.
+* Get https://github.com/RealMayo/AndEngine and https://github.com/RealMayo/AndEnginePhysicsBox2DExtension.
+* Launch eclipse, load project.
+* Correctly link AndEngine (and extension) to project.
+* Run project.
 
 Naitive app studio project UvA
 
