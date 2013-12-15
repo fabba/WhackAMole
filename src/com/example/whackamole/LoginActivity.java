@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -54,6 +55,7 @@ public class LoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
@@ -75,9 +77,6 @@ public class LoginActivity extends Activity {
 					}
 				});
 
-		mLoginFormView = findViewById(R.id.login_form);
-		mLoginStatusView = findViewById(R.id.login_status);
-		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 
 		findViewById(R.id.sign_in_button).setOnClickListener(
 				new View.OnClickListener() {
@@ -128,9 +127,8 @@ public class LoginActivity extends Activity {
 		UserAdapter user = new UserAdapter();
 		user.open();
 		String pass = user.getPassword(mEmail);
-		user.close();
 		if( pass != null){
-			if ( !(pass.equals(mPassword))){
+			if ( !BCrypt.checkpw(mPassword, pass)){
 				mPasswordView.setError(getString(R.string.action_forgot_password));
 				focusView = mPasswordView;
 				cancel = true;
@@ -150,8 +148,8 @@ public class LoginActivity extends Activity {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			user.open();
-			user.addUser(mEmail, mPassword);
+			String hashed = BCrypt.hashpw(mPassword, BCrypt.gensalt());
+			user.addUser(mEmail, hashed);
 			user.close();
 			SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
 			editor.putString("Name", mEmail);
