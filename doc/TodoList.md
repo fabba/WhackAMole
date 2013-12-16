@@ -1,9 +1,9 @@
 TODO
 ==========
 
-- Fix the crash at the end of a level, and implement nextLevel()
 - Create more rounds and especially levels (and play test them quite a few times).
 - Get time of current game, and not system time! (When pausing a game this can cause serious issues).
+- Fix background bug when switching from game to menu and back again.
 - Actualy make login work.
 - Save game states.
 - Allow resume.

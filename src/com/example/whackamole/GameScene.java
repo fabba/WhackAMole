@@ -62,34 +62,42 @@ public class GameScene extends BaseScene
 
             @Override
             public boolean onSceneTouchEvent(Scene pScene,TouchEvent pSceneTouchEvent) {
-            	 if(pSceneTouchEvent.isActionDown()) {
-            		 if( endRound ){
-            			 if (levelComplete.nextRound()) {
-            		    		levelComplete.playRound();
-            		    	} 
-            			 else {
-            		    		loadLevel(levelComplete.getNumLevel() + 1,1);
-            		    	}
-            			 gameHUD.detachChild(clickText);
-            			 gameHUD.detachChild(finishText);
-            			 gameHUD.detachChild(finish2Text);
-            			 gameHUD.detachChild(finish3Text);
-            			 endRound = false;
-            			 return true;
-            		 }
-            		
-            	 }
-               return false;
+            	if(pSceneTouchEvent.isActionDown() && endRound) {
+        			if (levelComplete.nextRound()) {
+    		    		levelComplete.playRound();
+    		    	} 
+        			else if (loadLevel(levelComplete.getNumLevel() + 1, 1)) {
+        		        currentLevel.playRound();
+        		    }
+        			else {
+        				// TODO Congratulate user first!
+        				GameActivity.gotTomain();
+        			}
+        			
+        			gameHUD.detachChild(clickText);
+        			gameHUD.detachChild(finishText);
+        			gameHUD.detachChild(finish2Text);
+        			gameHUD.detachChild(finish3Text);
+        			endRound = false;
+        			return true;
+            	}
+            	return false;
             }
         });
-    	 createBackground();
-    	 createHUD();
-    	 createPhysics();
-    	 UserAdapter userAdapter = new UserAdapter();
-    	 userAdapter.open();
-    	 this.user = userAdapter.getUser(GameActivity.getName());
-    	 userAdapter.close();
-    	 loadLevel(GameActivity.getStartLevel(), GameActivity.getStartRound());
+		
+    	createBackground();
+    	createHUD();
+    	createPhysics();
+    	
+    	UserAdapter userAdapter = new UserAdapter();
+    	userAdapter.open();
+    	this.user = userAdapter.getUser(GameActivity.getName());
+    	userAdapter.close();
+    	
+    	loadLevel(GameActivity.getStartLevel(), GameActivity.getStartRound());
+    	
+    	// play a round
+        currentLevel.playRound();
     }
 
     @Override
@@ -150,8 +158,7 @@ public class GameScene extends BaseScene
         
         gameHUD.attachChild(lifeText);
         gameHUD.sortChildren();
-        camera.setHUD(gameHUD);
-      
+        camera.setHUD(gameHUD); 
     }
     
     public void loseGame() {
@@ -198,7 +205,7 @@ public class GameScene extends BaseScene
     	 ScoreAdapter db = new ScoreAdapter();
 		 db.open();
 		 db.addScore(level.getScore(), user, level);
-		 db.printAll();
+		 db.printAll(); // TODO remove????
 		 db.close();
 		 
     	 finishText = new Text(30, 300, resourcesManager.font, "Congratulations, ",
@@ -299,44 +306,28 @@ public class GameScene extends BaseScene
     	return resourcesManager;
     }
     
-    private void loadLevel(int level, int round) {
+    private boolean loadLevel(int level, int round) {
     	System.out.println("Level loading!");
         
         // get a level from the database
         currentLevel = LevelModel.loadLevel(level, round, this);
         
-        // load the next round
-        // System.out.println("Switching round : " + currentLevel.nextRound());
+        System.out.println("Loading level: finished");
         
-        System.out.println("Current round: " + currentLevel.getCurrentRound().getNumRound());
-        System.out.println("Moles in current round: " + currentLevel.getCurrentRound().getMoles());
-        
-        // play a round
-        currentLevel.playRound();
-        
-    	System.out.println("Loading level: finished");
+        // TODO remove on final (debug info).
+        if (currentLevel != null) {
+	        System.out.println("Current round: " + currentLevel.getCurrentRound().getNumRound());
+	        System.out.println("Moles in current round: " + currentLevel.getCurrentRound().getMoles());
+	        
+	    	for (LocationModel location : currentLevel.getLocations()) {
+	    		System.out.print("Moles in location " + location.getX() + " , " + location.getY() + " ");
+	    		for (MoleModel mole : location.getMoles()) {
+	    			System.out.print(mole.getClass() + ", ");
+	    		}
+	    		System.out.println(".");
+	    	}
+        }
     	
-    	for (LocationModel location : currentLevel.getLocations()) {
-    		System.out.print("Moles in location " + location.getX() + " , " + location.getY() + " ");
-    		for (MoleModel mole : location.getMoles()) {
-    			System.out.print(mole.getClass() + ", ");
-    		}
-    		System.out.println(".");
-    	}
-    
-    	System.out.println("Loading score!");
-    	ScoreAdapter scoreAdapter = new ScoreAdapter();
-    	scoreAdapter.open();
-    	int score = scoreAdapter.getScore(user, currentLevel);
-    	System.out.println("Loading score: finished");
-    	
-    	System.out.println("Loaded score = " + score);
-    	
-    	System.out.println("Adding new score!");
-    	boolean succesScore = scoreAdapter.addScore(score + 1, user, currentLevel);
-    	System.out.println("Finished adding new score!" + succesScore);
-    	
-    	System.out.println("New score = " + scoreAdapter.getScore(user, currentLevel));
-    	scoreAdapter.close();
+    	return currentLevel != null;
     }
 }

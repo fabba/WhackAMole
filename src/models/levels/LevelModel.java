@@ -58,7 +58,7 @@ public class LevelModel {
 			}
 			
 		} else {
-			// TODO raise exception
+			return null;
 		}
 		
 		return level;
