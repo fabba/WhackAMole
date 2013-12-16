@@ -75,7 +75,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	}
 	}
     
-    protected void destroyMole() {
+    protected synchronized void destroyMole() {
 		HUD gameHUD = gameScene.getGameHUD();
 		gameHUD.detachChild(this);
 		gameHUD.unregisterTouchArea(this);
@@ -171,13 +171,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 	        
 	        gameHUD.attachChild(this);
 	    	gameHUD.registerTouchArea(this);
-	    	this.setZIndex(2);
-	    	
-	    	ResourcesManager resourcesManager = this.gameScene.getResourcesManager();
-	        Sprite back = new Sprite(location.getX(), location.getY(),
-	    			resourcesManager.back, gameScene.getVbom());
-	    	back.setZIndex(3);
-	    	gameHUD.attachChild(back);
+	    	this.setZIndex(1);
 	    	
 	    	gameHUD.sortChildren();
 	    	

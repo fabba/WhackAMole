@@ -96,6 +96,18 @@ public class GameScene extends BaseScene
     	
     	loadLevel(GameActivity.getStartLevel(), GameActivity.getStartRound());
     	
+    	// add a small overlapping patch on the background, between this patch
+    	// and the background, the moles will appear.
+    	for (LocationModel location : this.currentLevel.getLocations()) {
+	    	ResourcesManager resourcesManager = this.getResourcesManager();
+	        Sprite back = new Sprite(location.getX(), location.getY(),
+	    			resourcesManager.back, this.vbom);
+	    	back.setZIndex(2);
+	    	gameHUD.attachChild(back);
+    	}
+    	
+    	gameHUD.sortChildren();
+    	
     	// play a round
         currentLevel.playRound();
     }
@@ -284,6 +296,7 @@ public class GameScene extends BaseScene
     }
     
     public void blur() {
+   
     }
     
     public Camera getCamera() {
