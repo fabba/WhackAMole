@@ -36,24 +36,29 @@ public class MainActivity extends Activity {
 		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
 	}
 	
 	public void onClick(View view) {
 		if (view.getId() == R.id.newGame) {
-			Intent intent = new Intent (view.getContext(), GameActivity.class);
+			Intent intent = new Intent(view.getContext(), GameActivity.class);
+	    	GameScene.shouldResume(false);
+			startActivityForResult(intent,0);
+		}
+		else if (view.getId() == R.id.resume) {
+	    	Intent intent = new Intent(view.getContext(), GameActivity.class);
+	    	GameScene.shouldResume(true);
 	    	startActivityForResult(intent,0);
 		}
 		else if (view.getId() == R.id.setting) {
-	    	Intent intent = new Intent (view.getContext(), SettingActivity.class);
+	    	Intent intent = new Intent(view.getContext(), SettingActivity.class);
 	    	startActivityForResult(intent,0);
 		}
 		else if (view.getId() == R.id.score) {
-	    	Intent intent = new Intent (view.getContext(), ScoreActivity.class);
+	    	Intent intent = new Intent(view.getContext(), ScoreActivity.class);
 	    	startActivityForResult(intent,0);
 		}
 		else if (view.getId() == R.id.manual) {
-	    	Intent intent = new Intent (view.getContext(), ManualActivity.class);
+	    	Intent intent = new Intent(view.getContext(), ManualActivity.class);
 	    	startActivityForResult(intent,0);
 		}
 	}

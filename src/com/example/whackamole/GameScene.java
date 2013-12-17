@@ -33,6 +33,8 @@ import databaseadapter.UserAdapter;
 
 public class GameScene extends BaseScene
 {
+	private static boolean shouldResume = false;
+	
     private HUD gameHUD;
 
     private Text scoreText;
@@ -58,8 +60,9 @@ public class GameScene extends BaseScene
     public void createScene() {
 		endRound = false;
 		endGame  = false;
+		
 		this.setOnSceneTouchListener(new IOnSceneTouchListener() {
-
+			
             @Override
             public boolean onSceneTouchEvent(Scene pScene,TouchEvent pSceneTouchEvent) {
             	if(pSceneTouchEvent.isActionDown() && endRound) {
@@ -92,9 +95,26 @@ public class GameScene extends BaseScene
     	UserAdapter userAdapter = new UserAdapter();
     	userAdapter.open();
     	this.user = userAdapter.getUser(GameActivity.getName());
-    	userAdapter.close();
     	
-    	loadLevel(GameActivity.getStartLevel(), GameActivity.getStartRound());
+    	// if this game should resume from the last completed round, resume.
+    	// else start a new fresh game.
+    	if (shouldResume) {
+    		int[] levelAndRound = userAdapter.getLastLevelAndRound(user);
+    		
+    		// TODO remove on final
+        	System.out.println("Last Level: " + levelAndRound[0] + " last round: " +
+        						levelAndRound[1]);
+        	
+    		if (levelAndRound[0] == -1 || levelAndRound[1] == -1) {
+	    			loadLevel(1, 1);
+			}	
+	    	else if (loadLevel(levelAndRound[0], levelAndRound[1] + 1));
+	    	else if (loadLevel(levelAndRound[0] + 1, 1));
+	    	else loadLevel(1, 1);
+    	} else {
+    		loadLevel(GameActivity.getStartLevel(), GameActivity.getStartRound());
+    	}
+    	userAdapter.close();
     	
     	// add a small overlapping patch on the background, between this patch
     	// and the background, the moles will appear.
@@ -342,5 +362,9 @@ public class GameScene extends BaseScene
         }
     	
     	return currentLevel != null;
+    }
+    
+    public static void shouldResume(boolean shouldResume) {
+    	GameScene.shouldResume = shouldResume;
     }
 }
