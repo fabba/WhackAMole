@@ -66,6 +66,9 @@ public class SettingActivity extends Activity implements OnSeekBarChangeListener
 		score.close();
 		SeekBar levelSelect = (SeekBar) findViewById(R.id.startLevelSelect);
 		levelSelect.setMax(level[0]);
+		float x1, x2, y1, y2, dx, dy;
+		String direction;
+		
 		levelSelect.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override
