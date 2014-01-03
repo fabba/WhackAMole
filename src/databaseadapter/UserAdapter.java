@@ -1,5 +1,8 @@
 package databaseadapter;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+
 import models.users.UserModel;
 
 import com.example.whackamole.WhackAMole;
@@ -7,6 +10,7 @@ import com.example.whackamole.WhackAMole;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 public class UserAdapter extends DatabaseAdapter {
 
@@ -25,9 +29,54 @@ public class UserAdapter extends DatabaseAdapter {
 		super(ctx);
 	}
 	
-	public UserModel getUser(String name) {
-		// TODO test
+	public static ArrayList<Hashtable<String, String>> getContent(SQLiteDatabase db) {
+		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
 		
+		ArrayList<Hashtable<String, String>> content = new ArrayList<Hashtable<String, String>>();
+		
+		while (cursor.moveToNext()) {
+			System.out.println("USERCONTENT: MOVING TO NEXT)");
+			Hashtable<String, String> contentRow = new Hashtable<String, String>();
+			
+			for (int i = 0; i < COLUMNS.length; i++) {
+				contentRow.put(COLUMNS[i], cursor.getString(i));
+			}
+			
+			content.add(contentRow);
+		}
+		
+		return content;
+	}
+	
+	public static void addContent(SQLiteDatabase db, ArrayList<Hashtable<String, String>> content) {
+		ContentValues values = new ContentValues();
+		
+		for (Hashtable<String, String> contentRow : content) {	
+			for (String column : COLUMNS) {
+				values.put(column, contentRow.get(column));
+			}
+
+			if (db.insert(TABLE_NAME, null, values) == -1) {
+	    		db.update(TABLE_NAME, values, KEY_ID + " = ?", new String[]{contentRow.get(KEY_ID)});
+			}
+		}
+	}
+	
+	public ArrayList<UserModel> getUsers() {
+		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+		
+		ArrayList<UserModel> users = new ArrayList<UserModel>();
+		
+		if (cursor.moveToFirst()) {
+			do {
+				users.add(new UserModel(cursor.getInt(0), cursor.getString(1)));
+			} while (cursor.moveToNext());
+		}
+		
+		return users;
+	}
+	
+	public UserModel getUser(String name) {
 		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + 
 				KEY_NAME + " = '" + name + "'", null);
 		
@@ -56,18 +105,19 @@ public class UserAdapter extends DatabaseAdapter {
 	}
 	
 	public String getPassword(String name) {
-		// TODO test
 		Cursor cursor = db.rawQuery("SELECT password FROM " + TABLE_NAME + " WHERE " + 
 				KEY_NAME + " = '" + name +"'", null);
+		
 		String password = null;
+		
 		if (cursor.moveToFirst()) {
 			  password = cursor.getString(0);
 		}
+		
 		return password;
 	}
 	
 	public void addUser(String name, String password) {
-		System.out.println(db.toString());
 		ContentValues values = new ContentValues();
     	values.put(KEY_NAME, name);
     	values.put(KEY_PASSWORD, password);

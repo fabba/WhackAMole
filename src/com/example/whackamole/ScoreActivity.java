@@ -40,7 +40,7 @@ public class ScoreActivity extends Activity {
 	private void viewDatabase() {
 		ScoreAdapter db = new ScoreAdapter(this);
 		db.open();
-		data = db.getAllPoints();
+		data = db.getPoints(10);
 		ListView score_list= (ListView) findViewById(R.id.listView1);
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
                 android.R.layout.simple_list_item_2,
