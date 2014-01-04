@@ -12,7 +12,6 @@ public class LocationModel {
 	private MoleModel activeMole;
 	private int activeMoleIndex;
 	private float timeOffset;
-	private long startTime;
 	
 	public LocationModel(float x, float y) {
 		this(x, y, y);
@@ -24,10 +23,6 @@ public class LocationModel {
 		this.beginY = beginY;
 		this.moles = new ArrayList<MoleModel>();
 		this.reset();
-	}
-	
-	public void setStartTime(long time) {
-		this.startTime = time;
 	}
 	
 	public float getBeginY() {
@@ -124,7 +119,6 @@ public class LocationModel {
 		this.activeMole = null;
 		this.activeMoleIndex = -1;
 		this.timeOffset = 0;
-		this.startTime = System.currentTimeMillis();
 	}
 	
 	public void onMoleDeath(MoleModel mole) {

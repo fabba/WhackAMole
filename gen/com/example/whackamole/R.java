@@ -54,8 +54,8 @@ public final class R {
         public static final int password=0x7f080002;
         public static final int picture=0x7f08000b;
         public static final int resume=0x7f080005;
-        public static final int round1=0x7f080015;
-        public static final int round2=0x7f080014;
+        public static final int round1=0x7f080014;
+        public static final int round2=0x7f080015;
         public static final int round3=0x7f080016;
         public static final int round4=0x7f080017;
         public static final int score=0x7f080008;

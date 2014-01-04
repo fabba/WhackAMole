@@ -16,14 +16,14 @@ import databaseadapter.LevelAdapter;
 public class LevelModel {
 
 	private int numLevel, numberOfRounds, score, molesRemaining, lives;
-	private float freezeTime, freezeDuration, timeOffset;
+	private float freezeTime, freezeDuration;
 	private float smogTime, smogDuration;
 	private float burnTime, burnDuration;
+	private float startTime, timeOffset;
 	
 	private ArrayList<LocationModel> locations;
 	private GameScene gameScene;
 	private RoundModel currentRound;
-	private long startTime;
 	
 	private LevelModel(int numLevel, GameScene scene) {
 		this.numLevel = numLevel;
@@ -68,17 +68,12 @@ public class LevelModel {
 		this.currentRound = round;
 		this.numberOfRounds = numberOfRounds;
 		
-		this.startTime = System.currentTimeMillis();
+		this.startTime = gameScene.getSecondsElapsedTotal();
 		this.molesRemaining = this.currentRound.getMoles().size();
 		this.score = 0;
 		this.lives = 6; // TODO load from database?
 		
 		this.gameScene.onLivesUpdated(this.lives);
-		
-		// synchronize startTimes.
-		for (LocationModel location : locations) {
-			location.setStartTime(this.startTime);
-		}
 	}
 	
 	public boolean nextRound() {
@@ -207,7 +202,7 @@ public class LevelModel {
 	
     public void burn(float time) {
     	// TODO should not be based on system time
-    	this.burnTime = (System.currentTimeMillis() - startTime) / 1000;
+    	this.burnTime = gameScene.getSecondsElapsedTotal() - startTime;
 		this.burnDuration = time;
 		
 		System.out.println("BURNING for time: " + time + " at: " + this.burnTime);
@@ -228,9 +223,9 @@ public class LevelModel {
 				@Override
 				public void run() {
 					// TODO should not be based on system time
-					float time = ((float)(System.currentTimeMillis() - startTime)) / 1000;
+					float time = gameScene.getSecondsElapsedTotal() - startTime;
 					System.out.println("Trying to unburning at time: " + time);
-					if (time >= burnTime + burnDuration) {
+					if (time + .1 >= burnTime + burnDuration) {
 						burnTime = -1;
 						burnDuration = 0;
 						gameScene.onUnburn();
@@ -238,7 +233,7 @@ public class LevelModel {
 					}
 				}
 			},
-			(long)(time * 1000)
+			(long)((double)time * 1000)
 		);
     }
     
@@ -247,8 +242,7 @@ public class LevelModel {
     }
     
     public void freeze(float time) {
-    	// TODO should not be based on system time
-		this.freezeTime = (System.currentTimeMillis() - startTime) / 1000;
+		this.freezeTime = gameScene.getSecondsElapsedTotal() - startTime;
 		this.freezeDuration = time;
 		this.timeOffset += this.freezeDuration;
 		
@@ -269,9 +263,8 @@ public class LevelModel {
 				
 				@Override
 				public void run() {
-					// TODO should not be based on system time
-					float time = ((float)(System.currentTimeMillis() - startTime)) / 1000;
-					if (time >= freezeTime + freezeDuration) {
+					float time = gameScene.getSecondsElapsedTotal() - startTime;
+					if (time + .1 >= freezeTime + freezeDuration) {
 						freezeTime = -1;
 						freezeDuration = 0;
 						
@@ -285,7 +278,7 @@ public class LevelModel {
 					}
 				}
 			},
-			(long)(time * 1000)
+			(long)((double)time * 1000)
 		);
 	}
     
@@ -294,14 +287,10 @@ public class LevelModel {
     }
 	
     public void smog(float time) {
-    	// TODO should not be based on system time
-    	this.smogTime = (System.currentTimeMillis() - startTime) / 1000;
+    	this.smogTime = gameScene.getSecondsElapsedTotal() - startTime;
 		this.smogDuration = time;
 		
-		System.out.println("SMOGGING for time: " + time + " at: " + this.smogTime);
-		
-		unsmog(this.smogDuration);
-		
+    	unsmog(smogDuration);
     	gameScene.onSmog();
     }
     
@@ -311,9 +300,12 @@ public class LevelModel {
 				
 				@Override
 				public void run() {
-					// TODO should not be based on system time
-					float time = ((float)(System.currentTimeMillis() - startTime)) / 1000;
-					if (time >= smogTime + smogDuration) {
+					float time = gameScene.getSecondsElapsedTotal() - startTime;
+					
+					// TODO remove on final
+					System.out.println("Trying to unsmog at " + time + " smogtime: " + smogTime + " smogduration: " + smogDuration);
+					
+					if (time + .1 >= smogTime + smogDuration) {
 						smogTime = -1;
 						smogDuration = 0;
 						
@@ -323,8 +315,10 @@ public class LevelModel {
 					}
 				}
 			},
-			(long)(time * 1000)
+			(long)((double)time * 1000)
 		);
+    	
+		System.out.println("SMOGGING for time: " + time + " at: " + this.smogTime);
     }
     
     public void blur() {
@@ -332,7 +326,7 @@ public class LevelModel {
     }
     
     private void scheduleMolePopUp(final MoleModel mole, final float time, final float prevTime) {
-    	System.out.println("Schedule time: " + (long)(time - prevTime) * 1000 + " prevTime: " + prevTime + 
+    	System.out.println("Schedule time: " + (time - prevTime) + " prevTime: " + prevTime + 
     			" time: " + time);
     	
     	new Timer().schedule(
@@ -364,7 +358,7 @@ public class LevelModel {
 					}
 				}
 			},
-			(long)(time - prevTime) * 1000
+			(long)(((double)(time - prevTime)) * 1000)
 		);
     }
     
@@ -382,7 +376,7 @@ public class LevelModel {
 		return this.score;
 	}
 	
-	public long getStartTime() {
+	public float getStartTime() {
 		return this.startTime;
 	}
 	

@@ -27,8 +27,7 @@ public class GameActivity extends BaseGameActivity
 	private static Context mContext;
 	//private static Engine mEngine;
 	
-    public EngineOptions onCreateEngineOptions()
-    {
+    public EngineOptions onCreateEngineOptions() {
     	camera = new Camera(0, 0, 720, 1280);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(720, 1280), this.camera);
         //engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
@@ -36,8 +35,7 @@ public class GameActivity extends BaseGameActivity
         return engineOptions;
     }
 
-    public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) throws IOException
-    {
+    public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) throws IOException {
     	ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
         resourcesManager = ResourcesManager.getInstance();
         pOnCreateResourcesCallback.onCreateResourcesFinished();
@@ -60,13 +58,11 @@ public class GameActivity extends BaseGameActivity
 		return getSharedPreferences(string,modePrivate);
 	}
     
-    public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException
-    {
+    public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException {
     	SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
     }
 
-    public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException
-    {
+    public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
     	 mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 
     	    {
     	        public void onTimePassed(final TimerHandler pTimerHandler) 
@@ -102,6 +98,14 @@ public class GameActivity extends BaseGameActivity
     @Override
     protected void onDestroy() {
     	super.onDestroy();
-            System.exit(0);	
+        System.exit(0);	
+    }
+    
+    @Override
+    protected void onPause() {
+    	Intent intent = new Intent(WhackAMole.getContext(), MainActivity.class);
+    	startActivityForResult(intent,0);
+    	
+    	super.onPause();
     }
 }

@@ -214,6 +214,10 @@ public class GameScene extends BaseScene
     }
     
     public void onLivesUpdated(int lives) {
+    	
+    	// TODO remove
+    	System.out.println("MOLE DIED ON SECONDS ELAPSED: " + this.getEngine().getSecondsElapsedTotal());
+    	
     	if (lives > 5) {
     		for (int i = 0; i < 5; i++) {
         		spriteLives.get(i).setCurrentTileIndex(i > 0 ? 1 : 0);
@@ -227,10 +231,6 @@ public class GameScene extends BaseScene
     		
     		lifeText.setText("");
     	}
-    }
-    
-    public void onMoleDeath(MoleModel mole) {
-    	this.currentLevel.onMoleDeath(mole);
     }
     
     public void onRoundEnd(LevelModel level) {
@@ -316,8 +316,8 @@ public class GameScene extends BaseScene
     	this.setFore();
     }
     
-    public void blur() {
-   
+    public float getSecondsElapsedTotal() {
+    	return getEngine().getSecondsElapsedTotal();
     }
     
     public Camera getCamera() {
