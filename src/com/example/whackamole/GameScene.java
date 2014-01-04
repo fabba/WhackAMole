@@ -30,8 +30,13 @@ import com.example.whackamole.SceneManager.SceneType;
 import databaseadapter.ScoreAdapter;
 import databaseadapter.UserAdapter;
 
-public class GameScene extends BaseScene
-{
+/**
+ * Scene containing the game whack-a-mole. 
+ */
+public class GameScene extends BaseScene {
+	
+	// Flag indicating whether the scene on create should continue
+	// where the user left off.
 	private static boolean shouldResume = false;
 	
     private HUD gameHUD;
@@ -50,6 +55,7 @@ public class GameScene extends BaseScene
     private Text finish3Text;
     private UserModel user;
     
+    // Flags indicating whether the game is currently frozen, smogged or burned.
     private boolean isFrozen;
     private boolean isSmogged;
     private boolean isBurned;
@@ -147,7 +153,6 @@ public class GameScene extends BaseScene
     
     private void createBackground() {
         this.setBackground(new SpriteBackground(new Sprite(0, 0, resourcesManager.background_region, vbom)));
-        
     }
     
     public void onScoreUpdated() {
@@ -167,7 +172,7 @@ public class GameScene extends BaseScene
         allFore.setZIndex(4);
         gameHUD.attachChild(allFore);
         
-        // CREATE SCORE TEXT
+        // create score text
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
         scoreText.setText("Score: 0");
@@ -180,7 +185,7 @@ public class GameScene extends BaseScene
         spriteLives = new ArrayList<TiledSprite>();
         
         for (int i = 0 ; i < 5 ; i++) {
-        	spriteLives.add(new TiledSprite(600 - 80 * i,20,resourcesManager.life, vbom));
+        	spriteLives.add(new TiledSprite(600 - 80 * i, 20, resourcesManager.life, vbom));
         	gameHUD.attachChild(spriteLives.get(i));
         }
         
@@ -189,6 +194,9 @@ public class GameScene extends BaseScene
         camera.setHUD(gameHUD); 
     }
 
+    /**
+     * Called on game lost, submits the score and starts the score activity.
+     */
     public void onGameLost() {
     	resetFore();
     	
@@ -200,6 +208,11 @@ public class GameScene extends BaseScene
 		GameActivity.goToScore();
 	}
     
+    /**
+     * Called when lives are lost or gained, updates the visual representation
+     * of the lives accordingly.
+     * @param lives number of lives remaining.
+     */
     public void onLivesUpdated(int lives) {
     	
     	// TODO remove
@@ -220,6 +233,11 @@ public class GameScene extends BaseScene
     	}
     }
     
+    /**
+     * Called when a round has ended. Congratulates the user and
+     * shows the score on screen.
+     * @param level the level of which a round has ended.
+     */
     public void onRoundEnd(LevelModel level) {
     	 resetFore();
     	 ScoreAdapter db = new ScoreAdapter();
@@ -247,6 +265,11 @@ public class GameScene extends BaseScene
 	     endRound = true;
     }
     
+    /**
+     * Sets the foreground of the game according to the state.
+     * There is an ordering in states as multiple might occur at the same time:
+     * smogged > frozen > burned > nothing.
+     */
     public void setFore() {
     	if (this.isSmogged) {
     		allFore.setCurrentTileIndex(0);
@@ -266,6 +289,9 @@ public class GameScene extends BaseScene
     	}
     }
     
+    /**
+     * Reset the foreground and reset all states.
+     */
     private void resetFore() {
     	this.isFrozen = false;
     	this.isSmogged = false;
@@ -273,31 +299,49 @@ public class GameScene extends BaseScene
     	setFore();
     }
     
+    /**
+     * Called when the game is frozen, also sets the foreground.
+     */
     public void onFreeze() {
     	this.isFrozen = true;
     	this.setFore();
     }
     
+    /**
+     * Called when the game is unfrozen, also sets the foreground.
+     */
     public void onUnfreeze() {
     	this.isFrozen = false;
     	this.setFore();
     }
     
+    /**
+     * Called when the game is smogged, also sets the foreground.
+     */
     public void onSmog() {
     	this.isSmogged = true;
     	this.setFore();
     }
     
+    /**
+     * Called when the game is 'unsmogged', also sets the foreground.
+     */
     public void onUnsmog() {
     	this.isSmogged = false;
     	this.setFore();
     }
     
+    /**
+     * Called when the game is burned, also sets the foreground.
+     */
     public void onBurn() {
     	this.isBurned = true;
     	this.setFore();
     }
     
+    /**
+     * Called when the game is 'unburned', also sets the foreground.
+     */
     public void onUnburn() {
     	this.isBurned = false;
     	this.setFore();
@@ -327,6 +371,12 @@ public class GameScene extends BaseScene
     	return resourcesManager;
     }
     
+    /**
+     * Load level level with round round from database. 
+     * @param level number of level to load.
+     * @param round number of round to load.
+     * @return true if succes, false otherwise.
+     */
     private boolean loadLevel(int level, int round) {
     	System.out.println("Level loading!");
         
@@ -352,6 +402,11 @@ public class GameScene extends BaseScene
     	return currentLevel != null;
     }
     
+    /**
+     * If set to true, the scene will resume with the next level and round where the user
+     * does not a score for.
+     * @param shouldResume true if should resume where the user left off, false otherwise.
+     */
     public static void shouldResume(boolean shouldResume) {
     	GameScene.shouldResume = shouldResume;
     }

@@ -11,8 +11,6 @@ import org.andengine.engine.camera.Camera;
 
 import com.example.whackamole.SceneManager.SceneType;
 
-
-
 public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener {
 
 	@Override
@@ -27,24 +25,18 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 	}
 
 	@Override
-	public SceneType getSceneType() {
-	
+	public SceneType getSceneType() {	
 		return SceneType.SCENE_MENU;
 	}
 
 	@Override
 	public void disposeScene() {
-		
-		
 	}
 	
-	private void createBackground()
-	{
-	    attachChild(new Sprite(0, 0, resourcesManager.menu_background_region, vbom)
-	    {
+	private void createBackground() {
+	    attachChild(new Sprite(0, 0, resourcesManager.menu_background_region, vbom) {
 	        @Override
-	        protected void preDraw(GLState pGLState, Camera pCamera) 
-	        {
+	        protected void preDraw(GLState pGLState, Camera pCamera) {
 	            super.preDraw(pGLState, pCamera);
 	            pGLState.enableDither();
 	        }
@@ -93,8 +85,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 	@Override
 	public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem,
 			float pMenuItemLocalX, float pMenuItemLocalY) {
-		switch(pMenuItem.getID())
-        {
+		switch(pMenuItem.getID()) {
         case MENU_PLAY:
         	SceneManager.getInstance().loadGameScene(engine);
             return true;
@@ -102,7 +93,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
             return true;
         default:
             return false;
-    }
+        }
 	}
 
 }

@@ -7,32 +7,27 @@ import org.andengine.util.color.Color;
 import com.example.whackamole.BaseScene;
 import com.example.whackamole.SceneManager.SceneType;
 
-
-
-
+/**
+ * Scene containing only a loading screen.
+ */
 public class LoadingScene extends BaseScene
 {
 	@Override
-	public void createScene()
-	{
+	public void createScene() {
 	    setBackground(new Background(Color.WHITE));
 	    attachChild(new Text(400, 240, resourcesManager.font, "Loading...", vbom));
 	}
+	
     @Override
-    public void onBackKeyPressed()
-    {
-        return;
+    public void onBackKeyPressed() {
     }
 
     @Override
-    public SceneType getSceneType()
-    {
+    public SceneType getSceneType() {
         return SceneType.SCENE_LOADING;
     }
 
     @Override
-    public void disposeScene()
-    {
-
+    public void disposeScene() {
     }
 }
