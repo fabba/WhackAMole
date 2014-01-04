@@ -1,6 +1,7 @@
 package databaseadapter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 
@@ -143,6 +144,38 @@ public class LevelAdapter extends DatabaseAdapter {
     	}
     	
     	return numberOfRounds;
+    }
+    
+    public ArrayList<ArrayList<Integer>> getLevelAndRoundNumbers() {
+    	Cursor cursor = db.rawQuery("SELECT " + ROUND_KEY_LEVEL_ID + ", " + ROUND_KEY_ROUND_ID + 
+    			" FROM " + ROUND_TABLE_NAME +
+    			" ORDER BY " + ROUND_KEY_LEVEL_ID + ", " + ROUND_KEY_ROUND_ID,
+    			null);
+    	
+    	HashSet<Integer> rounds = new HashSet<Integer>();
+    	ArrayList<ArrayList<Integer>> levelAndRoundNumbers = new ArrayList<ArrayList<Integer>>();
+    	
+    	if (cursor.moveToFirst()) {
+    		int currentLevel = cursor.getInt(0);
+    		rounds.add(cursor.getInt(1));
+    			
+    		while (cursor.moveToNext()) {
+    			if (currentLevel != cursor.getInt(0)) {
+    				levelAndRoundNumbers.add(new ArrayList<Integer>(rounds));
+    				
+    				currentLevel = cursor.getInt(0);
+    				rounds.clear();
+    			}
+
+				rounds.add(cursor.getInt(1));
+    		}
+    		
+    		if (!rounds.isEmpty()) {
+    			levelAndRoundNumbers.add(new ArrayList<Integer>(rounds));
+    		}
+    	}
+    	
+    	return levelAndRoundNumbers;
     }
     
     public ArrayList<LocationModel> getLocations(int numLevel) {

@@ -28,4 +28,25 @@
         android:text="Top Score"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <TextView
+        android:id="@+id/roundText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/levelText"
+        android:layout_below="@+id/levelText"
+        android:layout_marginTop="36dp"
+        android:text="Round: 1"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/levelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/listView1"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="60dp"
+        android:text="Level: 1"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </RelativeLayout>

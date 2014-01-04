@@ -106,11 +106,13 @@ public class ScoreAdapter extends DatabaseAdapter {
     	return allLevels;
     }
     
-    public List<Map<String, String>> getPoints(int num) {
+    public List<Map<String, String>> getPoints(int level, int round, int num) {
     	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     	
     	Cursor cursor = db.rawQuery("SELECT " + KEY_SCORE + ", " + KEY_USER_ID + 
     			" FROM " + TABLE_NAME +
+    			" WHERE " + KEY_LEVEL_ID + " = " + level +
+    			" AND " + KEY_ROUND_ID + " = " + round +
     			" order by " + KEY_SCORE + " desc LIMIT " + num, null);
     	
     	while (cursor.moveToNext()) {

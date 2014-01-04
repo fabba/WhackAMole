@@ -12,9 +12,6 @@ import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.IBackground;
-import org.andengine.entity.scene.background.ParallaxBackground;
-import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
@@ -46,7 +43,6 @@ public class GameScene extends BaseScene
     private ArrayList<TiledSprite> spriteLives;
     public LevelModel currentLevel;
     private boolean endRound;
-    private boolean endGame;
     private LevelModel levelComplete;
     private Text clickText;
     private Text finishText;
@@ -61,7 +57,6 @@ public class GameScene extends BaseScene
 	@Override
     public void createScene() {
 		endRound = false;
-		endGame  = false;
 		
 		this.setOnSceneTouchListener(new IOnSceneTouchListener() {
 			
@@ -76,7 +71,7 @@ public class GameScene extends BaseScene
         		    }
         			else {
         				// TODO Congratulate user first!
-        				GameActivity.gotTomain();
+        				GameActivity.goToMain();
         			}
         			
         			gameHUD.detachChild(clickText);
@@ -136,7 +131,7 @@ public class GameScene extends BaseScene
 
     @Override
     public void onBackKeyPressed() {
-    	GameActivity.gotTomain();
+    	GameActivity.goToMain();
     }
 
     @Override
@@ -193,25 +188,17 @@ public class GameScene extends BaseScene
         gameHUD.sortChildren();
         camera.setHUD(gameHUD); 
     }
-    
-    public void loseGame() {
-    	 resetFore();
-	     ScoreAdapter db = new ScoreAdapter();
-		 db.open();
-		 db.addScore(currentLevel.getScore(), user, currentLevel);
-		 db.close();	 
-	     GameActivity.gotToscore();
-    }
 
     public void onGameLost() {
     	resetFore();
+    	
 	    ScoreAdapter db = new ScoreAdapter();
 		db.open();
 		db.addScore(currentLevel.getScore(), user, currentLevel);
 		db.close();
 	    
-		GameActivity.gotToscore();
-    }
+		GameActivity.goToScore();
+	}
     
     public void onLivesUpdated(int lives) {
     	

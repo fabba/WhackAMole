@@ -9,7 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ManualActivity" >
 
-
     <ImageView
         android:id="@+id/picture"
         android:layout_width="wrap_content"

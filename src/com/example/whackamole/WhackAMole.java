@@ -2,6 +2,7 @@ package com.example.whackamole;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
 public class WhackAMole extends Application {
 	
@@ -10,7 +11,6 @@ public class WhackAMole extends Application {
 	public void onCreate() {
 		super.onCreate();
 		WhackAMole.context = getApplicationContext();
-		System.out.println(getApplicationContext() + "app cont");
 	}
 	
 	public static Context getContext() {
