@@ -117,7 +117,7 @@ public class ResourcesManager
     {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2900, 2800, TextureOptions.BILINEAR);
-        backTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2900, 2800, TextureOptions.BILINEAR);
+      
         background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ground1.png");
         mole_normy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "normy.png", 1, 1);
         mole_burny = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "burny.png", 1, 1);
@@ -132,15 +132,7 @@ public class ResourcesManager
         mole_goldy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "goldy.png", 1, 1);
         mole_sniffy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "sniffy.png", 1, 1);
         
-        try 
-        {
-            this.backTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-            this.backTextureAtlas.load();
-        } 
-        catch (final TextureAtlasBuilderException e)
-        {
-            Debug.e(e);
-        }
+     
         try 
         {
             this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
