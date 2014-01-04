@@ -6,11 +6,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.utils.Array;
 import com.example.whackamole.WhackAMole;
 
 import models.levels.LevelModel;
-import models.levels.RoundModel;
 import models.users.UserModel;
 
 import android.content.ContentValues;
@@ -18,6 +16,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * DataBase adapter which grants access to the scores.
+ */
 public class ScoreAdapter extends DatabaseAdapter {
 	
 	public static final String TABLE_NAME = "scores";
@@ -38,6 +39,15 @@ public class ScoreAdapter extends DatabaseAdapter {
         super(context);
     }
     
+    /**
+     * Add a new score to the scores table if score does not already exist
+     * for that level and round. If a score already exists and this score is
+     * lower than the new score, update.
+     * @param score score to enter in scores table.
+     * @param user the user which scored.
+     * @param level the level on which was scored (currentRound determines the round).
+     * @return true if success, false otherwise.
+     */
     public boolean addScore(int score, UserModel user, LevelModel level) {
     	int previousScore = getScore(user, level);
     	
@@ -48,7 +58,7 @@ public class ScoreAdapter extends DatabaseAdapter {
 	    	values.put(KEY_ROUND_ID, level.getNumRound());
 	    	values.put(KEY_SCORE, score);
 	    	
-	    	if (previousScore == -1) {
+	    	if (previousScore == -1 ) {
 	    		db.insert(TABLE_NAME, null, values);
 	    	} else {
 	    		String[] whereArgs = {String.valueOf(user.getId()),
@@ -58,13 +68,19 @@ public class ScoreAdapter extends DatabaseAdapter {
 	    		db.update(TABLE_NAME, values,
 	    				KEY_USER_ID + " = ? AND " + KEY_ROUND_ID + " = ? AND " + KEY_LEVEL_ID + " = ?",
 	    				whereArgs);
-	    	}
+	    	}	    	
 			return true;
     	} else {
     		return false;
     	}
     }
     
+    /**
+     * Get score for the user on the current round of the level.
+     * @param user user for which to get the score.
+     * @param level level and round for which to get the score.
+     * @return the score, -1 if non found.
+     */
     public int getScore(UserModel user, LevelModel level) {
     	Cursor cursor = db.rawQuery("SELECT " + KEY_SCORE + " FROM " + TABLE_NAME +
     			" WHERE " + KEY_ROUND_ID + " = " + level.getNumRound() + 
@@ -79,33 +95,15 @@ public class ScoreAdapter extends DatabaseAdapter {
     	return score;
     }
     
-    public int[] getLevel(UserModel user) {
-    	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME +
-    			" WHERE " + KEY_USER_ID + " = " + user.getId(), null);
-        
-    	int[] level = new int[2];
-    	if (cursor.moveToFirst()) {
-			level[0] = cursor.getInt(2);
-			level[1] = cursor.getInt(3);
-        }
-    	
-    	return level;
-    }
-    public ArrayList<int[]> getAllLevels(UserModel user) {
-    	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME +
-    			" WHERE " + KEY_USER_ID + " = " + user.getId(), null);
-        
-    	int[] level = new int[2];
-    	ArrayList<int[]> allLevels = new ArrayList<int[]>() ;
-    	if (cursor.moveToFirst()) {
-			level[0] = cursor.getInt(2);
-			level[1] = cursor.getInt(3);
-			allLevels.add(level);
-        }
-    	
-    	return allLevels;
-    }
-    
+    /**
+     * Get a list of maps mapping from 'Name' to user name and
+     * 'Score' to score for a specific level and round pair, where num
+     * limits the number of entries returned. 
+     * @param level
+     * @param round
+     * @param num
+     * @return
+     */
     public List<Map<String, String>> getPoints(int level, int round, int num) {
     	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     	
@@ -132,6 +130,13 @@ public class ScoreAdapter extends DatabaseAdapter {
     	return data;
     }
     
+    /**
+     * Get the entire 'content' of the score database table as a list of
+     * Hashtables mapping from columns to values, one Hashtable thus
+     * represents one row.
+     * @param db the database to get the content from
+     * @return
+     */
     public static ArrayList<Hashtable<String, String>> getContent(SQLiteDatabase db) {
 		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
 		
@@ -151,6 +156,15 @@ public class ScoreAdapter extends DatabaseAdapter {
 		return content;
 	}
     
+    /**
+     * Add content to the database. Content should exist of a list of Hashtables
+     * where each Hashtable represents one row such that every key is a column
+     * in the database table.
+     * Ids are maintained, as these serve as unique entries in the database
+     * are updated.
+     * @param db
+     * @param content
+     */
     public static void addContent(SQLiteDatabase db, ArrayList<Hashtable<String, String>> content) {
 		ContentValues values = new ContentValues();
 		
@@ -166,6 +180,7 @@ public class ScoreAdapter extends DatabaseAdapter {
 		}
 	}
     
+    // TODO remove?
     public void printAll(){
     	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME , null);
     	

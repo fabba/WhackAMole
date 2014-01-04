@@ -1,23 +1,19 @@
 package com.example.whackamole;
 
 import com.example.whackamole.R;
-import com.example.whackamole.R.drawable;
-import com.example.whackamole.R.id;
-import com.example.whackamole.R.layout;
-import com.example.whackamole.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+/**
+ * Activity for the game manual, contains descriptions of each mole.
+ */
 public class ManualActivity extends Activity {
 
 	private TextView name;

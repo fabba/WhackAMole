@@ -12,6 +12,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * Database adapter for accessing the user data.
+ */
 public class UserAdapter extends DatabaseAdapter {
 
 	public static final String TABLE_NAME = "users";
@@ -29,6 +32,13 @@ public class UserAdapter extends DatabaseAdapter {
 		super(ctx);
 	}
 	
+	/**
+     * Get the entire 'content' of the score database table as a list of
+     * Hashtables mapping from columns to values, one Hashtable thus
+     * represents one row.
+     * @param db the database to get the content from
+     * @return
+     */
 	public static ArrayList<Hashtable<String, String>> getContent(SQLiteDatabase db) {
 		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
 		
@@ -48,6 +58,15 @@ public class UserAdapter extends DatabaseAdapter {
 		return content;
 	}
 	
+	/**
+     * Add content to the database. Content should exist of a list of Hashtables
+     * where each Hashtable represents one row such that every key is a column
+     * in the database table.
+     * Ids are maintained, as these serve as unique entries in the database
+     * are updated.
+     * @param db
+     * @param content
+     */
 	public static void addContent(SQLiteDatabase db, ArrayList<Hashtable<String, String>> content) {
 		ContentValues values = new ContentValues();
 		
@@ -90,8 +109,6 @@ public class UserAdapter extends DatabaseAdapter {
 	}
 	
 	public UserModel getUser(int id) {
-		// TODO test
-		
 		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + 
 				KEY_ID + " = " + id, null);
 		
@@ -104,6 +121,11 @@ public class UserAdapter extends DatabaseAdapter {
 		return user;
 	}
 	
+	/**
+	 * Get the password belonging to user with name name.
+	 * @param name
+	 * @return 
+	 */
 	public String getPassword(String name) {
 		Cursor cursor = db.rawQuery("SELECT password FROM " + TABLE_NAME + " WHERE " + 
 				KEY_NAME + " = '" + name +"'", null);
@@ -117,22 +139,23 @@ public class UserAdapter extends DatabaseAdapter {
 		return password;
 	}
 	
+	/**
+	 * Add a user with name and password to the database.
+	 * @param name
+	 * @param password
+	 */
 	public void addUser(String name, String password) {
 		ContentValues values = new ContentValues();
     	values.put(KEY_NAME, name);
     	values.put(KEY_PASSWORD, password);
     	db.insert(TABLE_NAME, null, values);
-    	
-    	// TODO remove on final
-    	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME +
-    			" WHERE " + KEY_NAME + " = '" + name + "'" , null);
-		if (cursor.moveToFirst()) {
-			do{
-				System.out.println(cursor.getInt(0) + " " + cursor.getString(1) + " " + cursor.getString(2));
-			} while (cursor.moveToNext());
-		}
 	}
 	
+	/**
+	 * Get the last level and round the user has played
+	 * @param user
+	 * @return array containing a level, round number pair.
+	 */
 	public int[] getLastLevelAndRound(UserModel user) {
 		int numRound = -1;
 		int numLevel = -1;
@@ -151,4 +174,26 @@ public class UserAdapter extends DatabaseAdapter {
 		
 		return new int[] {numLevel, numRound};
 	}
+	
+	/**
+	 * Get all the levels and rounds the user has played.
+	 * @param user
+	 * @return list containing level, round number pairs.
+	 */
+	public ArrayList<int[]> getAllLevels(UserModel user) {
+    	Cursor cursor = db.rawQuery(
+    			"SELECT " + ScoreAdapter.KEY_LEVEL_ID + ", " + ScoreAdapter.KEY_ROUND_ID + 
+    			" FROM " + TABLE_NAME +
+    			" WHERE " + ScoreAdapter.KEY_USER_ID + " = " + user.getId(), null);
+        
+    	ArrayList<int[]> allLevels = new ArrayList<int[]>() ;
+    	while (cursor.moveToNext()) {
+    		int[] level = new int[2];
+    		level[0] = cursor.getInt(0);
+			level[1] = cursor.getInt(1);
+			allLevels.add(level);
+        }
+    	
+    	return allLevels;
+    }
 }

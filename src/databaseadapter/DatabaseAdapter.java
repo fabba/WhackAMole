@@ -8,8 +8,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import models.users.UserModel;
-
 import com.example.whackamole.WhackAMole;
 
 import android.content.Context;
@@ -55,9 +53,9 @@ public abstract class DatabaseAdapter {
         	this.myContext = context;
         }	
      
-      /**
+        /**
          * Creates a empty database on the system and rewrites it with your own database.
-         * */
+         */
         public void createDataBase() throws IOException{
      
         	boolean dbExist = checkDataBase();
@@ -109,7 +107,6 @@ public abstract class DatabaseAdapter {
          * @return true if it exists, false if it doesn't
          */
         private boolean checkDataBase() {
-     
         	SQLiteDatabase checkDB = null;
      
         	try {
@@ -131,8 +128,7 @@ public abstract class DatabaseAdapter {
          * system folder, from where it can be accessed and handled.
          * This is done by transfering bytestream.
          * */
-        private void copyDataBase() throws IOException{
-
+        private void copyDataBase() throws IOException {
         	System.out.println("copying database");
         	
         	//Open your local db as the input stream
@@ -160,8 +156,6 @@ public abstract class DatabaseAdapter {
         }
      
         public void openDataBase() throws SQLException{
-
-        	//Open the database
             String myPath = DB_PATH + DATABASE_NAME;
         	myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         }
@@ -183,9 +177,6 @@ public abstract class DatabaseAdapter {
 	    @Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	    	System.out.println("Database updating.");
-	    	
-	    	// TODO remove
-	    	//WhackAMole.getContext().deleteDatabase(DATABASE_NAME);
 	    	
 	    	ArrayList<Hashtable<String, String>> userContent = UserAdapter.getContent(db);
 	    	ArrayList<Hashtable<String, String>> scoreContent = ScoreAdapter.getContent(db);

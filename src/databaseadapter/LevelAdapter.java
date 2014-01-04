@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-
-import com.example.whackamole.GameScene;
 import com.example.whackamole.WhackAMole;
 
 import models.levels.LevelModel;
@@ -26,6 +24,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+/**
+ * DataBase adapter which grants access to the levels and rounds.
+ */
 public class LevelAdapter extends DatabaseAdapter {
     public static final String ROUND_TABLE_NAME = "rounds";
     public static final String ROUND_KEY_ID = "_id";
@@ -85,6 +86,13 @@ public class LevelAdapter extends DatabaseAdapter {
     	}
     }
     
+    /**
+     * get and load a round from the database, returns null if numRound 
+     * with level does not exist.
+     * @param numRound number of the round to load
+     * @param level level of the round to load
+     * @return the loaded round.
+     */
     public RoundModel getRound(int numRound, LevelModel level) {
     	printTableNames();
     	
@@ -111,11 +119,6 @@ public class LevelAdapter extends DatabaseAdapter {
 	    		appearanceTimes.add(Float.valueOf(data.get(ROUND_KEY_APPEARANCE_TIME)));
 	    		moleClasses.add(typeToMoleClass.get(Integer.valueOf(data.get(ROUND_KEY_MOLE_ID))));
     		} while (cursor.moveToNext());
-    		
-    		// TODO remove
-    		for (Class<?> c : moleClasses) {
-    			System.out.println("Class: " + c);
-    		}
     		
     		ArrayList<MoleModel> moles = level.createMoles(moleClasses, times, appearanceTimes);
     		round = new RoundModel(numRound, moles, level);
@@ -146,6 +149,11 @@ public class LevelAdapter extends DatabaseAdapter {
     	return numberOfRounds;
     }
     
+    /**
+     * Get a list of list where the indices stand for the level numbers and
+     * the values in the inner lists stand for the round numbers.
+     * @return
+     */
     public ArrayList<ArrayList<Integer>> getLevelAndRoundNumbers() {
     	Cursor cursor = db.rawQuery("SELECT " + ROUND_KEY_LEVEL_ID + ", " + ROUND_KEY_ROUND_ID + 
     			" FROM " + ROUND_TABLE_NAME +

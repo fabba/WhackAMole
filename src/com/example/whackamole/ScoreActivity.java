@@ -21,6 +21,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+/**
+ * Activity for displaying the scores, scores are shown per level and round.
+ */
 public class ScoreActivity extends Activity {
 
 	// List of lists where the indices represent the levels
