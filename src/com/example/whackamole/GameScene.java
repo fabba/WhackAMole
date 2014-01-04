@@ -12,8 +12,10 @@ import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.scene.background.IBackground;
 import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
+import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
@@ -149,9 +151,8 @@ public class GameScene extends BaseScene
     }
     
     private void createBackground() {
-    	ParallaxBackground background = new ParallaxBackground(0, 0, 0);
-		background.attachParallaxEntity(new ParallaxEntity(0, new Sprite(0, 0, resourcesManager.background_region, vbom)));
-        setBackground(background);
+        this.setBackground(new SpriteBackground(new Sprite(0, 0, resourcesManager.background_region, vbom)));
+        
     }
     
     public void onScoreUpdated() {
@@ -198,7 +199,7 @@ public class GameScene extends BaseScene
 	     ScoreAdapter db = new ScoreAdapter();
 		 db.open();
 		 db.addScore(currentLevel.getScore(), user, currentLevel);
-		 db.close();
+		 db.close();	 
 	     GameActivity.gotToscore();
     }
 

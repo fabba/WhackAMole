@@ -27,7 +27,7 @@
         android:layout_below="@+id/resume"
         android:layout_marginTop="18dp"
         android:onClick="onClick"
-        android:text="Settings" />
+        android:text="Level selector" />
 
     <Button
         android:id="@+id/score"

@@ -71,19 +71,17 @@ public class SettingActivity extends Activity {
 		UserAdapter user = new UserAdapter(this);
 		user.open();
 		UserModel userName = user.getUser(name);
+		int[] level = user.getLastLevelAndRound(userName);
 		user.close();
-		ScoreAdapter score = new ScoreAdapter(this);
-		score.open();
-		int[] level = score.getLevel(userName);
-		score.close();
+	
 		maxLevel = level[0];
 		maxRound = level[1];
 		if( maxLevel == 0 && maxRound == 0){
 			maxLevel = 1;
-			maxRound = 1;
+			maxRound = 0;
 		}
-		round1 = (Button) findViewById(R.id.round1);
-		round2= (Button) findViewById(R.id.round2);
+		round2 = (Button) findViewById(R.id.round1);
+		round1 = (Button) findViewById(R.id.round2);
 		round3 = (Button) findViewById(R.id.round3);
 		round4 = (Button) findViewById(R.id.round4);
 		System.out.println(maxLevel);
@@ -138,9 +136,9 @@ public class SettingActivity extends Activity {
 			else upText.setText("Slide Up for previous level");
 			if ( currentLevel == maxLevel){ 
 				downText.setText("");
-				if( maxRound < 2) round2.setVisibility(View.INVISIBLE);
-				if( maxRound < 3) round3.setVisibility(View.INVISIBLE);
-				if( maxRound < 4) round4.setVisibility(View.INVISIBLE);
+				if( maxRound < 1) round2.setVisibility(View.INVISIBLE);
+				if( maxRound < 2) round3.setVisibility(View.INVISIBLE);
+				if( maxRound < 3) round4.setVisibility(View.INVISIBLE);
 			}
 			else{
 				downText.setText("Slide down for next level");

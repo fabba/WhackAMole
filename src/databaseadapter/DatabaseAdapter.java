@@ -5,6 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import models.users.UserModel;
 
 import com.example.whackamole.WhackAMole;
 
@@ -21,7 +25,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 public abstract class DatabaseAdapter {
  
     // Database Version
-    private static final int DATABASE_VERSION = 42;
+    private static final int DATABASE_VERSION = 63;
+    
     // Database Name
     private static final String DATABASE_NAME = "whackAMole.db";
 	
@@ -82,7 +87,6 @@ public abstract class DatabaseAdapter {
         		try {
 					this.createDataBase();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
             	
@@ -95,7 +99,6 @@ public abstract class DatabaseAdapter {
         		try {
 					createDataBase();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
         	}
@@ -117,12 +120,10 @@ public abstract class DatabaseAdapter {
         	}
      
         	if(checkDB != null){
-     
         		checkDB.close();
-     
         	}
      
-        	return checkDB != null ? true : false;
+        	return checkDB != null;
         }
      
         /**
@@ -159,7 +160,7 @@ public abstract class DatabaseAdapter {
         }
      
         public void openDataBase() throws SQLException{
-     
+
         	//Open the database
             String myPath = DB_PATH + DATABASE_NAME;
         	myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
@@ -182,9 +183,18 @@ public abstract class DatabaseAdapter {
 	    @Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	    	System.out.println("Database updating.");
-	    	WhackAMole.getContext().deleteDatabase(DATABASE_NAME);
+	    	
+	    	// TODO remove
+	    	//WhackAMole.getContext().deleteDatabase(DATABASE_NAME);
+	    	
+	    	ArrayList<Hashtable<String, String>> userContent = UserAdapter.getContent(db);
+	    	ArrayList<Hashtable<String, String>> scoreContent = ScoreAdapter.getContent(db);
+	    	
 	    	onCreate(db);
-		}
+	    	
+	    	ScoreAdapter.addContent(db, scoreContent);
+		    UserAdapter.addContent(db, userContent);
+	    }
     }
     
     public DatabaseAdapter(Context ctx) {

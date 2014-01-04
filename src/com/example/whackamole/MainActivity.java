@@ -42,6 +42,10 @@ public class MainActivity extends Activity {
 		if (view.getId() == R.id.newGame) {
 			Intent intent = new Intent(view.getContext(), GameActivity.class);
 	    	GameScene.shouldResume(false);
+	    	SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
+			editor.putInt("Startlevel", 1);
+			editor.putInt("Startround", 1);
+			editor.commit();
 			startActivityForResult(intent,0);
 		}
 		else if (view.getId() == R.id.resume) {

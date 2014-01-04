@@ -2,6 +2,7 @@ package databaseadapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -15,19 +16,19 @@ import models.users.UserModel;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 public class ScoreAdapter extends DatabaseAdapter {
 	
-	// id (int) | userId (int) | score (int)
-    public static final String TABLE_NAME = "scores";
+	public static final String TABLE_NAME = "scores";
     public static final String KEY_ID = "_id";
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_SCORE = "score";
     public static final String KEY_LEVEL_ID = "levelId";
     public static final String KEY_ROUND_ID = "roundId";
     
-    private static final String[] COLUMNS = {KEY_ID, KEY_USER_ID, KEY_SCORE,
-    	KEY_LEVEL_ID, KEY_ROUND_ID};
+    private static final String[] COLUMNS = {KEY_ID, KEY_USER_ID,
+    	KEY_LEVEL_ID, KEY_ROUND_ID, KEY_SCORE};
  
     public ScoreAdapter() {
     	this(WhackAMole.getContext());
@@ -105,34 +106,71 @@ public class ScoreAdapter extends DatabaseAdapter {
     	return allLevels;
     }
     
-    public List<Map<String, String>> getAllPoints() {
+    public List<Map<String, String>> getPoints(int num) {
     	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     	
-    	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME + " order by " + KEY_SCORE + " desc LIMIT 10", null);
+    	Cursor cursor = db.rawQuery("SELECT " + KEY_SCORE + ", " + KEY_USER_ID + 
+    			" FROM " + TABLE_NAME +
+    			" order by " + KEY_SCORE + " desc LIMIT " + num, null);
     	
-    	if (cursor.moveToFirst()) {
-        	do{ 
-        		HashMap<String, String> scores = new HashMap<String, String>(2);
-        		Cursor cursorUser = db.rawQuery("SELECT  name FROM users WHERE _id = " + cursor.getInt(1), null);
-        		if (cursorUser.moveToFirst()) {
-                	do{ 
-                		scores.put("Name", cursorUser.getString(0));
-                		scores.put("Score", cursor.getString(4));
-                	}while (cursorUser.moveToNext());
-        		}
-      		    data.add(scores);
-        	} while (cursor.moveToNext());
-        } 
-      return data;
+    	while (cursor.moveToNext()) {
+    		HashMap<String, String> scores = new HashMap<String, String>(2);
+    		Cursor cursorUser = db.rawQuery("SELECT " + UserAdapter.KEY_NAME +
+    				" FROM " + UserAdapter.TABLE_NAME +
+    				" WHERE " + UserAdapter.KEY_ID + " = " + cursor.getInt(1), null);
+  
+        	while (cursorUser.moveToNext()) {
+            	scores.put("Name", cursorUser.getString(0));
+        		scores.put("Score", cursor.getString(0));
+            }
+    		
+  		    data.add(scores);
+        }
+    	
+    	return data;
     }
+    
+    public static ArrayList<Hashtable<String, String>> getContent(SQLiteDatabase db) {
+		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+		
+		ArrayList<Hashtable<String, String>> content = new ArrayList<Hashtable<String, String>>();
+		
+		while (cursor.moveToNext()) {
+			System.out.println("SCORECONTENT: MOVING TO NEXT)");
+			Hashtable<String, String> contentRow = new Hashtable<String, String>();
+			
+			for (int i = 0; i < COLUMNS.length; i++) {
+				contentRow.put(COLUMNS[i], cursor.getString(i));
+			}
+			
+			content.add(contentRow);
+		}
+		
+		return content;
+	}
+    
+    public static void addContent(SQLiteDatabase db, ArrayList<Hashtable<String, String>> content) {
+		ContentValues values = new ContentValues();
+		
+		for (Hashtable<String, String> contentRow : content) {	
+			for (String column : COLUMNS) {
+				values.put(column, contentRow.get(column));
+				System.out.println("SCORECONTENT: " + column + " : " + contentRow.get(column));
+			}
+			
+			if (db.insert(TABLE_NAME, null, values) == -1) {
+	    		db.update(TABLE_NAME, values, KEY_ID + " = ?", new String[]{contentRow.get(KEY_ID)});
+			}
+		}
+	}
     
     public void printAll(){
     	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME , null);
     	
     	if (cursor.moveToFirst()) {
-        	do{ 
+        	do { 
         		System.out.println(cursor.getInt(0) + " " + cursor.getString(1) + " " + cursor.getString(2) + " " + cursor.getString(3) + " " + cursor.getString(4));
-        	}while (cursor.moveToNext());
-    }
+        	} while (cursor.moveToNext());
+    	}
     }
 }
