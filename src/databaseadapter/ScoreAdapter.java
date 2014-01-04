@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.utils.Array;
 import com.example.whackamole.WhackAMole;
 
 import models.levels.LevelModel;
@@ -88,6 +89,20 @@ public class ScoreAdapter extends DatabaseAdapter {
         }
     	
     	return level;
+    }
+    public ArrayList<int[]> getAllLevels(UserModel user) {
+    	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME +
+    			" WHERE " + KEY_USER_ID + " = " + user.getId(), null);
+        
+    	int[] level = new int[2];
+    	ArrayList<int[]> allLevels = new ArrayList<int[]>() ;
+    	if (cursor.moveToFirst()) {
+			level[0] = cursor.getInt(2);
+			level[1] = cursor.getInt(3);
+			allLevels.add(level);
+        }
+    	
+    	return allLevels;
     }
     
     public List<Map<String, String>> getAllPoints() {
