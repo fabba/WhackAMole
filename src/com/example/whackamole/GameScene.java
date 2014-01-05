@@ -69,7 +69,7 @@ public class GameScene extends BaseScene {
     	
     	UserAdapter userAdapter = new UserAdapter();
     	userAdapter.open();
-    	this.user = userAdapter.getUser(GameActivity.getName());
+    	this.user = WhackAMole.getUser();
     	
     	// if this game should resume from the last completed round, resume.
     	// else start a new fresh game.

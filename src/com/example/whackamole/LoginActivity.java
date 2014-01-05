@@ -59,27 +59,27 @@ public class LoginActivity extends Activity {
 		mEmailView.setText(mEmail);
 
 		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
-						}
-						return false;
-					}
-				});
+		mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+					
+			@Override
+			public boolean onEditorAction(TextView textView, int id,
+					KeyEvent keyEvent) {
+				if (id == R.id.login || id == EditorInfo.IME_NULL) {
+					attemptLogin();
+					return true;
+				}
+				return false;
+			}
+		});
 
 
 		findViewById(R.id.sign_in_button).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						attemptLogin();
-					}
+			new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					attemptLogin();
 				}
+			}
 		);
 	}
 
@@ -119,17 +119,19 @@ public class LoginActivity extends Activity {
 			cancel = true;
 		}
 		
-		UserAdapter user = new UserAdapter();
-		user.open();
-		String pass = user.getPassword(mEmail);
+		UserAdapter userAdapter = new UserAdapter();
+		userAdapter.open();
+		String pass = userAdapter.getPassword(mEmail);
+		
 		// We have imported BCrypt to hash the passwords
 		if( pass != null){
-			if ( !BCrypt.checkpw(mPassword, pass)){
+			if (!BCrypt.checkpw(mPassword, pass)){
 				mPasswordView.setError(getString(R.string.action_forgot_password));
 				focusView = mPasswordView;
 				cancel = true;
 			}
 		}
+		
 		// Check for a valid email address.
 		if (TextUtils.isEmpty(mEmail)) {
 			mEmailView.setError(getString(R.string.error_field_required));
@@ -145,14 +147,18 @@ public class LoginActivity extends Activity {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
 			String hashed = BCrypt.hashpw(mPassword, BCrypt.gensalt());
-			user.addUser(mEmail, hashed);
-			user.close();
+			userAdapter.addUser(mEmail, hashed);
 			SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
 			editor.putString("Name", mEmail);
 			editor.commit();
+			
+			WhackAMole.setUser(userAdapter.getUser(mEmail));
+			
 			Intent intent = new Intent (this.getBaseContext(), MainActivity.class);
 	    	startActivityForResult(intent,0);
 		}
+		
+		userAdapter.close();
 	}
 }
 

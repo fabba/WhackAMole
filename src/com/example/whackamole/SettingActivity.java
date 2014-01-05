@@ -59,13 +59,10 @@ public class SettingActivity extends Activity {
 	private void setContentViewSetting() {
 		setContentView(R.layout.activity_setting);
 	
-		SharedPreferences setting = getSharedPreferences("Setting", MODE_PRIVATE);
-		String name = setting.getString("Name", "");
-		UserAdapter user = new UserAdapter(this);
-		user.open();
-		UserModel userName = user.getUser(name);
-		final ArrayList<int[]> level = user.getAllLevels(userName);
-		user.close();
+		UserAdapter userAdapter = new UserAdapter(this);
+		userAdapter.open();
+		final ArrayList<int[]> level = userAdapter.getAllLevels(WhackAMole.getUser());
+		userAdapter.close();
 
     	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     	for( int[] currentLevel : level){
@@ -76,6 +73,7 @@ public class SettingActivity extends Activity {
 					
 			data.add(levels);
     	}
+    	
 		final ListView score_list= (ListView) findViewById(R.id.levelSelector);
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
                 android.R.layout.simple_list_item_2,
