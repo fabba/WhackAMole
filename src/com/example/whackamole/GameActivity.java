@@ -27,8 +27,6 @@ public class GameActivity extends BaseGameActivity
     public EngineOptions onCreateEngineOptions() {
     	camera = new Camera(0, 0, 720, 1280);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(720, 1280), this.camera);
-        // TODO remove
-        //engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
         return engineOptions;
     }
@@ -44,14 +42,18 @@ public class GameActivity extends BaseGameActivity
     private SharedPreferences getPreferences(String string, int modePrivate) {
 		return getSharedPreferences(string,modePrivate);
 	}
-    
+    /* 
+     * The Splashscreen will be created and will appear until the game has loaded
+     */
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException {
     	SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
     }
-
+    
+    
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
     	 mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 
     	    {
+    		 	// The game has fully been loaded
     	        public void onTimePassed(final TimerHandler pTimerHandler) 
     	        {
     	            mEngine.unregisterUpdateHandler(pTimerHandler);

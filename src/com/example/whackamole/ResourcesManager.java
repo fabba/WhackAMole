@@ -112,7 +112,7 @@ public class ResourcesManager
         
     }
 
-  
+    // This will load all the images needed for the game
     private void loadGameGraphics()
     {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");

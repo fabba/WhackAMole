@@ -1,6 +1,9 @@
 package com.example.whackamole;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import models.users.UserModel;
 
@@ -8,6 +11,7 @@ import com.example.whackamole.R;
 
 import databaseadapter.UserAdapter;
 
+import android.R.integer;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -20,9 +24,12 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class SettingActivity extends Activity {
@@ -57,80 +64,43 @@ public class SettingActivity extends Activity {
 		UserAdapter user = new UserAdapter(this);
 		user.open();
 		UserModel userName = user.getUser(name);
-		int[] level = user.getLastLevelAndRound(userName);
+		final ArrayList<int[]> level = user.getAllLevels(userName);
 		user.close();
-	
-		maxLevel = level[0];
-		maxRound = level[1];
-		if( maxLevel == 0 && maxRound == 0){
-			maxLevel = 1;
-			maxRound = 0;
-		}
-		
-		round2 = (Button) findViewById(R.id.round1);
-		round1 = (Button) findViewById(R.id.round2);
-		round3 = (Button) findViewById(R.id.round3);
-		round4 = (Button) findViewById(R.id.round4);
-		
-		upText = (TextView) findViewById(R.id.slideUpText);
-		downText = (TextView) findViewById(R.id.slideDownText);
-		currentLevel = 1;
-		setLevel();
-		this.findViewById(android.R.id.content).setOnTouchListener(MyOnTouchListener);
-	}
-	
-	OnTouchListener MyOnTouchListener = new OnTouchListener(){
 
-		@Override
-		public boolean onTouch(View view, MotionEvent event) {
-			float dx, dy;
-			switch(event.getAction()) {
-				case(MotionEvent.ACTION_DOWN):
-				    onDownX = event.getX();
-				    onDownY = event.getY();
-				    break;
-				case(MotionEvent.ACTION_UP):
-				    dx = event.getX() - onDownX;
-				    dy = event.getY()-onDownY;
-				    
-				    // Use dx and dy to determine the direction
-				    if(Math.abs(dx) <= Math.abs(dy)) {
-				    	setNextLevel(dy>0);
-				    }
-				    break;	      
-			}
-			return true;  
-		}
-	};
-	 
-	private void setNextLevel(boolean down) {
-		if (down && currentLevel < maxLevel)  currentLevel++;
-		else if (!down && currentLevel > 1) currentLevel--;
-		setLevel();
-	}
+    	List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    	for( int[] currentLevel : level){
+	    	HashMap<String, String> levels = new HashMap<String, String>(2);
+	    	levels.put("Level", " Start level : " + currentLevel[0]);
+			levels.put("Round", " Round : " + currentLevel[1]);
+			System.out.println(" Level : " + currentLevel[0] + " and round : " + currentLevel[1]);
+					
+			data.add(levels);
+    	}
+		final ListView score_list= (ListView) findViewById(R.id.levelSelector);
+		SimpleAdapter adapter = new SimpleAdapter(this, data,
+                android.R.layout.simple_list_item_2,
+                new String[] {"Level", "Round"},
+                new int[] {android.R.id.text1,
+                           android.R.id.text2});
+		score_list.setAdapter(adapter);
+		score_list.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,int position, long id) 
+			    {
+			      int[] levelRound = level.get(position);
+			      System.out.println(levelRound[1]);
+			      SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
+			      editor.putInt("Startlevel", levelRound[0]);
+			      editor.putInt("Startround", levelRound[1]);
+		    	  editor.commit();
+	    		  Intent intent = new Intent(view.getContext(), GameActivity.class);
+			      startActivityForResult(intent,0);
+			    }});
 
-	private void setLevel(){
-		if ( currentLevel == 1) upText.setText("");
-		else upText.setText("Slide Up for previous level");
 		
-		if (currentLevel == maxLevel) { 
-			downText.setText("");
-			if (maxRound < 1) round2.setVisibility(View.INVISIBLE);
-			if (maxRound < 2) round3.setVisibility(View.INVISIBLE);
-			if (maxRound < 3) round4.setVisibility(View.INVISIBLE);
-		} else {
-			downText.setText("Slide down for next level");
-			round1.setVisibility(View.VISIBLE);
-			round2.setVisibility(View.VISIBLE);
-			round3.setVisibility(View.VISIBLE);
-			round4.setVisibility(View.VISIBLE);
-		}
-		
-		round1.setText("Start Level: " + currentLevel + " Round: 1");
-		round2.setText("Start Level: " + currentLevel + " Round: 2");
-		round3.setText("Start Level: " + currentLevel + " Round: 3");
-		round4.setText("Start Level: " + currentLevel + " Round: 4");	 
 	}
+	
+
+
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@SuppressLint("NewApi")
@@ -144,29 +114,6 @@ public class SettingActivity extends Activity {
 	        super.onBackPressed();  
 	    }
 	}
-
-    public void onClick(View view) {
-    	SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
-		editor.putInt("Startlevel", currentLevel);
-		
-    	if (view.getId() == R.id.round1) {
-    		editor.putInt("Startround", 1);
-    	}
-    	else if (view.getId() == R.id.round2) {
-    		editor.putInt("Startround", 2);
-    	}
-    	else if (view.getId() == R.id.round3) {
-    		editor.putInt("Startround", 3);
-    	}
-    	else if (view.getId() == R.id.round4) {
-    		editor.putInt("Startround", 4);
-    	}
-    	
-    	editor.commit();
-    	Intent intent = new Intent(view.getContext(), GameActivity.class);
-    	startActivityForResult(intent,0);
-    }
-    
     @Override
 	/* Inflate the menu; this adds items to the action bar if it is present. */
 	public boolean onCreateOptionsMenu(Menu menu) {

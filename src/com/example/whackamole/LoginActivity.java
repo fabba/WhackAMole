@@ -122,6 +122,7 @@ public class LoginActivity extends Activity {
 		UserAdapter user = new UserAdapter();
 		user.open();
 		String pass = user.getPassword(mEmail);
+		// We have imported BCrypt to hash the passwords
 		if( pass != null){
 			if ( !BCrypt.checkpw(mPassword, pass)){
 				mPasswordView.setError(getString(R.string.action_forgot_password));

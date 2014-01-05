@@ -17,6 +17,9 @@ public class SplashScene extends BaseScene {
 	private Sprite splash;
 	
     @Override
+    /*
+     * Creates a splashscreen which will appear between the main menu and the game scene
+     */
     public void createScene() {
     	splash = new Sprite(0, 0, resourcesManager.splash_region, vbom) {
     	    @Override

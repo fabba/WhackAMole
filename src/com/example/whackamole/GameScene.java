@@ -149,6 +149,7 @@ public class GameScene extends BaseScene {
     public void disposeScene() {
     	 camera.setHUD(null);
     	 camera.setCenter(400, 240);
+    	 this.dispose();
     }
     
     private void createBackground() {
@@ -204,7 +205,7 @@ public class GameScene extends BaseScene {
 		db.open();
 		db.addScore(currentLevel.getScore(), user, currentLevel);
 		db.close();
-	    
+	    disposeScene();
 		GameActivity.goToScore();
 	}
     

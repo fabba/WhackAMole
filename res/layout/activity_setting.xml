@@ -8,64 +8,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".Setting" >
-    
-      <Button
-        android:id="@+id/round1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="28dp"
-        android:onClick="onClick"
-        android:text="Button1" />
-      
-    <Button
-        android:id="@+id/round2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/round1"
-        android:layout_alignLeft="@+id/round1"
-        android:onClick="onClick"
-        android:text="Button2" />
-    
-    <Button
-        android:id="@+id/round3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/round2"
-        android:layout_alignLeft="@+id/round1"
-        android:onClick="onClick"
-        android:text="Button3" />
 
-    <Button
-        android:id="@+id/round4"
-        android:layout_width="wrap_content"
+    <ListView
+        android:id="@+id/levelSelector"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/round3"
-        android:layout_alignLeft="@+id/round1"
-        android:onClick="onClick"
-        android:text="Button4" />
+       
+        android:layout_marginTop="90dp" >
 
-    <TextView
-        android:id="@+id/slideDownText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/round1"
-        android:layout_below="@+id/round4"
-        android:text="Slide down for next level"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/slideUpText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/round1"
-        android:layout_above="@+id/round1"
-        android:layout_marginTop="153dp"
-        android:text="Slide up for previous level"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-  
+    </ListView>
 
 </RelativeLayout>

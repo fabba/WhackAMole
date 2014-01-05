@@ -183,7 +183,7 @@ public class UserAdapter extends DatabaseAdapter {
 	public ArrayList<int[]> getAllLevels(UserModel user) {
     	Cursor cursor = db.rawQuery(
     			"SELECT " + ScoreAdapter.KEY_LEVEL_ID + ", " + ScoreAdapter.KEY_ROUND_ID + 
-    			" FROM " + TABLE_NAME +
+    			" FROM " + ScoreAdapter.TABLE_NAME +
     			" WHERE " + ScoreAdapter.KEY_USER_ID + " = " + user.getId(), null);
         
     	ArrayList<int[]> allLevels = new ArrayList<int[]>() ;

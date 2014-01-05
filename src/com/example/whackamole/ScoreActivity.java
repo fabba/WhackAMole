@@ -121,6 +121,7 @@ public class ScoreActivity extends Activity {
 		db.close();
 		
 		ListView score_list= (ListView) findViewById(R.id.listView1);
+		
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
                 android.R.layout.simple_list_item_2,
                 new String[] {"Name", "Score"},
