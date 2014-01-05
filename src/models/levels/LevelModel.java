@@ -176,6 +176,7 @@ public class LevelModel {
 	    	}
 	    	Collections.shuffle(shuffledIndexes);
 	    	
+	    	// try to place a mole at a randomly picked location (thanks to shuffledIndexes).
 	    	for (int index : shuffledIndexes) {
 	    		LocationModel location = locations.get(index);
 	    			

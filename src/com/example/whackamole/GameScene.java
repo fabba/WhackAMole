@@ -182,7 +182,11 @@ public class GameScene extends BaseScene {
 		db.open();
 		db.addScore(currentLevel.getScore(), user, currentLevel);
 		db.close();
-	    disposeScene();
+		
+		if (!this.isDisposed()) {
+			disposeScene();
+		}
+		
 		GameActivity.goToScore();
 	}
     
