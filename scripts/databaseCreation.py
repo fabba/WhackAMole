@@ -11,26 +11,17 @@ DATABASE_NAME = "whackAMole.db"
 
 DEFAULT_ID_CONTENT = "_id integer primary key"
 
-GAMELOG_TABLE_NAME = "gameLogs"
-GAMELOG_TABLE_CONTENT = DEFAULT_ID_CONTENT + ", userId integer, scoreId integer, level integer, round integer"
-
 SCORE_TABLE_NAME = "scores"
 SCORE_TABLE_CONTENT = DEFAULT_ID_CONTENT + ", userId integer, levelId integer, roundId integer, score integer"
 
 USER_TABLE_NAME = "users"
 USER_TABLE_CONTENT = DEFAULT_ID_CONTENT + ", name text, password text"
 
-# LEVEL_TABLE_NAME = "levels"
-# LEVEL_TABLE_CONTENT = DEFAULT_ID_CONTENT + ", spriteLocation text"
-
 LOCATION_TABLE_NAME = "locations"
 LOCATION_TABLE_CONTENT = DEFAULT_ID_CONTENT + ", levelId integer, x integer, y integer"
 
 ROUND_TABLE_NAME = "rounds"
 ROUND_TABLE_CONTENT =  DEFAULT_ID_CONTENT + ", roundId integer, levelId integer, moleId integer, time integer, appearanceTime integer"
-
-# MOLE_TABLE_NAME = "moles"
-# MOLE_TABLE_CONTENT = DEFAULT_ID_CONTENT + ", type integer, clicks integer, score integer, spriteLocation text"
 
 METADATA_TABLE_NAME = "android_metadata"
 METADATA_TABLE_CONTENT = "\"locale\" TEXT DEFAULT 'en_US'"
@@ -85,15 +76,21 @@ def insertMole(cursor, roundId, levelId, moleName, time, appearanceTime):
 
 def insertLevels(cursor):
 	insertLevel1(cursor)
+	insertLevel2(cursor)
 
 def insertLevel1(cursor):
 	insertLocations1(cursor, 1)
-	insertRound1(cursor, 1)
-	insertRound2(cursor, 1)
-	insertRound3(cursor, 1)
+	insertRound1(cursor, 1, 1)
+	insertRound2(cursor, 1, 2)
+	insertRound3(cursor, 1, 3)
 
-def insertRound1(cursor, levelId):
-	roundId = 1
+def insertLevel2(cursor):
+	insertLocations1(cursor, 2)
+	insertRound2(cursor, 2, 1, seed = 1)
+	insertRound2(cursor, 2, 2, seed = 2)
+	insertRound2(cursor, 2, 3, seed = 3)
+
+def insertRound1(cursor, levelId, roundId):
 
 	def insertMoleRound1(moleName, time, appearanceTime):
 		insertMole(cursor, roundId, levelId, moleName, time, appearanceTime)
@@ -144,12 +141,10 @@ def insertRound1(cursor, levelId):
 
 	insertMoleRound1("goldy", 44, 6)	
 
-def insertRound2(cursor, levelId):
-	roundId = 2
-	simpleRoundGenerator(cursor, levelId, roundId, 5, 5, 3, 2, 3, 0)
+def insertRound2(cursor, levelId, roundId, seed = 0):
+	simpleRoundGenerator(cursor, levelId, roundId, 5, 5, 3, 2, 2, 3, seed)
 
-def insertRound3(cursor, levelId):
-	roundId = 3
+def insertRound3(cursor, levelId, roundId):
 	time = 0
 	appearanceTime = 3
 	for moleName in MOLE_NAMES:
@@ -163,11 +158,11 @@ def insertLocations1(cursor, levelId):
 		for verticalLoc in verticalLocations:
 			insertRecord(cursor, LOCATION_TABLE_NAME, None, levelId, horizontalLoc, verticalLoc)
 
-def simpleRoundGenerator(cursor, levelId, roundId, numWaves, waveDuration, numMolesPerWave, variation, appearanceTime, seed):
+def simpleRoundGenerator(cursor, levelId, roundId, numWaves, waveDuration, numMolesPerWave, initialDelay, variation, appearanceTime, seed):
 	randomGen = random.Random()
 	randomGen.seed(seed)
 
-	for time in range(0, numWaves * waveDuration + 1, waveDuration):
+	for time in range(initialDelay, numWaves * waveDuration + 1 + initialDelay, waveDuration):
 		for i in range(numMolesPerWave):
 			insertMole(cursor, roundId, levelId, randomGen.choice(MOLE_NAMES), time + randomGen.random() * variation, appearanceTime)
 
@@ -177,22 +172,12 @@ if __name__ == "__main__":
 	with connection:
 	    cursor = connection.cursor()
 
-	    remakeTable(connection, cursor, GAMELOG_TABLE_NAME, GAMELOG_TABLE_CONTENT)
 	    remakeTable(connection, cursor, SCORE_TABLE_NAME, SCORE_TABLE_CONTENT)
 	    remakeTable(connection, cursor, USER_TABLE_NAME, USER_TABLE_CONTENT)
-	    # remakeTable(connection, cursor, LEVEL_TABLE_NAME, LEVEL_TABLE_CONTENT)
 	    remakeTable(connection, cursor, LOCATION_TABLE_NAME, LOCATION_TABLE_CONTENT)
 	    remakeTable(connection, cursor, ROUND_TABLE_NAME, ROUND_TABLE_CONTENT)
-	    # remakeTable(connection, cursor, MOLE_TABLE_NAME, MOLE_TABLE_CONTENT)
 	    remakeTable(connection, cursor, METADATA_TABLE_NAME, METADATA_TABLE_CONTENT)
 
 	    insertRecord(cursor, METADATA_TABLE_NAME, 'en_US')
 	    
 	    insertLevels(cursor)
-
-	    # insert first user with name jelle and password 123 (should probably hash the last).
-	    insertRecord(cursor, USER_TABLE_NAME, None, "jelle", "123")
-
-	    # insert first score by userId 1 on levelId 1 and roundId 1 with score 10
-	    insertRecord(cursor, SCORE_TABLE_NAME, None, 1, 1, 1, 10)
-

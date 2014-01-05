@@ -89,14 +89,14 @@ public class ScoreActivity extends Activity {
 				loadScores(this.currentLevel, this.currentRound + 1);
 			} 
 			else if (this.currentLevel + 1 < this.levelAndRoundNumbers.size()) {
-				loadScores(this.currentLevel + 1, this.currentRound);
+				loadScores(this.currentLevel + 1, 0);
 			}
 		} else {
 			if (this.currentRound > 0) {
 				loadScores(this.currentLevel, this.currentRound - 1);
 			} 
 			else if (this.currentLevel > 0) {
-				loadScores(this.currentLevel - 1, this.currentRound);
+				loadScores(this.currentLevel - 1, levelAndRoundNumbers.get(this.currentLevel - 1).size() - 1);
 			}
 		}
 	}

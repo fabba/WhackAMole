@@ -66,6 +66,7 @@ public class SettingActivity extends Activity {
 				SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
 				editor.putInt("Startlevel", levelRound[0]);
 				editor.putInt("Startround", levelRound[1]);
+				editor.putBoolean("ShouldResume", false);
 				editor.commit();
 				
 				Intent intent = new Intent(view.getContext(), GameActivity.class);

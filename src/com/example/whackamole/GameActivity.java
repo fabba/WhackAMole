@@ -81,6 +81,10 @@ public class GameActivity extends BaseGameActivity
 		return staticSetting.getInt("Startround", 1);
 	}
 	
+	public static boolean shouldResume() {
+		return staticSetting.getBoolean("ShouldResume", false);
+	}
+	
 	/**
 	 * Start the score activity.
 	 */

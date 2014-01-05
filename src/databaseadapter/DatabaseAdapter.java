@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public abstract class DatabaseAdapter {
  
     // Database Version
-    private static final int DATABASE_VERSION = 63;
+    private static final int DATABASE_VERSION = 65;
     
     // Database Name
     private static final String DATABASE_NAME = "whackAMole.db";

@@ -24,17 +24,21 @@ public class MainActivity extends Activity {
 	
 	public void onClick(View view) {
 		if (view.getId() == R.id.newGame) {
-			Intent intent = new Intent(view.getContext(), GameActivity.class);
-	    	GameScene.shouldResume(false);
-	    	SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
+			SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
 			editor.putInt("Startlevel", 1);
 			editor.putInt("Startround", 1);
+			editor.putBoolean("ShouldResume", false);
 			editor.commit();
-			startActivityForResult(intent,0);
+			
+			Intent intent = new Intent(view.getContext(), GameActivity.class);
+	    	startActivityForResult(intent,0);
 		}
 		else if (view.getId() == R.id.resume) {
-	    	Intent intent = new Intent(view.getContext(), GameActivity.class);
-	    	GameScene.shouldResume(true);
+	    	SharedPreferences.Editor editor = getSharedPreferences("Setting", MODE_PRIVATE).edit();
+			editor.putBoolean("ShouldResume", true);
+			editor.commit();
+			
+			Intent intent = new Intent(view.getContext(), GameActivity.class);
 	    	startActivityForResult(intent,0);
 		}
 		else if (view.getId() == R.id.setting) {

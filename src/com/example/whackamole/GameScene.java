@@ -33,10 +33,6 @@ import databaseadapter.UserAdapter;
  */
 public class GameScene extends BaseScene {
 	
-	// Flag indicating whether the scene on create should continue
-	// where the user left off.
-	private static boolean shouldResume = false;
-	
     private HUD gameHUD;
 
     private Text scoreText;
@@ -71,7 +67,7 @@ public class GameScene extends BaseScene {
     	
     	// if this game should resume from the last completed round, resume.
     	// else start a new fresh game.
-    	if (shouldResume) {
+    	if (GameActivity.shouldResume()) {
     		int[] levelAndRound = userAdapter.getLastLevelAndRound(user);
     		
     		if (levelAndRound[0] == -1 || levelAndRound[1] == -1) {
@@ -81,6 +77,8 @@ public class GameScene extends BaseScene {
 	    	else if (loadLevel(levelAndRound[0] + 1, 1));
 	    	else loadLevel(1, 1);
     	} else {
+    		System.out.println("LEVELS starting level: " + GameActivity.getStartLevel() + " starting round: " +
+    				GameActivity.getStartRound());
     		loadLevel(GameActivity.getStartLevel(), GameActivity.getStartRound());
     	}
     	userAdapter.close();
@@ -377,14 +375,5 @@ public class GameScene extends BaseScene {
     private boolean loadLevel(int level, int round) {
     	currentLevel = LevelModel.loadLevel(level, round, this);
     	return currentLevel != null;
-    }
-    
-    /**
-     * If set to true, the scene will resume with the next level and round where the user
-     * does not a score for.
-     * @param shouldResume true if should resume where the user left off, false otherwise.
-     */
-    public static void shouldResume(boolean shouldResume) {
-    	GameScene.shouldResume = shouldResume;
     }
 }
