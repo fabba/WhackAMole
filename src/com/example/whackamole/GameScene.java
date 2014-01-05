@@ -64,35 +64,7 @@ public class GameScene extends BaseScene {
     public void createScene() {
 		endRound = false;
 		
-		this.setOnSceneTouchListener(new IOnSceneTouchListener() {
-			
-            @Override
-            public boolean onSceneTouchEvent(Scene pScene,TouchEvent pSceneTouchEvent) {
-            	if(pSceneTouchEvent.isActionDown() && endRound) {
-        			if (levelComplete.nextRound()) {
-    		    		levelComplete.playRound();
-    		    	} 
-        			else if (loadLevel(levelComplete.getNumLevel() + 1, 1)) {
-        		        currentLevel.playRound();
-        		    }
-        			else {
-        				// TODO Congratulate user first!
-        				GameActivity.goToMain();
-        			}
-        			
-        			gameHUD.detachChild(clickText);
-        			gameHUD.detachChild(finishText);
-        			gameHUD.detachChild(finish2Text);
-        			gameHUD.detachChild(finish3Text);
-        			endRound = false;
-        			return true;
-            	}
-            	return false;
-            }
-        });
-		
-    	createBackground();
-    	createHUD();
+		createHUD();
     	createPhysics();
     	
     	UserAdapter userAdapter = new UserAdapter();
@@ -129,6 +101,11 @@ public class GameScene extends BaseScene {
 	    	gameHUD.attachChild(back);
     	}
     	
+    	// create the background for the game.
+    	Sprite background = new Sprite(0, 0, resourcesManager.background_region, vbom);
+    	background.setZIndex(0);
+    	gameHUD.attachChild(background);
+    	
     	gameHUD.sortChildren();
     	
     	// play a round
@@ -137,6 +114,7 @@ public class GameScene extends BaseScene {
 
     @Override
     public void onBackKeyPressed() {
+    	this.disposeScene();
     	GameActivity.goToMain();
     }
 
@@ -150,10 +128,6 @@ public class GameScene extends BaseScene {
     	 camera.setHUD(null);
     	 camera.setCenter(400, 240);
     	 this.dispose();
-    }
-    
-    private void createBackground() {
-        this.setBackground(new SpriteBackground(new Sprite(0, 0, resourcesManager.background_region, vbom)));
     }
     
     public void onScoreUpdated() {
@@ -177,20 +151,23 @@ public class GameScene extends BaseScene {
         scoreText = new Text(20, 20, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
         scoreText.setSkewCenter(0, 0);    
         scoreText.setText("Score: 0");
+        scoreText.setZIndex(1);
         gameHUD.attachChild(scoreText);
             
         lifeText = new Text(510, 20, resourcesManager.font, "0123456789 *", new TextOptions(HorizontalAlign.LEFT), vbom);
         lifeText.setSkewCenter(0, 0);
         lifeText.setText("");
+        lifeText.setZIndex(1);
+        gameHUD.attachChild(lifeText);
         
         spriteLives = new ArrayList<TiledSprite>();
         
         for (int i = 0 ; i < 5 ; i++) {
         	spriteLives.add(new TiledSprite(600 - 80 * i, 20, resourcesManager.life, vbom));
+        	spriteLives.get(i).setZIndex(1);
         	gameHUD.attachChild(spriteLives.get(i));
         }
         
-        gameHUD.attachChild(lifeText);
         gameHUD.sortChildren();
         camera.setHUD(gameHUD); 
     }
@@ -215,10 +192,6 @@ public class GameScene extends BaseScene {
      * @param lives number of lives remaining.
      */
     public void onLivesUpdated(int lives) {
-    	
-    	// TODO remove
-    	System.out.println("MOLE DIED ON SECONDS ELAPSED: " + this.getEngine().getSecondsElapsedTotal());
-    	
     	if (lives > 5) {
     		for (int i = 0; i < 5; i++) {
         		spriteLives.get(i).setCurrentTileIndex(i > 0 ? 1 : 0);
@@ -264,6 +237,33 @@ public class GameScene extends BaseScene {
 
          levelComplete = level;
 	     endRound = true;
+	     
+	     this.gameHUD.setOnSceneTouchListener(new IOnSceneTouchListener() {
+			
+            @Override
+            public boolean onSceneTouchEvent(Scene pScene,TouchEvent pSceneTouchEvent) {
+            	if (pSceneTouchEvent.isActionDown() && endRound) {
+        			if (levelComplete.nextRound()) {
+    		    		levelComplete.playRound();
+    		    	} 
+        			else if (loadLevel(levelComplete.getNumLevel() + 1, 1)) {
+        		        currentLevel.playRound();
+        		    }
+        			else {
+        				// TODO Congratulate user first!
+        				GameActivity.goToMain();
+        			}
+        			
+        			gameHUD.detachChild(clickText);
+        			gameHUD.detachChild(finishText);
+        			gameHUD.detachChild(finish2Text);
+        			gameHUD.detachChild(finish3Text);
+        			endRound = false;
+        			return true;
+            	}
+            	return false;
+            }
+        });
     }
     
     /**

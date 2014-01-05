@@ -20,5 +20,4 @@ public class UserModel {
 	public int getId() {
 		return this.id;
 	}
-	
 }

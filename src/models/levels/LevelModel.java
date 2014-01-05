@@ -437,6 +437,8 @@ public class LevelModel {
      * Play the current round.
      */
 	public void playRound() {
+		gameScene.onScoreUpdated();
+		
 		for (LocationModel location : locations) {
 			MoleModel mole = location.getFirstMole();
 			
