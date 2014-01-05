@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import models.moles.MoleModel;
 
+/**
+ * Model for a round of whack-a-mole. Contains only data.
+ */
 public class RoundModel {
 	
 	private int numRound;

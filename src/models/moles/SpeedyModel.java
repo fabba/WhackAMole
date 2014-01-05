@@ -5,6 +5,9 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * Default mole with a different appearance, should have a small appearance time.
+ */
 public class SpeedyModel extends MoleModel {
 
 	public SpeedyModel(LocationModel location, float time,

@@ -5,6 +5,9 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * A mole model which is word five points, has no special features.
+ */
 public class GoldyModel extends MoleModel {
 
 	public GoldyModel(LocationModel location, float time,

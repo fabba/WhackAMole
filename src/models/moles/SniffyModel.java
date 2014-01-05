@@ -5,6 +5,10 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * A mole model which gives the user points if not touched, and makes the user lose
+ * lives if touched.
+ */
 public class SniffyModel extends MoleModel {
 
 	public SniffyModel(LocationModel location, float time,

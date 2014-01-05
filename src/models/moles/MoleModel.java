@@ -7,7 +7,6 @@ import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.MoveYModifier;
-import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
@@ -16,10 +15,12 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.example.whackamole.GameScene;
-import com.example.whackamole.ResourcesManager;
 
-public abstract class MoleModel extends TiledSprite implements MoleInterface
-{
+/**
+ * The mole model, specifies its behaviour on death and when touched and
+ * its movement.
+ */
+public abstract class MoleModel extends TiledSprite {
     private float time, appearanceTime;
     protected GameScene gameScene;
     private LocationModel location;
@@ -61,6 +62,10 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 		return false;
 	}
     
+    /**
+     * Called when the mole has died.
+     * Notifies the level and by default substracts 1 life.
+     */
     public synchronized void onDie() {
     	if (!this.isDead) {
 			this.isDead = true;
@@ -82,6 +87,12 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
 		this.dispose();
 	}
     
+    /**
+     * Go from location from to location to in time.
+     * @param from
+     * @param to
+     * @param time
+     */
     private void goFromTo(float from, float to, float time) {
     	if (from > to) {
     		goUp(from, to, time);
@@ -90,10 +101,16 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	}
     }
     
+    /**
+     * Move upwards (negative direction) by 150px from location's y.
+     */
     private void goUp() {
     	goUp(location.getY(), location.getY() - 150, appearanceTime / 2);
     }
     
+    /**
+     * Move upwards (negative direction) from location from to location to in time.
+     */
     private void goUp(float from, float to, float time) {
     	this.moveY = new MoveYModifier(time, from, to){
         	@Override
@@ -106,10 +123,16 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
         this.registerEntityModifier(moveY);
     }
     
+    /**
+     * Move downwards (positive direction) by 150px from location's y-150.
+     */
     private void goDown() {
     	goDown(location.getY() - 150, location.getY(), appearanceTime / 2);
     }
     
+    /**
+     * Move downwards (positive direction) from location from to location to in time.
+     */
     private void goDown(float from, float to, float time) {
     	this.moveY = new MoveYModifier(time, from, to) {
          	@Override
@@ -127,7 +150,7 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
          registerEntityModifier(moveY);
     }
     
-    public float getStartY(){
+    public float getStartY() {
     	return this.location.getBeginY();
     }
     
@@ -143,6 +166,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	return this.location;
     }
 
+    /**
+     * Freezes the mole and its movement.
+     */
     public void freeze() {
     	if (moveY != null) {
     		this.from = this.getY();
@@ -151,9 +177,11 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     		this.unregisterEntityModifier(moveY);
     		moveY = null;
     	}
-    	System.out.println("Mole: " + this + " is freezing!!!!!");
     }
     
+    /**
+     * Unfreezes the mole and continues its movement.
+     */
     public void unfreeze() {
     	if (moveY == null) {
 	    	this.goFromTo(this.from, this.to, (this.appearanceTime / 2) - this.pausedTime);
@@ -163,6 +191,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	}
     }
     
+    /**
+     * Makes the mole jump from its location.
+     */
     public void jump() {
     	if (!isJumping) {
     		goUp();
@@ -179,6 +210,10 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     	}
     }
     
+    /**
+     * Called when the mole is unavoidably touched, thus the user should
+     * not be punished! By default calls touched.
+     */
     public synchronized void unavoidableTouched() {
 		touched();
 	}
@@ -198,4 +233,9 @@ public abstract class MoleModel extends TiledSprite implements MoleInterface
     public boolean isDead() {
     	return this.isDead;
     }
+    
+    /**
+     * This function should implement the moles behavior if it is touched.
+     */
+    public abstract void touched();
 }

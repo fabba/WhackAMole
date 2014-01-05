@@ -13,6 +13,10 @@ import models.moles.MoleModel;
 
 import databaseadapter.LevelAdapter;
 
+/**
+ * The level model or rather the game model is the model for the entire game.
+ * Contains functions to play and load a game of whack-a-mole.
+ */
 public class LevelModel {
 
 	private int numLevel, numberOfRounds, score, molesRemaining, lives;
@@ -38,6 +42,15 @@ public class LevelModel {
 		this.smogDuration = 0;
 	}
 	
+	/** 
+	 * Load a level from the database, initializes all that is necessary
+	 * and places the moles on the locations for a specific round which
+	 * are all also loaded.
+	 * @param numLevel number of level to get from the database.
+	 * @param numRound number of round to get from the database.
+	 * @param scene the scene to load the level on.
+	 * @return the level loaded.
+	 */
 	public static LevelModel loadLevel(int numLevel, int numRound, GameScene scene) {
 		LevelModel level = new LevelModel(numLevel, scene);
 		
@@ -49,14 +62,15 @@ public class LevelModel {
 		levelAdapter.close();
 		
 		if (!level.getLocations().isEmpty() && round != null) {
-			level.initializeRound(round, numberOfRounds);
+			level.numberOfRounds = numberOfRounds;
+			level.initializeRound(round);
 			
+			// TODO remove on final
 			for (LocationModel location : level.locations) {
 				for (MoleModel mole : location.getMoles()) {
 					System.out.println("Location: " + location + " mole: " + mole + " queued at: " + mole.getTime());
 				}
 			}
-			
 		} else {
 			return null;
 		}
@@ -64,9 +78,12 @@ public class LevelModel {
 		return level;
 	}
 	
-	private void initializeRound(RoundModel round, int numberOfRounds) {
+	/**
+	 * Initialize a round for this level. 
+	 * @param round
+	 */
+	private void initializeRound(RoundModel round) {
 		this.currentRound = round;
-		this.numberOfRounds = numberOfRounds;
 		
 		this.startTime = gameScene.getSecondsElapsedTotal();
 		this.molesRemaining = this.currentRound.getMoles().size();
@@ -76,8 +93,11 @@ public class LevelModel {
 		this.gameScene.onLivesUpdated(this.lives);
 	}
 	
+	/**
+	 * Load the next round if that exists.
+	 * @return true if succes, false otherwise.
+	 */
 	public boolean nextRound() {
-		System.out.println("Current round num: " + currentRound.getNumRound() + " Total num of rounds " + numberOfRounds);
 		if (currentRound.getNumRound() < numberOfRounds) { 
 			for (LocationModel location : locations) {
 				location.reset();
@@ -88,18 +108,26 @@ public class LevelModel {
 			this.currentRound = levelAdapter.getRound(currentRound.getNumRound() + 1, this);
 			levelAdapter.close();
 			
-			initializeRound(this.currentRound, this.numberOfRounds);
+			initializeRound(this.currentRound);
 			
 			return true;
 		} else {
 			return false;
 		}
 	}
-
+	
 	public void setLocations(ArrayList<LocationModel> locations) {
 		this.locations = locations;
 	}
     
+	/**
+	 * Creates a mole of type moleClass at location at time with appearanceTime.
+	 * @param moleClass
+	 * @param location
+	 * @param time
+	 * @param appearanceTime
+	 * @return the mole created.
+	 */
     public MoleModel createMole(Class<?> moleClass, LocationModel location,
     		float time, float appearanceTime){
     	
@@ -122,6 +150,15 @@ public class LevelModel {
     	return null;
     }
 	
+    /**
+     * Create a list of moles based on the classes provided at times with
+     * appearanceTimes. Note all three parameters should be of the same size
+     * (obviously).
+     * @param moleClasses
+     * @param times
+     * @param appearanceTimes
+     * @return list of moles created.
+     */
     public ArrayList<MoleModel> createMoles(ArrayList<Class<?>> moleClasses,
     		ArrayList<Float> times, ArrayList<Float> appearanceTimes) {
     	
@@ -139,12 +176,9 @@ public class LevelModel {
 	    	}
 	    	Collections.shuffle(shuffledIndexes);
 	    	
-	    	boolean placementSucceeded = false;
 	    	for (int index : shuffledIndexes) {
 	    		LocationModel location = locations.get(index);
-	    		
-	    		System.out.println("Placement succeeded " + location.isRoomForMole(time, appearanceTime));
-	    		
+	    			
 	    		if (location.isRoomForMole(time, appearanceTime)) {
 	    			MoleModel mole = createMole(moleClass, location, time, appearanceTime);
 	    			
@@ -152,22 +186,23 @@ public class LevelModel {
 	    				location.addMole(mole);
 	    				moles.add(mole);
 	    			}
-	    			
-	    			placementSucceeded = true;
 	    			break;
 	    		}
-	    	}
-	    	
-	    	if (!placementSucceeded) {
-	    		// TODO throw exception
 	    	}
     	}
     	
     	return moles;
     }
 	
+    /**
+     * Called on mole death, handles moles remaining and 
+     * ends the round if non remaining.
+     * @param mole which died.
+     */
 	public void onMoleDeath(MoleModel mole) {
 		this.molesRemaining--;
+		
+		// TODO remove on final
 		System.out.println("Remaining moles: " + this.molesRemaining);
 		
 		mole.getLocation().onMoleDeath(mole);
@@ -196,16 +231,21 @@ public class LevelModel {
         gameScene.onScoreUpdated();
     }
 	
+	/**
+	 * Burn the game for time, time just indicates the visual effect.
+	 * @param time time in milliseconds
+	 */
 	public void burn(long time) {
 		this.burn(((float)time) / 1000);
 	}
 	
+	/**
+	 * Burn the game for time, time just indicates the visual effect.
+	 * @param time time in seconds.
+	 */
     public void burn(float time) {
-    	// TODO should not be based on system time
     	this.burnTime = gameScene.getSecondsElapsedTotal() - startTime;
 		this.burnDuration = time;
-		
-		System.out.println("BURNING for time: " + time + " at: " + this.burnTime);
 		
 		for (LocationModel location : locations) {
     		location.burn();
@@ -216,6 +256,10 @@ public class LevelModel {
     	unburn(this.burnDuration);
     }
     
+    /**
+     * 'Unburn' the game after time.
+     * @param time time in seconds
+     */
     private void unburn(float time) {
     	new Timer().schedule(
 			new TimerTask() {
@@ -237,10 +281,18 @@ public class LevelModel {
 		);
     }
     
+    /**
+     * Freeze the game for time.
+     * @param time time in milliseconds.
+     */
     public void freeze(long time) {
     	this.freeze(((float)time) / 1000);
     }
     
+    /**
+     * Freeze the game for time.
+     * @param time time in seconds.
+     */
     public void freeze(float time) {
 		this.freezeTime = gameScene.getSecondsElapsedTotal() - startTime;
 		this.freezeDuration = time;
@@ -257,6 +309,10 @@ public class LevelModel {
 		gameScene.onFreeze();
 	}
 	
+    /**
+     * Unfreeze the game after time.
+     * @param time time in seconds.
+     */
 	private void unfreeze(float time) {
 		new Timer().schedule(
 			new TimerTask() {
@@ -282,10 +338,18 @@ public class LevelModel {
 		);
 	}
     
+	/**
+	 * Smog the game for time, smog is just a visual effect.
+	 * @param time time in milliseconds.
+	 */
 	public void smog(long time) {
     	this.smog(((float)time) / 1000);
     }
 	
+	/**
+	 * Smog the game for time, smog is just a visual effect.
+	 * @param time time in seconds.
+	 */
     public void smog(float time) {
     	this.smogTime = gameScene.getSecondsElapsedTotal() - startTime;
 		this.smogDuration = time;
@@ -294,6 +358,10 @@ public class LevelModel {
     	gameScene.onSmog();
     }
     
+    /**
+     * 'Unsmog' the game after time.
+     * @param time time in seconds.
+     */
     private void unsmog(float time) {
     	new Timer().schedule(
 			new TimerTask() {
@@ -321,10 +389,13 @@ public class LevelModel {
 		System.out.println("SMOGGING for time: " + time + " at: " + this.smogTime);
     }
     
-    public void blur() {
-    	// TODO implement
-    }
-    
+    /**
+     * Schedule a mole pop up at time for appearanceTime. Searches for an empty location
+     * where this mole can pop up, if no location is found the mole is dropped, beware!
+     * @param mole the mole to schedule.
+     * @param time the time at which the mole is to appear.
+     * @param prevTime the time for which the mole has to appear.
+     */
     private void scheduleMolePopUp(final MoleModel mole, final float time, final float prevTime) {
     	System.out.println("Schedule time: " + (time - prevTime) + " prevTime: " + prevTime + 
     			" time: " + time);
@@ -362,6 +433,9 @@ public class LevelModel {
 		);
     }
     
+    /**
+     * Play the current round.
+     */
 	public void playRound() {
 		for (LocationModel location : locations) {
 			MoleModel mole = location.getFirstMole();
@@ -406,5 +480,9 @@ public class LevelModel {
 	
 	public int getLives() {
 		return this.lives;
+	}
+	
+	public float getTimeOffset() {
+		return this.timeOffset;
 	}
 }

@@ -5,6 +5,11 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * A mole model which freezes the other moles, preventing movement and
+ * delaying appearance of future moles for the duration of the freeze.
+ * Also triggers a visual effect.
+ */
 public class IcyModel extends MoleModel {
 
 	public IcyModel(LocationModel location, float time,

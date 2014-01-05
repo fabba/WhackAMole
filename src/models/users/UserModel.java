@@ -1,5 +1,8 @@
 package models.users;
 
+/**
+ * Model for a user playing this game, just contains data.
+ */
 public class UserModel {
 
 	private int id;

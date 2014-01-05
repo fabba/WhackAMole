@@ -5,6 +5,9 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * Default mole model, no special behavior.
+ */
 public class NormyModel extends MoleModel {
 	
 	public NormyModel(LocationModel location, float time,

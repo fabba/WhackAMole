@@ -5,6 +5,10 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * A mole model which will burn all other moles, causing them to be
+ * unavoidably touched also triggers a visual effect.
+ */
 public class BurnyModel extends MoleModel {
 	
 	public BurnyModel(LocationModel location, float time,
@@ -26,7 +30,9 @@ public class BurnyModel extends MoleModel {
 			
 			this.level.onMoleDeath(this);
 			
-			level.burn(500l);
+			if (isTouched) {
+				level.burn(500l);
+			}
 		}
 	}
 	
@@ -35,7 +41,6 @@ public class BurnyModel extends MoleModel {
 		isTouched = true;
 		this.onDie();
 	}
-	
 }
 
 

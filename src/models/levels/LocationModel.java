@@ -1,11 +1,12 @@
 package models.levels;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import models.moles.MoleModel;
 
+/**
+ * Model for a location at which moles can appear.
+ */
 public class LocationModel {
 	private float x, y, beginY;
 	private ArrayList<MoleModel> moles;
@@ -37,14 +38,29 @@ public class LocationModel {
 		return this.y;
 	}
 	
+	/**
+	 * Get a list of moles that pop up at this location in order of time.
+	 * @return list of moles.
+	 */
 	public ArrayList<MoleModel> getMoles() {
 		return this.moles;
 	}
 	
+	/**
+	 * Checks whether there is room for this mole (depends on time and appearanceTime).
+	 * @param mole
+	 * @return true if there is room, false otherwise.
+	 */
 	public boolean isRoomForMole(MoleModel mole) {
 		return isRoomForMole(mole.getTime(), mole.getAppearanceTime());
 	}
 	
+	/**
+	 * Checks whether there is room for a mole with time and appearanceTime.
+	 * @param time the time at which the mole is to appear.
+	 * @param appearanceTime the time for which the mole is to appear.
+	 * @return true if there is room, false otherwise.
+	 */
 	public boolean isRoomForMole(float time, float appearanceTime) {
 		float currentMoleGoDownTime = time + appearanceTime;
 		
@@ -63,13 +79,13 @@ public class LocationModel {
 			}
 		}
 		
-		// TODO remove on final release.
-		//System.out.println("Location: " + x + "," + y + " nextMoleTime: " + nextMoleTime + " previousMoleTime: " + prevMoleTime +
-		//		" current moletime = " + time + " appearanceTime: " + appearanceTime +
-		//		" islegit: " + (nextMoleTime - prevMoleTime >= appearanceTime));
 		return true;
 	}
 
+	/**
+	 * Get the first mole that is to appear in this location.
+	 * @return the first mole, null if no moles appear here.
+	 */
 	public MoleModel getFirstMole() {
 		if (moles.size() > 0) {
 			return moles.get(0);
@@ -78,16 +94,34 @@ public class LocationModel {
 		}
 	}
 	
+	/**
+	 * Checks whether it is time for mole to pop up at time.
+	 * This is important as the pop up time might shift during the course
+	 * of a game by for instance the freeze effect.
+	 * @param mole 
+	 * @param time
+	 * @return true if it is time to pop up, false otherwise.
+	 */
 	public boolean isPopUpTime(MoleModel mole, float time) {
 		float moleGoUpTime = getPopUpTime(mole);
 		float moleGoDownTime = moleGoUpTime + mole.getAppearanceTime();	
 		return (time >= moleGoUpTime) && (moleGoDownTime > time);
 	}
 	
+	/**
+	 * Get the earliest time at which the mole is supposed to pop up.
+	 * @param mole
+	 * @return
+	 */
 	public float getPopUpTime(MoleModel mole) {
 		return mole.getTime() + this.timeOffset;
 	}
 	
+	/**
+	 * Add a mole to the location.
+	 * @param mole
+	 * @return true if succeeded, false otherwise (there might be no room!).
+	 */
 	public boolean addMole(MoleModel mole) {
 		if (isRoomForMole(mole)) {
 			float time = mole.getTime();
@@ -114,6 +148,9 @@ public class LocationModel {
 		return false;
 	}
 	
+	/**
+	 * Reset this location, clearing all the moles.
+	 */
 	public void reset() {
 		this.moles.clear();
 		this.activeMole = null;
@@ -121,12 +158,21 @@ public class LocationModel {
 		this.timeOffset = 0;
 	}
 	
+	/**
+	 * Called on mole death, removes the active mole if this was the mole
+	 * that died.
+	 * @param mole the mole that died.
+	 */
 	public void onMoleDeath(MoleModel mole) {
 		if (this.activeMole.equals(mole)) {
 			this.activeMole = null;
 		}
 	}
 	
+	/**
+	 * Set the next active mole.
+	 * @return true if succesfully set (not null), false otherwise
+	 */
 	public boolean setNextActiveMole() {
 		this.activeMole = getNextActiveMole();
 		
@@ -138,6 +184,10 @@ public class LocationModel {
 		}
 	}
 	
+	/**
+	 * Get the next active mole if there is one.
+	 * @return the next active mole, if non null.
+	 */
 	public MoleModel getNextActiveMole() {
 		if (this.activeMoleIndex < this.moles.size() - 1) {
 			return this.moles.get(this.activeMoleIndex + 1);
@@ -150,20 +200,29 @@ public class LocationModel {
 		return this.activeMole;
 	}
 	
+	/**
+	 * Called on burn, unavoidably touches the active mole.
+	 */
 	public void burn() {
 		if (activeMole != null) {
 			activeMole.unavoidableTouched();
 		}
 	}
 	
+	/**
+	 * Called on freeze, and freezes the location and active mole.
+	 * @param time the time for which to freeze in seconds.
+	 */
 	public void freeze(float time) {
 		if (activeMole != null) {
 			activeMole.freeze();
 		}
-		
 		this.timeOffset += time;
 	}
 	
+	/**
+	 * Called on unfreeze, unfreezes the active mole.
+	 */
 	public void unfreeze() {
 		if (activeMole != null) {
 			activeMole.unfreeze();

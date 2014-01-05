@@ -5,6 +5,10 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * A mole model which has to be touched thrice in order to die, changes sprite
+ * when touched.
+ */
 public class TankyModel extends MoleModel {
 
 	public TankyModel(LocationModel location, float time,

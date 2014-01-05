@@ -5,6 +5,9 @@ import models.levels.LocationModel;
 
 import com.example.whackamole.ResourcesManager;
 
+/**
+ * A mole model which triggers a visual smog effect when touched.
+ */
 public class SmogyModel extends MoleModel {
 
 	public SmogyModel(LocationModel location, float time,
