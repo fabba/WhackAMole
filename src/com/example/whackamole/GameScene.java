@@ -5,14 +5,12 @@ import java.util.ArrayList;
 
 import models.levels.LevelModel;
 import models.levels.LocationModel;
-import models.moles.MoleModel;
 import models.users.UserModel;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
@@ -76,10 +74,6 @@ public class GameScene extends BaseScene {
     	if (shouldResume) {
     		int[] levelAndRound = userAdapter.getLastLevelAndRound(user);
     		
-    		// TODO remove on final
-        	System.out.println("Last Level: " + levelAndRound[0] + " last round: " +
-        						levelAndRound[1]);
-        	
     		if (levelAndRound[0] == -1 || levelAndRound[1] == -1) {
 	    			loadLevel(1, 1);
 			}	
@@ -221,7 +215,6 @@ public class GameScene extends BaseScene {
     	 ScoreAdapter db = new ScoreAdapter();
 		 db.open();
 		 db.addScore(level.getScore(), user, level);
-		 db.printAll(); // TODO remove????
 		 db.close();
 		 
     	 finishText = new Text(30, 300, resourcesManager.font, "Congratulations, ",
@@ -254,7 +247,6 @@ public class GameScene extends BaseScene {
         		        currentLevel.playRound();
         		    }
         			else {
-        				// TODO Congratulate user first!
         				GameActivity.goToMain();
         			}
         			
@@ -380,30 +372,10 @@ public class GameScene extends BaseScene {
      * Load level level with round round from database. 
      * @param level number of level to load.
      * @param round number of round to load.
-     * @return true if succes, false otherwise.
+     * @return true if success, false otherwise.
      */
     private boolean loadLevel(int level, int round) {
-    	System.out.println("Level loading!");
-        
-        // get a level from the database
-        currentLevel = LevelModel.loadLevel(level, round, this);
-        
-        System.out.println("Loading level: finished");
-        
-        // TODO remove on final (debug info).
-        if (currentLevel != null) {
-	        System.out.println("Current round: " + currentLevel.getCurrentRound().getNumRound());
-	        System.out.println("Moles in current round: " + currentLevel.getCurrentRound().getMoles());
-	        
-	    	for (LocationModel location : currentLevel.getLocations()) {
-	    		System.out.print("Moles in location " + location.getX() + " , " + location.getY() + " ");
-	    		for (MoleModel mole : location.getMoles()) {
-	    			System.out.print(mole.getClass() + ", ");
-	    		}
-	    		System.out.println(".");
-	    	}
-        }
-    	
+    	currentLevel = LevelModel.loadLevel(level, round, this);
     	return currentLevel != null;
     }
     

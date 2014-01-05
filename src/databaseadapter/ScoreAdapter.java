@@ -143,7 +143,6 @@ public class ScoreAdapter extends DatabaseAdapter {
 		ArrayList<Hashtable<String, String>> content = new ArrayList<Hashtable<String, String>>();
 		
 		while (cursor.moveToNext()) {
-			System.out.println("SCORECONTENT: MOVING TO NEXT)");
 			Hashtable<String, String> contentRow = new Hashtable<String, String>();
 			
 			for (int i = 0; i < COLUMNS.length; i++) {
@@ -171,7 +170,6 @@ public class ScoreAdapter extends DatabaseAdapter {
 		for (Hashtable<String, String> contentRow : content) {	
 			for (String column : COLUMNS) {
 				values.put(column, contentRow.get(column));
-				System.out.println("SCORECONTENT: " + column + " : " + contentRow.get(column));
 			}
 			
 			if (db.insert(TABLE_NAME, null, values) == -1) {
@@ -180,7 +178,6 @@ public class ScoreAdapter extends DatabaseAdapter {
 		}
 	}
     
-    // TODO remove?
     public void printAll(){
     	Cursor cursor = db.rawQuery("SELECT  * FROM " + TABLE_NAME , null);
     	

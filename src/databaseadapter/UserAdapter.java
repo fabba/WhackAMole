@@ -45,7 +45,6 @@ public class UserAdapter extends DatabaseAdapter {
 		ArrayList<Hashtable<String, String>> content = new ArrayList<Hashtable<String, String>>();
 		
 		while (cursor.moveToNext()) {
-			System.out.println("USERCONTENT: MOVING TO NEXT)");
 			Hashtable<String, String> contentRow = new Hashtable<String, String>();
 			
 			for (int i = 0; i < COLUMNS.length; i++) {
@@ -186,12 +185,9 @@ public class UserAdapter extends DatabaseAdapter {
     			" FROM " + ScoreAdapter.TABLE_NAME +
     			" WHERE " + ScoreAdapter.KEY_USER_ID + " = " + user.getId(), null);
         
-    	ArrayList<int[]> allLevels = new ArrayList<int[]>() ;
+    	ArrayList<int[]> allLevels = new ArrayList<int[]>();
     	while (cursor.moveToNext()) {
-    		int[] level = new int[2];
-    		level[0] = cursor.getInt(0);
-			level[1] = cursor.getInt(1);
-			allLevels.add(level);
+    		allLevels.add(new int[] {cursor.getInt(0), cursor.getInt(1)});
         }
     	
     	return allLevels;

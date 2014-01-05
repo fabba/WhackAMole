@@ -7,8 +7,6 @@ import org.andengine.ui.IGameInterface.OnCreateSceneCallback;
 
 import com.example.whackamole.BaseScene;
 
-
-
 /**
  * @author Mateusz Mysliwiec
  * @author www.matim-dev.com

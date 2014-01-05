@@ -43,13 +43,13 @@ public class GameActivity extends BaseGameActivity
     private SharedPreferences getPreferences(String string, int modePrivate) {
 		return getSharedPreferences(string,modePrivate);
 	}
+    
     /* 
      * The Splashscreen will be created and will appear until the game has loaded
      */
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException {
     	SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
     }
-    
     
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
     	 mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 

@@ -25,6 +25,8 @@ public class LevelModel {
 	private float burnTime, burnDuration;
 	private float startTime, timeOffset;
 	
+	private static final int numLives = 6;
+	
 	private ArrayList<LocationModel> locations;
 	private GameScene gameScene;
 	private RoundModel currentRound;
@@ -64,13 +66,6 @@ public class LevelModel {
 		if (!level.getLocations().isEmpty() && round != null) {
 			level.numberOfRounds = numberOfRounds;
 			level.initializeRound(round);
-			
-			// TODO remove on final
-			for (LocationModel location : level.locations) {
-				for (MoleModel mole : location.getMoles()) {
-					System.out.println("Location: " + location + " mole: " + mole + " queued at: " + mole.getTime());
-				}
-			}
 		} else {
 			return null;
 		}
@@ -88,7 +83,7 @@ public class LevelModel {
 		this.startTime = gameScene.getSecondsElapsedTotal();
 		this.molesRemaining = this.currentRound.getMoles().size();
 		this.score = 0;
-		this.lives = 6; // TODO load from database?
+		this.lives = numLives;
 		
 		this.gameScene.onLivesUpdated(this.lives);
 	}
@@ -203,9 +198,6 @@ public class LevelModel {
 	public void onMoleDeath(MoleModel mole) {
 		this.molesRemaining--;
 		
-		// TODO remove on final
-		System.out.println("Remaining moles: " + this.molesRemaining);
-		
 		mole.getLocation().onMoleDeath(mole);
 		
 		if (this.molesRemaining == 0) {
@@ -267,14 +259,11 @@ public class LevelModel {
 				
 				@Override
 				public void run() {
-					// TODO should not be based on system time
 					float time = gameScene.getSecondsElapsedTotal() - startTime;
-					System.out.println("Trying to unburning at time: " + time);
 					if (time + .1 >= burnTime + burnDuration) {
 						burnTime = -1;
 						burnDuration = 0;
 						gameScene.onUnburn();
-						System.out.println("Unburning at time: " + time);
 					}
 				}
 			},
@@ -298,8 +287,6 @@ public class LevelModel {
 		this.freezeTime = gameScene.getSecondsElapsedTotal() - startTime;
 		this.freezeDuration = time;
 		this.timeOffset += this.freezeDuration;
-		
-		System.out.println("FREEZING for time: " + time + " at: " + this.freezeTime);
 		
 		for (LocationModel location : locations) {
     		location.freeze(this.freezeDuration);
@@ -330,8 +317,6 @@ public class LevelModel {
 				    	}
 						
 						gameScene.onUnfreeze();
-						
-						System.out.println("Unfreezing at time: " + time);
 					}
 				}
 			},
@@ -371,23 +356,16 @@ public class LevelModel {
 				public void run() {
 					float time = gameScene.getSecondsElapsedTotal() - startTime;
 					
-					// TODO remove on final
-					System.out.println("Trying to unsmog at " + time + " smogtime: " + smogTime + " smogduration: " + smogDuration);
-					
 					if (time + .1 >= smogTime + smogDuration) {
 						smogTime = -1;
 						smogDuration = 0;
 						
 						gameScene.onUnsmog();
-						
-						System.out.println("Unsmogging at time: " + time);
 					}
 				}
 			},
 			(long)((double)time * 1000)
 		);
-    	
-		System.out.println("SMOGGING for time: " + time + " at: " + this.smogTime);
     }
     
     /**
@@ -398,9 +376,6 @@ public class LevelModel {
      * @param prevTime the time for which the mole has to appear.
      */
     private void scheduleMolePopUp(final MoleModel mole, final float time, final float prevTime) {
-    	System.out.println("Schedule time: " + (time - prevTime) + " prevTime: " + prevTime + 
-    			" time: " + time);
-    	
     	new Timer().schedule(
 			new TimerTask() {
 				float popUpTime = time;
@@ -418,11 +393,6 @@ public class LevelModel {
 						MoleModel nextActiveMole = location.getNextActiveMole();
 						if (nextActiveMole != null) {
 							float nextPopUpTime = location.getPopUpTime(nextActiveMole);
-							
-							// TODO remove on final
-							System.out.println("nextPopUpTime: " + nextPopUpTime + " time: " + time +
-									" from mole: " + mole + " to mole: " + nextActiveMole);
-							
 							scheduleMolePopUp(nextActiveMole, nextPopUpTime, time);
 						}
 					} else {

@@ -41,7 +41,6 @@ public abstract class DatabaseAdapter {
      
         private SQLiteDatabase myDataBase; 
      
-        private final Context myContext;
      
         /**
          * Constructor
@@ -50,7 +49,6 @@ public abstract class DatabaseAdapter {
          */
         public DatabaseHelper(Context context) {
         	super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        	this.myContext = context;
         }	
      
         /**
@@ -61,9 +59,8 @@ public abstract class DatabaseAdapter {
         	boolean dbExist = checkDataBase();
      
         	if (!dbExist) {
-        		System.out.println("Succes!");
-        		//By calling this method and empty database will be created into the default system path
-                   //of your application so we are gonna be able to overwrite that database with our database.
+        		// By calling this method and empty database will be created into the default system path
+                // of your application so we are gonna be able to overwrite that database with our database.
             	this.getReadableDatabase();
             	
             	try {
@@ -71,8 +68,6 @@ public abstract class DatabaseAdapter {
         		} catch (IOException e) {
             		throw new Error("Error copying database");
             	}
-        	} else {
-        		System.out.println( "DERP!");
         	}
         }
         
@@ -129,7 +124,6 @@ public abstract class DatabaseAdapter {
          * This is done by transfering bytestream.
          * */
         private void copyDataBase() throws IOException {
-        	System.out.println("copying database");
         	
         	//Open your local db as the input stream
         	InputStream myInput = WhackAMole.getContext().getAssets().open(DATABASE_NAME);
@@ -151,8 +145,6 @@ public abstract class DatabaseAdapter {
         	myOutput.flush();
         	myOutput.close();
         	myInput.close();
-        	
-        	System.out.println("finished copying database");
         }
      
         public void openDataBase() throws SQLException{
@@ -170,14 +162,11 @@ public abstract class DatabaseAdapter {
 	 
 	    @Override
 	    public void onCreate(SQLiteDatabase db) {
-	    	System.out.println("Database being created.");
 	    	createDataBase(true);
 	    }
 	    
 	    @Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	    	System.out.println("Database updating.");
-	    	
 	    	ArrayList<Hashtable<String, String>> userContent = UserAdapter.getContent(db);
 	    	ArrayList<Hashtable<String, String>> scoreContent = ScoreAdapter.getContent(db);
 	    	
