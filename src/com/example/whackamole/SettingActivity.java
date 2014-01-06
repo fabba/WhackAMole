@@ -87,11 +87,4 @@ public class SettingActivity extends Activity {
 	        super.onBackPressed();  
 	    }
 	}
-	
-    @Override
-	/* Inflate the menu; this adds items to the action bar if it is present. */
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.setting, menu);
-		return true;
-	}
 }

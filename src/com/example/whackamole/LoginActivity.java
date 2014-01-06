@@ -46,9 +46,14 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		System.out.println(WhackAMole.getUser());
+		if ( WhackAMole.getUser() != null){
+			Intent intent = new Intent (this.getBaseContext(), MainActivity.class);
+	    	startActivityForResult(intent,0);
+		}
 		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_login);
+		
 
 		// Set up the login form.
 		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
@@ -80,12 +85,6 @@ public class LoginActivity extends Activity {
 		);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		getMenuInflater().inflate(R.menu.login, menu);
-		return true;
-	}
 
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
@@ -134,7 +133,13 @@ public class LoginActivity extends Activity {
 			mEmailView.setError(getString(R.string.error_field_required));
 			focusView = mEmailView;
 			cancel = true;
+		}
+		if (mEmail.length() > 12) {
+			mEmailView.setError(getString(R.string.error_length_email));
+			focusView = mEmailView;
+			cancel = true;
 		} 
+
 
 		if (cancel) {
 			// There was an error; don't attempt login and focus the first

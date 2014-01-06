@@ -53,10 +53,29 @@
         android:id="@+id/newGame"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button3"
-        android:layout_alignTop="@+id/button3"
         android:layout_marginTop="120dp"
         android:onClick="onClick"
         android:text="New Game" />
+
+    <Button
+        android:id="@+id/logOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/newGame"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="58dp"
+        android:onClick="onClick"
+        android:text="Log out" />
+
+    <TextView
+        android:id="@+id/loginName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/logOut"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:text="Logged in as:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

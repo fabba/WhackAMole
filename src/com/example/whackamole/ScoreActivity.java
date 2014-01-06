@@ -136,11 +136,4 @@ public class ScoreActivity extends Activity {
 	    Intent intent = new Intent (context, MainActivity.class);
 	    startActivity(intent);
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.score, menu);
-		return true;
-	}
 }
