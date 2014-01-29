@@ -41,7 +41,6 @@ public abstract class DatabaseAdapter {
      
         private SQLiteDatabase myDataBase; 
      
-     
         /**
          * Constructor
          * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
